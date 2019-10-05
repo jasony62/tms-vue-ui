@@ -16,7 +16,7 @@ export default function(Vue) {
   Vue.component('tms-flex', {
     props: {
       direction: { type: String, default: 'row' },
-      growItems: { type: Array }
+      elasticItems: { type: Array }
     },
     render(h) {
       let classes = ['tms-flex']
@@ -26,8 +26,8 @@ export default function(Vue) {
         items.forEach((item, index) => {
           if (undefined === item.data) item.data = {}
           addStyleClass(item.data, 'class', 'tms-flex__item')
-          if (this.growItems && this.growItems.length && this.growItems.includes(index)) {
-            addStyleClass(item.data, 'class', 'tms-flex__item_grow_1')
+          if (this.elasticItems && this.elasticItems.length && this.elasticItems.includes(index)) {
+            addStyleClass(item.data, 'class', 'tms-flex__item_elastic')
           }
         })
       }

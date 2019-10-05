@@ -11,7 +11,7 @@ describe('card', () => {
       propsData: { thumb: '/images/123.jpg', title: 'test-title', desc: 'test-desc' }
     })
     expect(wrapper.html()).toBe(
-      '<div class="tms-card"><main><div class="tms-flex tms-flex_row"><div class="tms-flex__item"><img src="/images/123.jpg"></div><div class="tms-flex__item tms-flex__item_grow_1"><div class="tms-flex tms-flex_column"><div class="tms-card__title tms-flex__item">test-title</div><div class="tms-card__desc tms-flex__item tms-flex__item_grow_1">test-desc</div></div></div></div></main></div>'
+      '<div class="tms-card"><main><div class="tms-flex tms-flex_row"><div class="tms-card__thumb tms-flex__item"><img src="/images/123.jpg"></div><div class="tms-flex__item tms-flex__item_elastic"><div class="tms-flex tms-flex_column"><div class="tms-card__title tms-flex__item">test-title</div><div class="tms-card__desc tms-flex__item tms-flex__item_elastic">test-desc</div></div></div></div></main></div>'
     )
     wrapper.destroy()
   })
@@ -24,7 +24,7 @@ describe('card', () => {
       }
     })
     expect(wrapper.html()).toBe(
-      '<div class="tms-card"><header>tms-card-header</header><main><div class="tms-flex tms-flex_row"><div class="tms-flex__item"><img src="/images/123.jpg"></div><div class="tms-flex__item tms-flex__item_grow_1"><div class="tms-flex tms-flex_column"><div class="tms-card__title tms-flex__item">test-title</div><div class="tms-card__desc tms-flex__item tms-flex__item_grow_1">test-desc</div></div></div></div></main><footer>tms-card-footer</footer></div>'
+      '<div class="tms-card"><header>tms-card-header</header><main><div class="tms-flex tms-flex_row"><div class="tms-card__thumb tms-flex__item"><img src="/images/123.jpg"></div><div class="tms-flex__item tms-flex__item_elastic"><div class="tms-flex tms-flex_column"><div class="tms-card__title tms-flex__item">test-title</div><div class="tms-card__desc tms-flex__item tms-flex__item_elastic">test-desc</div></div></div></div></main><footer>tms-card-footer</footer></div>'
     )
     wrapper.destroy()
   })
@@ -37,7 +37,7 @@ describe('card', () => {
       }
     })
     expect(wrapper.html()).toBe(
-      '<div class="tms-card"><main><div class="tms-flex tms-flex_row"><div class="tms-flex__item"><img src="/images/123.jpg"></div><div class="tms-flex__item tms-flex__item_grow_1"><div class="tms-flex tms-flex_column"><div class="tms-card__title tms-flex__item"><h3>test-title</h3></div><div class="tms-card__desc tms-flex__item tms-flex__item_grow_1"><div style="color: red;">test-desc</div></div></div></div></div></main></div>'
+      '<div class="tms-card"><main><div class="tms-flex tms-flex_row"><div class="tms-card__thumb tms-flex__item"><img src="/images/123.jpg"></div><div class="tms-flex__item tms-flex__item_elastic"><div class="tms-flex tms-flex_column"><div class="tms-card__title tms-flex__item"><h3>test-title</h3></div><div class="tms-card__desc tms-flex__item tms-flex__item_elastic"><div style="color: red;">test-desc</div></div></div></div></div></main></div>'
     )
     wrapper.destroy()
   })
@@ -49,7 +49,7 @@ describe('card', () => {
       }
     })
     expect(wrapper.html()).toBe(
-      '<div class="tms-card"><main><div class="tms-flex tms-flex_row"><div class="tms-flex__item"><img src="/images/123.jpg"></div><div class="tms-flex__item tms-flex__item_grow_1"><div class="tms-flex tms-flex_column"><div class="tms-card__title tms-flex__item">test-title</div><div class="tms-card__desc tms-flex__item tms-flex__item_grow_1">test-desc</div><div class="tms-card__bottom tms-flex__item">test-bottom</div></div></div></div></main></div>'
+      '<div class="tms-card"><main><div class="tms-flex tms-flex_row"><div class="tms-card__thumb tms-flex__item"><img src="/images/123.jpg"></div><div class="tms-flex__item tms-flex__item_elastic"><div class="tms-flex tms-flex_column"><div class="tms-card__title tms-flex__item">test-title</div><div class="tms-card__desc tms-flex__item tms-flex__item_elastic">test-desc</div><div class="tms-card__bottom tms-flex__item">test-bottom</div></div></div></div></main></div>'
     )
     wrapper.destroy()
   })

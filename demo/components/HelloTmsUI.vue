@@ -5,7 +5,13 @@
 				<b>tms-card-title</b>
 			</template>
 			<template slot="desc">
-				<span style="color:grey;">tms-card-desc</span>
+				<span>tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc</span>
+			</template>
+			<template slot="bottom">
+				<tms-flex :elasticItems="[0]">
+					<span>left</span>
+					<span>right</span>
+				</tms-flex>
 			</template>
 		</tms-card>
 	</div>
@@ -19,13 +25,19 @@ import '../../lib/card/style'
 Vue.use(Flex).use(Card)
 
 export default {
-	name: 'HelloJsx'
+	name: 'HelloTmsUI'
 }
 </script>
 
 <style>
-#myCard img {
-	width: 100px;
+#myCard {
 	height: 100px;
+}
+#myCard .tms-card__thumb img {
+	height: 100px;
+	width: 100px;
+}
+#myCard .tms-card__desc {
+	color: #666;
 }
 </style>

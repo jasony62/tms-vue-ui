@@ -1,16 +1,23 @@
 .tms-flex {
-    display: -webkit-flex;
     display: flex;
 
     &.tms-flex_row {
         flex-direction: row;
+
+        &>.tms-flex__item+.tms-flex__item {
+            margin-left: 8px;
+        }
     }
 
     &.tms-flex_column {
         flex-direction: column;
+
+        &>.tms-flex__item+.tms-flex__item {
+            margin-top: 8px;
+        }
     }
 
-    .tms-flex__item_grow_1 {
+    .tms-flex__item_elastic {
         flex-grow: 1;
     }
 
