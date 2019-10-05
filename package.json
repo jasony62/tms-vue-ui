@@ -1,0 +1,49 @@
+{
+  "name": "tms-vue-ui",
+  "description": "基于VUE实现的常用UI组件库。",
+  "author": "jasony62",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasony62/tms-vue-ui.git"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "version": "0.0.3",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "node build/build-lib",
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service test:unit"
+  },
+  "dependencies": {
+    "core-js": "^2.6.5",
+    "vue": "^2.6.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "@vue/babel-preset-jsx": "^1.1.0",
+    "@vue/cli-plugin-babel": "^3.11.0",
+    "@vue/cli-plugin-eslint": "^3.11.0",
+    "@vue/cli-plugin-unit-jest": "^3.11.0",
+    "@vue/cli-service": "^3.11.0",
+    "@vue/test-utils": "1.0.0-beta.29",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.6",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.4",
+    "less": "^3.10.3",
+    "postcss": "^7.0.18",
+    "postcss-load-config": "^2.1.0",
+    "shelljs": "^0.8.3",
+    "signale": "^1.4.0",
+    "vue-template-compiler": "^2.6.10"
+  }
+}
