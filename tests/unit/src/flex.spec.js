@@ -7,12 +7,12 @@ import { mount } from '@vue/test-utils'
 describe('flex', () => {
   it('渲染组件-默认', () => {
     const wrapper = mount(Vue.component('tms-flex'))
-    expect(wrapper.html()).toBe('<div class="tms-flex tms-flex_row"></div>')
+    expect(wrapper.html()).toBe('<div class="tms-flex tms-flex_row tms-flex_gap_2"></div>')
     wrapper.destroy()
   })
   it('渲染组件-垂直排列', () => {
     const wrapper = mount(Vue.component('tms-flex'), { propsData: { direction: 'column' } })
-    expect(wrapper.html()).toBe('<div class="tms-flex tms-flex_column"></div>')
+    expect(wrapper.html()).toBe('<div class="tms-flex tms-flex_column tms-flex_gap_2"></div>')
     wrapper.destroy()
   })
   it('渲染组件-给子元素添加类', () => {
@@ -28,7 +28,7 @@ describe('flex', () => {
     })
     const wrapper = mount(comp)
     expect(wrapper.html()).toBe(
-      '<div class="tms-flex tms-flex_row"><div class="tms-flex__item"></div><div class="tms-flex__item"></div><div class="tms-flex__item"></div><div class="tms-flex__item"></div></div>'
+      '<div class="tms-flex tms-flex_row tms-flex_gap_2"><div class="tms-flex__item"></div><div class="tms-flex__item"></div><div class="tms-flex__item"></div><div class="tms-flex__item"></div></div>'
     )
     wrapper.destroy()
   })
@@ -40,7 +40,7 @@ describe('flex', () => {
     })
     const wrapper = mount(comp)
     expect(wrapper.html()).toBe(
-      '<div class="tms-flex tms-flex_row"><div class="tms-flex__item"></div><div class="tms-flex__item tms-flex__item_elastic"></div><div class="tms-flex__item"></div></div>'
+      '<div class="tms-flex tms-flex_row tms-flex_gap_2"><div class="tms-flex__item"></div><div class="tms-flex__item tms-flex__item_elastic"></div><div class="tms-flex__item"></div></div>'
     )
     wrapper.destroy()
   })
@@ -52,7 +52,7 @@ describe('flex', () => {
     })
     const wrapper = mount(comp)
     expect(wrapper.html()).toBe(
-      '<div class="tms-flex tms-flex_row"><div class="tms-flex__item"></div><div class="tms-flex tms-flex_column tms-flex__item"></div></div>'
+      '<div class="tms-flex tms-flex_row tms-flex_gap_2"><div class="tms-flex__item"></div><div class="tms-flex tms-flex_column tms-flex_gap_2 tms-flex__item"></div></div>'
     )
     wrapper.destroy()
   })

@@ -14,15 +14,31 @@
         </tms-flex>
       </template>
     </tms-card>
+    <hr />
+    <div style="width:200px">
+      <span>原始文本</span>
+      <tms-text>这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
+      <span>显示两行</span>
+      <tms-text
+        :lines="2"
+      >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
+      <span>小屏幕（小于等于768）显示两行</span>
+      <tms-text
+        :lines-sm="2"
+      >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
+    </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
-import { Flex, Card } from '../../lib'
+import { Text, Flex, Card } from '../../lib'
+import '../../lib/text/style'
 import '../../lib/flex/style'
 import '../../lib/card/style'
-Vue.use(Flex).use(Card)
+Vue.use(Text)
+  .use(Flex)
+  .use(Card)
 
 export default {
   name: 'HelloTmsUI'

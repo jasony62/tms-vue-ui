@@ -8,17 +8,18 @@ export default function(Vue) {
     },
     render() {
       let slots = this.$slots
-      let props = this.$props
+      let { thumb, title, desc } = this.$props
+      if (thumb === '') thumb = null
       return (
         <div class="tms-card">
           {slots.header ? <header>{slots.header}</header> : ''}
           <main>
             <tms-flex {...{ props: { elasticItems: [1] } }}>
-              <div class="tms-card__thumb">{slots.thumb ? slots.thumb : <img src={props.thumb} />}</div>
+              <div class="tms-card__thumb">{slots.thumb ? slots.thumb : <img src={thumb} />}</div>
               <div>
                 <tms-flex {...{ props: { direction: 'column', elasticItems: [1] } }}>
-                  <div class="tms-card__title">{slots.title ? slots.title : props.title}</div>
-                  <div class="tms-card__desc">{slots.desc ? slots.desc : props.desc}</div>
+                  <div class="tms-card__title">{slots.title ? slots.title : title}</div>
+                  <div class="tms-card__desc">{slots.desc ? slots.desc : desc}</div>
                   {slots.bottom ? <div class="tms-card__bottom">{slots.bottom}</div> : ''}
                 </tms-flex>
               </div>

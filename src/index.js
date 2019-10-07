@@ -1,4 +1,5 @@
+import Text from './text'
 import Flex from './flex'
 import Card from './card'
 
-export { Flex, Card }
+export { Text, Flex, Card }

@@ -16,11 +16,13 @@ export default function(Vue) {
   Vue.component('tms-flex', {
     props: {
       direction: { type: String, default: 'row' },
-      elasticItems: { type: Array }
+      elasticItems: { type: Array },
+      gap: { type: Number, default: 2 }
     },
     render(h) {
       let classes = ['tms-flex']
       classes.push(this.direction === 'column' ? 'tms-flex_column' : 'tms-flex_row')
+      classes.push(`tms-flex_gap_${this.gap}`)
       let items = this.$slots.default
       if (items && items.length) {
         items.forEach((item, index) => {
