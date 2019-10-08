@@ -1,3 +1,8 @@
+const path = require('path')
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
+
 module.exports = {
   // 基本路径
   publicPath: '/demo/',
@@ -27,5 +32,9 @@ module.exports = {
   // enabled by default if the machine has more than 1 cores
   parallel: require('os').cpus().length > 1,
   // 是否使用包含运行时编译器的 Vue 构建版本。
-  runtimeCompiler: true
+  runtimeCompiler: true,
+
+  chainWebpack: config => {
+    config.resolve.alias.set('@', resolve('./'))
+  }
 }

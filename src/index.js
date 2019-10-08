@@ -1,5 +1,6 @@
+import Frame from './frame'
 import Text from './text'
 import Flex from './flex'
 import Card from './card'
 
-export { Text, Flex, Card }
+export { Frame, Text, Flex, Card }
