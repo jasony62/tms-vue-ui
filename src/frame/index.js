@@ -15,18 +15,34 @@ export default function(Vue) {
       },
       backColor: { type: String, default: '#f0f3f6' },
       headerColor: { type: String, default: '#f0f3f6' },
+      headerMinHeight: { type: String, default: '32px' },
       leftColor: { type: String, default: '#f0f3f6' },
       leftWidth: { type: String, default: '25%' },
+      leftWidthSm: { type: String, default: '100%' },
       centerColor: { type: String, default: '#fff' },
       centerMargin: { type: String, default: '0 8px' },
       centerMarginSm: { type: String, default: '' },
       rightColor: { type: String, default: '#f0f3f6' },
       rightWidth: { type: String, default: '25%' },
-      footerColor: { type: String, default: '#f0f3f6' }
+      rightWidthSm: { type: String, default: '100%' },
+      footerColor: { type: String, default: '#f0f3f6' },
+      footerMinHeight: { type: String, default: '32px' },
+      mainDirection: { type: String, default: 'row' },
+      mainDirectionSm: { type: String, default: 'row' }
     },
     methods: {
       adjust() {
         let props = this.$props
+        let elMain = this.$el.querySelector('.tms-frame__main')
+        if (elMain) {
+          if (this.isSmallScreen) {
+            elMain.classList.remove(`tms-frame__main_${props.mainDirection}`)
+            elMain.classList.add(`tms-frame__main_${props.mainDirectionSm}`)
+          } else {
+            elMain.classList.remove(`tms-frame__main_${props.mainDirectionSm}`)
+            elMain.classList.add(`tms-frame__main_${props.mainDirection}`)
+          }
+        }
         let elCenter = this.$el.querySelector('.tms-frame__main__center')
         if (elCenter) {
           if (this.isSmallScreen) {
@@ -34,6 +50,14 @@ export default function(Vue) {
           } else {
             elCenter.style.margin = props.centerMargin
           }
+        }
+        let elLeft = this.$el.querySelector('.tms-frame__main__left')
+        if (elLeft) {
+          elLeft.style.width = this.isSmallScreen ? props.leftWidthSm : props.leftWidth
+        }
+        let elRight = this.$el.querySelector('.tms-frame__main__right')
+        if (elRight) {
+          elRight.style.width = this.isSmallScreen ? props.rightWidthSm : props.rightWidth
         }
       }
     },
@@ -62,11 +86,16 @@ export default function(Vue) {
     render() {
       let slots = this.$slots
       let props = this.$props
+      let headerStyle = { backgroundColor: props.headerColor }
+      if (!slots.header) headerStyle.minHeight = props.headerMinHeight
+      let footerStyle = { backgroundColor: props.footerColor }
+      if (!slots.footer) footerStyle.minHeight = props.footerMinHeight
       let responsiveDisplay = this.responsiveDisplay
+
       return (
         <div class="tms-frame" {...{ style: { backgroundColor: props.backColor } }}>
           {responsiveDisplay.header ? (
-            <header class="tms-frame__header" {...{ style: { backgroundColor: props.headerColor } }}>
+            <header class="tms-frame__header" {...{ style: headerStyle }}>
               {slots.header}
             </header>
           ) : (
@@ -103,7 +132,7 @@ export default function(Vue) {
             )}
           </main>
           {responsiveDisplay.footer ? (
-            <footer class="tms-frame__footer" {...{ style: { backgroundColor: props.footerColor } }}>
+            <footer class="tms-frame__footer" {...{ style: footerStyle }}>
               {slots.footer}
             </footer>
           ) : (

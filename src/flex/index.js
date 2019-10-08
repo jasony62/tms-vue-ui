@@ -16,6 +16,7 @@ export default function(Vue) {
   Vue.component('tms-flex', {
     props: {
       direction: { type: String, default: 'row' },
+      alignItems: { type: String, default: 'flex-start' },
       elasticItems: { type: Array },
       gap: { type: Number, default: 2 }
     },
@@ -33,7 +34,7 @@ export default function(Vue) {
           }
         })
       }
-      return h('div', { class: classes }, items)
+      return h('div', { class: classes, style: { alignItems: this.alignItems } }, items)
     }
   })
 }

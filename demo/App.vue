@@ -1,5 +1,11 @@
 <template>
-  <tms-frame id="app" header-color="#f00" left-width="15%" :display-sm="{header:true,left:true}">
+  <tms-frame
+    id="app"
+    header-color="#f00"
+    left-width="15%"
+    :display-sm="{header:true,right:true}"
+    main-direction-sm="column-reverse"
+  >
     <template v-slot:header>
       <div>this is header section</div>
     </template>
