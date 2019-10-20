@@ -45,6 +45,5 @@ function compile(dir) {
 fs.emptyDirSync(libDir)
 
 // compile lib dir
-//process.env.BABEL_MODULE = 'commonjs'
 fs.copySync(srcDir, libDir)
 compile(libDir)
