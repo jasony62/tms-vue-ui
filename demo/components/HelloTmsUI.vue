@@ -37,6 +37,7 @@ import { Text, Flex, Card } from '../../lib'
 import '../../lib/text/style'
 import '../../lib/flex/style'
 import '../../lib/card/style'
+
 Vue.use(Text)
   .use(Flex)
   .use(Card)

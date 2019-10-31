@@ -1,0 +1,21 @@
+.tms-login {
+    position: absolute;
+    width: 400px;
+    height: 300px;
+    top: 30px;
+    left: 50%;
+    margin-left: -200px;
+    background-color: #fff;
+    text-align: center;
+    z-index: 1000;
+}
+.tms-login__input {
+    margin-top: 10px;
+}
+.tms-login__input.captcha {
+    display: flex;
+}
+.tms-login__button {
+    width: 100%;
+    margin-top: 10px;
+}
