@@ -1,72 +1,68 @@
-import Nickname from './widget/Nickname'
-import Password from './widget/Password'
+import Vue from 'vue'
+import { Button, Icon, CellGroup, Field, Notify } from 'vant'
+
+Vue.use(Button)
+Vue.use(Icon)
+Vue.use(CellGroup)
+Vue.use(Field)
+Vue.use(Notify)
 
 class Login{
-    constructor(display, getCaptcha, getToken) {
-        this.display = display
-        this.getCaptcha = getCaptcha
-        this.getToken = getToken
+    constructor(fnCaptcha, fnToken) {
+        this.fncaptcha = fnCaptcha
+        this.fntoken = fnToken
     }
     get component() {
-        const requireItems = this.display
-        const fncaptcha = this.getCaptcha
-        const fntoken = this.getToken
+        let count = 0, loginData = {}
+        const { fncaptcha, fntoken } = this
         return {
-            data() {
-                return {
-                    user: {
-                        nickname: '',
-                        password: '',
-                        pin: ''
-                    }
-                }
-            },
-            /* mounted(){
-                this.refresh()
-            },
-            methods: {
-                async refresh() {
-                    console.log(this);
-                    let captchaSvg = await this.getCaptcha()
-                    document.getElementById("captcha").innerHTML = captchaSvg
-                },
-                submit(userArg) {
-                    if (Object.keys(userArg).length !== 0) {
-                        this.getToken(userArg).then(res => {
-                            if(res.code === 0) {
-                                let { access_token } = res.result
-                                this.$emit('getTokenSuccess', access_token)
-                            }
-                        })
-                    }
-                }
-            }, */
+            props: { data: { type: Array } },
             render: function(h) {
-                let self = this, nameComp, pwdComp, catpchComp, btnComp
-                if(requireItems.nickname) {
-                    nameComp =  h('div', { class: 'tms-login__input' }, [
-                        h('input', {
-                            class: 'el-input__inner',
-                            attrs: {
-                                type: "text",
-                                autocomplete: "off",
-                                placeholder: "用户名" 
-                            },
-                            domProps: {
-                                value: self.user.nickname
-                            },
-                            on: {
-                                input: function (event) {
-                                    self.$emit('input', event.target.value)
-                                }
-                            }
+                const data = this.data
+                const eventhub = this.$eventHub
+                if (count == 0) {
+                    refresh()
+                    count += 1
+                }
+                function refresh() {
+                    try {
+                        fncaptcha().then(result => {
+                            document.getElementById("captcha").innerHTML = result
                         })
-                    ])
+                    } catch(e) {
+                        Notify({ type: 'danger', message: e })
+                    }
+                    
                 }
-                if(requireItems.password) {
-                    pwdComp = h('div', { class: 'tms-login__input'}, new Password(this.user.password).editor)
+                function submit() {
+                    try {
+                        fntoken(loginData).then(response => {
+                            console.log(loginData)
+                            let { code, result, msg} = response
+                            if (code != 0) {
+                                Notify({ type: 'danger', message: msg })
+                                return false
+                            }
+                            let { access_token } = result
+                            eventhub.$emit('getTokenSuccess', access_token)
+                        })
+                    } catch(e) {
+                        Notify({ type: 'danger', message: e })
+                    }   
                 }
-                return h('div', { class: 'tms-login' }, [nameComp, pwdComp])
+                return (
+                    <div class="tms-login__form">
+                        {
+                            data.map((item) => {
+                                let textEle, codeEle
+                                textEle = <van-cell-group class="tms-login__input"><van-field placeholder={item.placeholder} type={item.type} vModel={loginData[item.key]} required></van-field></van-cell-group>
+                                codeEle = <van-cell-group class="tms-login__input flex flex__row"><van-field placeholder={item.placeholder} vModel={loginData[item.key]} required></van-field><span style="width: 150px; height: 44px" id="captcha"></span><van-button type="default" onClick={refresh}><van-icon name="replay" /></van-button></van-cell-group>
+                                return item.type == 'code' ? codeEle : textEle
+                            })
+                        }
+                        <div class="tms-login__button"><van-button size="large" type="info" onClick={submit}>登录</van-button></div>
+                    </div>
+                )
             }
         }
     }

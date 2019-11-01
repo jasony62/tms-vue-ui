@@ -1,25 +1,38 @@
-.tms-login {
+.tms-login__form {
     position: absolute;
-    width: 400px;
-    height: 300px;
-    top: 30px;
+    width: 350px;
+    height: auto;
+    top: 50px;
     left: 50%;
-    margin-left: -200px;
-    background-color: #fff;
+    margin-left: -175px;
+    background-color: #f5f5f5;
     z-index: 1000;
     text-align: center;
+    padding: 30px 15px;
+    box-sizing: border-box;
 
     .tms-login__input {
         margin-top: 10px;
+
+        & > .van-cell {
+            padding: 8px 16px
+        }
     }
 
-    .tms-login__input.captcha {
+    .flex {
         display: flex;
+
+        &.flex__row {
+            flex-direction: row;
+        }
     }
 
     .tms-login__button {
-        width: 100%;
-        margin-top: 10px;
-    }
+        margin-top: 15px;
 
+        & > .van-button--large {
+            height: 40px;
+            line-height: 38px;
+        }
+    }
 }
