@@ -57,6 +57,10 @@ Vue.use(Flex)
 | elasticItems | 占据空余空间的字元素序号                              | array  | -          |
 | gap          | 自元素之间的间距（4px 的倍数），有效值为 1，2，3，4。 | number | 2          |
 
+```
+<tms-flex><tms-flex>
+```
+
 ## 卡片（card）
 
 用卡片的形式显示信息，包括：图片，标题，描述。可以通过插槽进行定制。
