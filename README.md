@@ -2,6 +2,10 @@
 
 ## 运行和打包
 
+运行演示程序，需执行`cnpm i vue`（注意不要-S 或-D）。
+
+运行演示程序，需执行`cnpm i vant`（注意不要-S 或-D）。
+
 执行`yarn serve`启动演示程序。
 
 执行`yarn build`编译组件库。
@@ -111,7 +115,7 @@ Vue.use(Text)
 | lines    | 文本显示的行数                     | number | -      |
 | lines-sm | 小屏幕下（小于等于 768）显示的行数 | number | -      |
 
-## 背景（backgroud）
+## 背景（frame）
 
 提供自适应页面的布局。
 
@@ -119,8 +123,8 @@ Vue.use(Text)
 
 ```js
 import Vue from 'vue'
-import { Background } from 'tms-vue-ui'
-Vue.use(Background)
+import { Frame } from 'tms-vue-ui'
+Vue.use(Frame)
 ```
 
 ### 插槽（slots）
@@ -163,32 +167,38 @@ Vue.use(Background)
 ```js
 import Vue from 'vue'
 import { Login } from 'tms-vue-ui'
-
-const TmsLogin = Vue.component('tms-login', new Login(fn1, fn2).component)
-
-components: { TmsLogin }
+Vue.use(Login, { fnGetCaptcha, fnGetToken })
 ```
+
+| 参数         | 说明                               | 类型     | 默认值 |
+| ------------ | ---------------------------------- | -------- | ------ |
+| fnGetCaptcha | 获得验证码的回调函数，返回 promise | function | -      |
+| fnGetToken   | 获得验证码的回调函数，返回 promise | function | -      |
+
 ### 属性（props）
 
-| 参数     | 说明                               | 类型   | 默认值 |
-| -------- | ---------------------------------- | ------ | ------ |
-| data    | 给后台传递的键和配置                     | Array | -      |
+| 参数 | 说明                 | 类型  | 默认值 |
+| ---- | -------------------- | ----- | ------ |
+| data | 给后台传递的键和配置 | Array | -      |
 
-````
-例子
-data: [{
-  // 当前双向绑定的属性名
-  key: 'uname',
-  // 组件类型
-  type: 'text',
-  placeholder: '用户名'
-},{
-  key: 'password',
-  type: 'password',
-  placeholder: '密码'
-},{
-  key: 'pin',
-  type: 'code',
-  placeholder: '验证码'
-}]
-````
+```javascript
+data: [
+  {
+    // 当前双向绑定的属性名
+    key: 'uname',
+    // 组件类型
+    type: 'text',
+    placeholder: '用户名'
+  },
+  {
+    key: 'password',
+    type: 'password',
+    placeholder: '密码'
+  },
+  {
+    key: 'pin',
+    type: 'code',
+    placeholder: '验证码'
+  }
+]
+```
