@@ -149,3 +149,42 @@ Vue.use(Background)
 | center-margin-sm  | 屏幕小于 768 时，中间区域边距                                   | string | -                                                       |
 | display           | 显示哪些区域。只要将要显示的区域设置成 true，不显示的不用设置。 | object | {header: true, footer: true, left: true, right: true}   |
 | display-sm        | 屏幕小于 768 时，显示哪些区域                                   | object | {header: true, footer: true, left: false, right: false} |
+
+## 登录框（login）
+
+可指定用户名框、密码、验证码是否可见。
+
+### 使用
+
+```js
+import Vue from 'vue'
+import { Login } from 'tms-vue-ui'
+
+const TmsLogin = Vue.component('tms-login', new Login(fn1, fn2).component)
+
+components: { TmsLogin }
+```
+### 属性（props）
+
+| 参数     | 说明                               | 类型   | 默认值 |
+| -------- | ---------------------------------- | ------ | ------ |
+| data    | 给后台传递的键和配置                     | Array | -      |
+
+````
+例子
+data: [{
+  // 当前双向绑定的属性名
+  key: 'uname',
+  // 组件类型
+  type: 'text',
+  placeholder: '用户名'
+},{
+  key: 'password',
+  type: 'password',
+  placeholder: '密码'
+},{
+  key: 'pin',
+  type: 'code',
+  placeholder: '验证码'
+}]
+````
