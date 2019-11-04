@@ -103,8 +103,9 @@ export default {
   }
 }
 #myLogin {
-  position: relative;
-  width: 100%;
-  height: 400px;
+  width: 300px;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #f5f5f5;
 }
 </style>

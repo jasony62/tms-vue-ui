@@ -20,7 +20,12 @@ class Login {
       methods: {
         refresh() {
           fnCaptcha()
-            .then(result => {
+            .then(response => {
+              let { code, result, msg } = response
+              if ( code !== 0 ) {
+                Notify({ type: 'danger', message: msg })
+                return false
+              }
               document.getElementById('captcha').innerHTML = result
             })
             .catch(e => {
@@ -83,6 +88,8 @@ class Login {
     }
   }
 }
+
+export { Login }
 /**
  *
  * @param {*} Vue
