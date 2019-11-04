@@ -170,10 +170,10 @@ import { Login } from 'tms-vue-ui'
 Vue.use(Login, { fnGetCaptcha, fnGetToken })
 ```
 
-| 参数         | 说明                               | 类型     | 默认值 |
-| ------------ | ---------------------------------- | -------- | ------ |
-| fnGetCaptcha | 获得验证码的回调函数，返回 promise | function | -      |
-| fnGetToken   | 获得验证码的回调函数，返回 promise | function | -      |
+| 参数         | 说明                               | 类型      | 默认值  | 备注       |
+| ------------ | ---------------------------------- | -------- | ------ | ----------- |
+| fnGetCaptcha | 获得验证码的回调函数，返回 promise  | function | -      | 需要返回的是svg |
+| fnGetToken   | 获得验证码的回调函数，返回 promise | function | -      |  -              |
 
 ### 属性（props）
 

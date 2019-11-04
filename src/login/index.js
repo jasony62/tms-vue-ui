@@ -20,8 +20,8 @@ class Login {
       methods: {
         refresh() {
           fnCaptcha()
-            .then(result => {
-              document.getElementById('captcha').innerHTML = result
+            .then(ResultData => {
+              document.getElementById('captcha').innerHTML = ResultData
             })
             .catch(e => {
               Notify({ type: 'danger', message: e })
@@ -29,8 +29,8 @@ class Login {
         },
         submit() {
           fnToken(loginData)
-            .then(response => {
-              let { code, result, msg } = response
+            .then(ResultData => {
+              let { code, result, msg } = ResultData
               if (code !== 0) {
                 Notify({ type: 'danger', message: msg })
                 return false
