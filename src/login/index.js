@@ -20,8 +20,13 @@ class Login {
       methods: {
         refresh() {
           fnCaptcha()
-            .then(ResultData => {
-              document.getElementById('captcha').innerHTML = ResultData
+            .then(response => {
+              let { code, result, msg } = response
+              if ( code !== 0 ) {
+                Notify({ type: 'danger', message: msg })
+                return false
+              }
+              document.getElementById('captcha').innerHTML = result
             })
             .catch(e => {
               Notify({ type: 'danger', message: e })
@@ -29,8 +34,8 @@ class Login {
         },
         submit() {
           fnToken(loginData)
-            .then(ResultData => {
-              let { code, result, msg } = ResultData
+            .then(response => {
+              let { code, result, msg } = response
               if (code !== 0) {
                 Notify({ type: 'danger', message: msg })
                 return false
@@ -83,6 +88,8 @@ class Login {
     }
   }
 }
+
+export { Login }
 /**
  *
  * @param {*} Vue
