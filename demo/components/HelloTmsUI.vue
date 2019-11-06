@@ -30,7 +30,7 @@
     </div>
     <h3>Login</h3>
     <div id="myLogin">
-      <tms-login :data="user"></tms-login>
+      <tms-login :data="user" :submit="login"></tms-login>
     </div>
   </div>
 </template>
@@ -83,10 +83,10 @@ export default {
       ]
     }
   },
-  mounted() {
-    this.$eventHub.$on('getTokenSuccess', token => {
-      console.log('已获取token：' + token)
-    })
+  methods: {
+    login(token) {
+      console.log("已获得token:" + token)
+    }
   }
 }
 </script>
