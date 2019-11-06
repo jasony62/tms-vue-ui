@@ -180,6 +180,7 @@ Vue.use(Login, { fnGetCaptcha, fnGetToken })
 | 参数 | 说明                 | 类型  | 默认值 |
 | ---- | -------------------- | ----- | ------ |
 | data | 给后台传递的键和配置 | Array | -      |
+| submit | 回调函数          |  Function | - |
 
 ```javascript
 data: [

@@ -16,7 +16,7 @@ class Login {
     const loginData = {}
     const { fnCaptcha, fnToken } = this
     return {
-      props: { data: { type: Array } },
+      props: { data: { type: Array }, submit: { type: Function } },
       methods: {
         refresh() {
           fnCaptcha()
@@ -29,10 +29,10 @@ class Login {
               document.getElementById('captcha').innerHTML = result
             })
             .catch(e => {
-              Notify({ type: 'danger', message: e })
+              Notify({ type: 'danger', message: e.message })
             })
         },
-        submit() {
+        login() {
           fnToken(loginData)
             .then(response => {
               let { code, result, msg } = response
@@ -41,10 +41,10 @@ class Login {
                 return false
               }
               let { access_token } = result
-              this.$eventHub.$emit('getTokenSuccess', access_token)
+              this.submit(access_token)
             })
             .catch(e => {
-              Notify({ type: 'danger', message: e })
+              Notify({ type: 'danger', message: e.message })
             })
         }
       },
@@ -78,7 +78,7 @@ class Login {
           <div class="tms-login__form">
             {data.map(item => (item.type == 'code' ? captchaEle(item) : textEle(item)))}
             <div class="tms-login__button">
-              <van-button size="large" type="info" onClick={this.submit}>
+              <van-button size="large" type="info" onClick={this.login}>
                 登录
               </van-button>
             </div>
