@@ -16,7 +16,7 @@ class Login {
     const loginData = {}
     const { fnCaptcha, fnToken } = this
     return {
-      props: { data: { type: Array }, submit: Function },
+      props: { data: { type: Array }, submit: { type: Function } },
       methods: {
         refresh() {
           fnCaptcha()
