@@ -53,7 +53,8 @@ function getCaptcha() {
   return Promise.resolve({ code: 0, result: svg})
 }
 function getToken() {
-  return Promise.resolve({ code: 0, result: { access_token: '89898989' } })
+  //return Promise.resolve({ code: 0, result: { access_token: '89898989' } })
+  return Promise.resolve({ code: 20012, msg: "过期" })
 }
 
 Vue.use(Login, { fnGetCaptcha: getCaptcha, fnGetToken: getToken })
