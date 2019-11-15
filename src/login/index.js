@@ -38,6 +38,7 @@ class Login {
               let { code, result, msg } = response
               if (code !== 0) {
                 Notify({ type: 'danger', message: msg })
+                this.refresh()
                 return false
               }
               let { access_token } = result
