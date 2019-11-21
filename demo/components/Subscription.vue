@@ -2,10 +2,10 @@
   <el-row>
     <el-col :span="12">
       <el-card class="form">
-        <json-doc ref="JsonDoc" :schema="schema" v-model="model">
+        <tms-json-doc ref="JsonDoc" :schema="schema" v-model="model">
           <el-button type="primary" @click="submit">Subscribe</el-button>
           <el-button type="reset" @click="reset">Reset</el-button>
-        </json-doc>
+        </tms-json-doc>
       </el-card>
     </el-col>
     <el-col :span="12">
@@ -31,7 +31,7 @@
 
 <script>
 import Vue from 'vue'
-import JsonDoc from '../../src/json-doc/Editor.vue'
+import { TmsJsonDoc } from '../../lib'
 import {
   Radio,
   Checkbox,
@@ -57,7 +57,7 @@ Vue.use(Radio)
   .use(CheckboxGroup)
   .use(InputNumber)
 
-JsonDoc.setComponent('form', 'el-form', ({ vm }) => {
+TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
   // vm is the JsonDoc VM
 
   const labelWidth = '120px'
@@ -96,37 +96,37 @@ JsonDoc.setComponent('form', 'el-form', ({ vm }) => {
 })
 
 // http://element.eleme.io/#/en-US/component/form#validation
-JsonDoc.setComponent('label', 'el-form-item', ({ field }) => ({
+TmsJsonDoc.setComponent('label', 'el-form-item', ({ field }) => ({
   prop: field.name
 }))
 
-JsonDoc.setComponent('email', 'el-input')
-JsonDoc.setComponent('url', 'el-input')
-JsonDoc.setComponent('number', 'el-input-number')
-JsonDoc.setComponent('text', 'el-input')
-JsonDoc.setComponent('textarea', 'el-input')
-JsonDoc.setComponent('checkbox', 'el-checkbox')
-JsonDoc.setComponent('checkboxgroup', 'el-checkbox-group')
-JsonDoc.setComponent('radio', 'el-radio')
-JsonDoc.setComponent('select', 'el-select')
-JsonDoc.setComponent('switch', 'el-switch')
-JsonDoc.setComponent('color', 'el-color-picker')
-JsonDoc.setComponent('rate', 'el-rate')
+TmsJsonDoc.setComponent('email', 'el-input')
+TmsJsonDoc.setComponent('url', 'el-input')
+TmsJsonDoc.setComponent('number', 'el-input-number')
+TmsJsonDoc.setComponent('text', 'el-input')
+TmsJsonDoc.setComponent('textarea', 'el-input')
+TmsJsonDoc.setComponent('checkbox', 'el-checkbox')
+TmsJsonDoc.setComponent('checkboxgroup', 'el-checkbox-group')
+TmsJsonDoc.setComponent('radio', 'el-radio')
+TmsJsonDoc.setComponent('select', 'el-select')
+TmsJsonDoc.setComponent('switch', 'el-switch')
+TmsJsonDoc.setComponent('color', 'el-color-picker')
+TmsJsonDoc.setComponent('rate', 'el-rate')
 
 // You can also use the component object
-JsonDoc.setComponent('option', Option)
+TmsJsonDoc.setComponent('option', Option)
 
 // By default `<h1/>` is used to render the form title.
 // To override this, use the `title` type:
-JsonDoc.setComponent('title', 'h2')
+TmsJsonDoc.setComponent('title', 'h2')
 
 // By default `<p/>` is used to render the form title.
 // To override this, use the `description` type:
-JsonDoc.setComponent('description', 'small')
+TmsJsonDoc.setComponent('description', 'small')
 
 // By default `<div/>` is used to render the message error.
 // To override this, use the `error` type:
-JsonDoc.setComponent('error', 'el-alert', ({ vm }) => ({
+TmsJsonDoc.setComponent('error', 'el-alert', ({ vm }) => ({
   type: 'error',
   title: vm.error
 }))
@@ -148,25 +148,25 @@ export default {
   },
   methods: {
     submit() {
-      this.$refs.JsonDoc.form().validate(valid => {
+      this.$refs.TmsJsonDoc.form().validate(valid => {
         if (valid) {
           // this.model contains the valid data according your JSON Schema.
           // You can submit your model to the server here
 
           // eslint-disable-next-line no-console
           console.log('model', JSON.stringify(this.model))
-          this.$refs.JsonDoc.clearErrorMessage()
+          this.$refs.TmsJsonDoc.clearErrorMessage()
         } else {
-          this.$refs.JsonDoc.setErrorMessage('Please fill out the required fields')
+          this.$refs.TmsJsonDoc.setErrorMessage('Please fill out the required fields')
           return false
         }
       })
     },
     reset() {
-      this.$refs.JsonDoc.reset()
+      this.$refs.TmsJsonDoc.reset()
     }
   },
-  components: { JsonDoc }
+  components: { TmsJsonDoc }
 }
 </script>
 
