@@ -41,6 +41,10 @@
     <div id="myJsonSchema">
       <tms-json-schema :schema="jsonSchema"></tms-json-schema>
     </div>
+    <h3>JSON Doc</h3>
+    <div id="myJsonDoc">
+      <Subscription />
+    </div>
   </div>
 </template>
 
@@ -51,6 +55,7 @@ import '../../lib/text/style'
 import '../../lib/flex/style'
 import '../../lib/card/style'
 import '../../lib/login/style'
+import Subscription from './Subscription.vue'
 
 Vue.use(Text)
   .use(Flex)
@@ -69,7 +74,7 @@ Vue.use(Login, { fnGetCaptcha: getCaptcha, fnGetToken: getToken })
 
 export default {
   name: 'HelloTmsUI',
-  components: { TmsJsonSchema },
+  components: { TmsJsonSchema, Subscription },
   data() {
     return {
       user: [

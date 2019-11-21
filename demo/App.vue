@@ -2,8 +2,9 @@
   <tms-frame
     id="app"
     header-color="#f00"
-    left-width="15%"
-    :display-sm="{header:true,right:true}"
+    left-width="10%"
+    right-width="10%"
+    :display-sm="{ header: true, right: true }"
     main-direction-sm="column-reverse"
   >
     <template v-slot:header>
@@ -40,7 +41,7 @@ export default {
 }
 </script>
 
-<style lang='less'>
+<style lang="less">
 .tms-frame__main__center {
   padding: 8px;
 }

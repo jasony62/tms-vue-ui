@@ -4,5 +4,6 @@ import Flex from './flex'
 import Card from './card'
 import Login from './login'
 import TmsJsonSchema from './json-schema/Editor.vue'
+import TmsJsonDoc from './json-doc/Editor.vue'
 
-export { Frame, Text, Flex, Card, Login, TmsJsonSchema }
+export { Frame, Text, Flex, Card, Login, TmsJsonSchema, TmsJsonDoc }
