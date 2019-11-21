@@ -170,17 +170,17 @@ import { Login } from 'tms-vue-ui'
 Vue.use(Login, { fnGetCaptcha, fnGetToken })
 ```
 
-| 参数         | 说明                               | 类型      | 默认值  | 备注       |
-| ------------ | ---------------------------------- | -------- | ------ | ----------- |
-| fnGetCaptcha | 获得验证码的回调函数，返回 promise  | function | -      | {code: "0", msg: "**", result:值为svg } |
-| fnGetToken   | 获得验证码的回调函数，返回 promise | function | -      |  -              |
+| 参数         | 说明                               | 类型     | 默认值 | 备注                                       |
+| ------------ | ---------------------------------- | -------- | ------ | ------------------------------------------ |
+| fnGetCaptcha | 获得验证码的回调函数，返回 promise | function | -      | {code: "0", msg: "\*\*", result:值为 svg } |
+| fnGetToken   | 获得验证码的回调函数，返回 promise | function | -      | -                                          |
 
 ### 属性（props）
 
-| 参数 | 说明                 | 类型  | 默认值 |
-| ---- | -------------------- | ----- | ------ |
-| data | 给后台传递的键和配置 | Array | -      |
-| submit | 回调函数          |  Function | - |
+| 参数   | 说明                 | 类型     | 默认值 |
+| ------ | -------------------- | -------- | ------ |
+| data   | 给后台传递的键和配置 | Array    | -      |
+| submit | 回调函数             | Function | -      |
 
 ```javascript
 data: [
@@ -203,3 +203,7 @@ data: [
   }
 ]
 ```
+
+## json-schema 编辑器
+
+## json 编辑器
