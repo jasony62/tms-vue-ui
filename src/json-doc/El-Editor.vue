@@ -1,5 +1,5 @@
 <template>
-  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="model">
+  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc">
     <el-button type="primary" @click="submit">提交</el-button>
     <el-button type="reset" @click="reset">重置</el-button>
   </tms-json-doc>
@@ -112,14 +112,22 @@ TmsJsonDoc.setComponent('error', 'el-alert', ({ vm }) => ({
 }))
 export default {
   components: { TmsJsonDoc },
-  props: ['schema', 'model'],
+  props: ['schema', 'doc'],
+  computed: {
+    editingDoc: {
+      get: function() {
+        return Object.assign({}, this.doc)
+      },
+      set: function(newValue) {
+        // do nothing
+      }
+    }
+  },
   methods: {
     submit() {
       this.$refs.TmsJsonDoc.form().validate(valid => {
         if (valid) {
-          // this.model contains the valid data according your JSON Schema.
-          // You can submit your model to the server here
-          this.$emit('submit', this.model)
+          this.$emit('submit', this.editingDoc)
           this.$refs.TmsJsonDoc.clearErrorMessage()
         } else {
           this.$refs.TmsJsonDoc.setErrorMessage(
