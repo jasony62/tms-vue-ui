@@ -6,8 +6,7 @@
       default-expand-all
       :expand-on-click-node="false"
       @node-click="onNodeClick"
-    >
-    </el-tree>
+    ></el-tree>
     <el-form label-width="80px" :model="form">
       <el-form-item label="键值">
         <el-input v-model="form.key" @change="onChangeKey" :disabled="!form.node"></el-input>
@@ -30,12 +29,8 @@
         <el-input type="textarea" v-model="form.schema.description" :disabled="!form.node"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button size="mini" @click="onRemoveNode" :disabled="!form.node">
-          删除
-        </el-button>
-        <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object'">
-          添加属性
-        </el-button>
+        <el-button size="mini" @click="onRemoveNode" :disabled="!form.node">删除</el-button>
+        <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object'">添加属性</el-button>
       </el-form-item>
     </el-form>
   </tms-flex>
@@ -50,13 +45,22 @@ Vue.use(Form)
   .use(Select)
   .use(Option)
   .use(Button)
-
 class SchemaWrap {
+  /**
+   *
+   * @param {*} key
+   * @param {Object} schema
+   */
   constructor(key, schema, parent) {
     this.key = key
     this.label = key
     this.schema = schema
     this.parent = parent
+  }
+  appendChild(child) {
+    this.children.push(child)
+    this.schema.properties[child.key] = child.schema
+    child.parent = this
   }
 }
 SchemaWrap.build = function(key, schema, parent) {
@@ -64,7 +68,9 @@ SchemaWrap.build = function(key, schema, parent) {
   switch (schema.type) {
     case 'object':
       if (typeof schema.properties === 'object') {
-        wrap.children = Object.entries(schema.properties).map(([k, s]) => SchemaWrap.build(k, s, wrap))
+        wrap.children = Object.entries(schema.properties).map(([k, s]) =>
+          SchemaWrap.build(k, s, wrap)
+        )
       }
       break
     case 'array':
@@ -114,17 +120,25 @@ export default {
     },
     onAppendNode() {
       const data = this.form.node.data
-      if (!data.children) {
+      if (!Array.isArray(data.children)) {
         this.$set(data, 'children', [])
       }
+      if (
+        typeof data.schema.properties !== 'object' ||
+        Array.isArray(data.schema.properties)
+      ) {
+        this.$set(data.schema, 'properties', {})
+      }
       const newChild = new SchemaWrap('newKey', { type: 'string' })
-      data.children.push(newChild)
+      data.appendChild(newChild)
     },
     onRemoveNode() {
       const { parent, data } = this.form.node
       const children = parent.data.children || parent.data
       const index = children.findIndex(d => d.key === data.key)
       children.splice(index, 1)
+      const properties = parent.data.schema.properties
+      properties && delete properties[data.key]
       this.form.reset()
     }
   },
