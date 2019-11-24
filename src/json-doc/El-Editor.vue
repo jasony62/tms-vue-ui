@@ -1,37 +1,12 @@
 <template>
-  <el-row>
-    <el-col :span="12">
-      <el-card class="form">
-        <tms-json-doc ref="JsonDoc" :schema="schema" v-model="model">
-          <el-button type="primary" @click="submit">Subscribe</el-button>
-          <el-button type="reset" @click="reset">Reset</el-button>
-        </tms-json-doc>
-      </el-card>
-    </el-col>
-    <el-col :span="12">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span>Model</span>
-        </div>
-        <pre class="json">{{ jsonString }}</pre>
-      </el-card>
-      <br />
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span>How to use</span>
-        </div>
-        <div class="json">
-          <p>GitHub: <a href="https://github.com/yourtion/vue-json-ui-editor" target="_blank">vue-json-ui-editor</a></p>
-          <p>NPM: <a href="https://www.npmjs.com/package/vue-json-ui-editor" target="_blank">json-editor</a></p>
-        </div>
-      </el-card>
-    </el-col>
-  </el-row>
+  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="model">
+    <el-button type="primary" @click="submit">提交</el-button>
+    <el-button type="reset" @click="reset">重置</el-button>
+  </tms-json-doc>
 </template>
-
 <script>
 import Vue from 'vue'
-import { TmsJsonDoc } from '../../lib'
+import TmsJsonDoc from './Editor.vue'
 import {
   Radio,
   Checkbox,
@@ -74,10 +49,15 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
       if (!field.name) return
       rules[field.name] = []
       // http://element.eleme.io/#/en-US/component/form#validation
-      const type = field.schemaType === 'array' && field.type === 'radio' ? 'string' : field.schemaType
+      const type =
+        field.schemaType === 'array' && field.type === 'radio'
+          ? 'string'
+          : field.schemaType
       const required = field.required
       const message = field.title
-      const trigger = ['radio', 'checkbox', 'select'].includes(field.type) ? 'change' : 'blur'
+      const trigger = ['radio', 'checkbox', 'select'].includes(field.type)
+        ? 'change'
+        : 'blur'
       rules[field.name].push({ type, required, message, trigger })
 
       if (field.minlength !== undefined || field.maxlength !== undefined) {
@@ -130,34 +110,21 @@ TmsJsonDoc.setComponent('error', 'el-alert', ({ vm }) => ({
   type: 'error',
   title: vm.error
 }))
-
 export default {
-  data: () => ({
-    schema: require('../newsletter'),
-    model: {
-      name: 'Yourtion',
-      sub: {
-        sEmail: 'yourtion@gmail.com'
-      }
-    }
-  }),
-  computed: {
-    jsonString() {
-      return JSON.stringify(this.model, null, 2).trim()
-    }
-  },
+  components: { TmsJsonDoc },
+  props: ['schema', 'model'],
   methods: {
     submit() {
       this.$refs.TmsJsonDoc.form().validate(valid => {
         if (valid) {
           // this.model contains the valid data according your JSON Schema.
           // You can submit your model to the server here
-
-          // eslint-disable-next-line no-console
-          console.log('model', JSON.stringify(this.model))
+          this.$emit('submit', this.model)
           this.$refs.TmsJsonDoc.clearErrorMessage()
         } else {
-          this.$refs.TmsJsonDoc.setErrorMessage('Please fill out the required fields')
+          this.$refs.TmsJsonDoc.setErrorMessage(
+            'Please fill out the required fields'
+          )
           return false
         }
       })
@@ -165,45 +132,6 @@ export default {
     reset() {
       this.$refs.TmsJsonDoc.reset()
     }
-  },
-  components: { TmsJsonDoc }
+  }
 }
 </script>
-
-<style>
-.form {
-  text-align: left;
-  width: 90%;
-  margin: auto;
-}
-
-h2 {
-  font-size: 1.7em;
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 0.2em;
-}
-
-h2 + small {
-  display: block;
-  text-align: center;
-  margin-bottom: 1.2em;
-}
-
-small {
-  line-height: 20px;
-  display: block;
-}
-
-.el-alert {
-  margin-bottom: 15px;
-}
-
-.el-form .sub {
-  margin-left: 10%;
-}
-
-.json {
-  text-align: left;
-}
-</style>

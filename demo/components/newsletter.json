@@ -28,6 +28,15 @@
             "title": "Please enter your full name"
           }
         },
+        "sEmail": {
+          "minLength": 8,
+          "maxLength": 80,
+          "title": "SubEmail",
+          "attrs": {
+            "placeholder": "Sub Email",
+            "title": "Please enter your email"
+          }
+        },
         "sUrl": {
           "title": "SubUrl",
           "format": "uri"

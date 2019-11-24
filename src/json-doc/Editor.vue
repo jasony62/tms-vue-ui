@@ -30,13 +30,10 @@ const defaultInput = { component: 'input', option }
 const defaultGroup = { component: 'div', option }
 
 /**
- * Edit JSON in UI form with JSON Schema and Vue.js `<json-editor>` component.
  *
- * @author Yourtion
- * @license MIT
  */
 export default {
-  name: 'JsonDoc',
+  name: 'TmsJsonDoc',
   props: {
     /**
      * The JSON Schema object. Use the `v-if` directive to load asynchronous schema.
@@ -80,7 +77,9 @@ export default {
       nodes.push(createElement(components.title.component, this.schema.title))
     }
     if (this.schema.description) {
-      nodes.push(createElement(components.description.component, this.schema.description))
+      nodes.push(
+        createElement(components.description.component, this.schema.description)
+      )
     }
     if (this.error) {
       const errorOptions = this.elementOptions(components.error)
@@ -88,7 +87,9 @@ export default {
       if (components.error.option.native) {
         errorNodes.push(this.error)
       }
-      nodes.push(createElement(components.error.component, errorOptions, errorNodes))
+      nodes.push(
+        createElement(components.error.component, errorOptions, errorNodes)
+      )
     }
     const allFormNodes = []
     const formNode = {
@@ -116,7 +117,9 @@ export default {
           if (!field.value) {
             field.value = fieldValue
           }
-          const customComponent = field.component ? { component: field.component, option: {} } : undefined
+          const customComponent = field.component
+            ? { component: field.component, option: {} }
+            : undefined
           // eslint-disable-next-line
           const element = field.component
             ? customComponent
@@ -158,8 +161,19 @@ export default {
             case 'checkbox':
               if (field.hasOwnProperty('items')) {
                 field.items.forEach(item => {
-                  const itemOptions = this.elementOptions(components[field.type], item, item, item)
-                  children.push(createElement(components[field.type].component, itemOptions, item.label))
+                  const itemOptions = this.elementOptions(
+                    components[field.type],
+                    item,
+                    item,
+                    item
+                  )
+                  children.push(
+                    createElement(
+                      components[field.type].component,
+                      itemOptions,
+                      item.label
+                    )
+                  )
                 })
               }
               break
@@ -194,7 +208,11 @@ export default {
 
           const formControlsNodes = []
           if (field.label && !option.disableWrappingLabel) {
-            const labelOptions = this.elementOptions(components.label, field, field)
+            const labelOptions = this.elementOptions(
+              components.label,
+              field,
+              field
+            )
             const labelNodes = []
             if (components.label.option.native) {
               labelNodes.push(
@@ -214,7 +232,13 @@ export default {
               labelNodes.push(createElement('br'))
               labelNodes.push(createElement('small', field.description))
             }
-            formControlsNodes.push(createElement(components.label.component, labelOptions, labelNodes))
+            formControlsNodes.push(
+              createElement(
+                components.label.component,
+                labelOptions,
+                labelNodes
+              )
+            )
           } else {
             formControlsNodes.push(inputElement)
             if (field.description) {
@@ -285,11 +309,23 @@ export default {
       ? { component: this.$slots.default, option }
       : components.button
     if (button.component instanceof Array) {
-      allFormNodes.push(createElement(components.label.component, labelOptions, button.component))
+      allFormNodes.push(
+        createElement(
+          components.label.component,
+          labelOptions,
+          button.component
+        )
+      )
     } else {
       const buttonOptions = this.elementOptions(button)
-      const buttonElement = createElement(button.component, buttonOptions, button.option.label)
-      allFormNodes.push(createElement(components.label.component, labelOptions, [buttonElement]))
+      const buttonElement = createElement(
+        button.component,
+        buttonOptions,
+        button.option.label
+      )
+      allFormNodes.push(
+        createElement(components.label.component, labelOptions, [buttonElement])
+      )
     }
     const formOptions = this.elementOptions(components.form, {
       autocomplete: this.autocomplete,
@@ -325,7 +361,9 @@ export default {
      * @private
      */
     optionValue(field, target, item = {}) {
-      return typeof target === 'function' ? target({ vm: this, field, item }) : target
+      return typeof target === 'function'
+        ? target({ vm: this, field, item })
+        : target
     },
     /**
      * @private
@@ -333,7 +371,9 @@ export default {
     elementOptions(element, extendingOptions = {}, field = {}, item = {}) {
       const attrName = element.option.native ? 'attrs' : 'props'
       const elementProps =
-        typeof element.option === 'function' ? element.option : { ...element.option, native: undefined }
+        typeof element.option === 'function'
+          ? element.option
+          : { ...element.option, native: undefined }
       const options = this.optionValue(field, elementProps, item)
       return { [attrName]: { ...extendingOptions, ...options } }
     },

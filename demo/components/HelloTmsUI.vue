@@ -6,10 +6,10 @@
         <b>tms-card-title</b>
       </template>
       <template slot="desc">
-        <span
-          >tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc
-          tms-card-desc</span
-        >
+        <span>
+          tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc tms-card-desc
+          tms-card-desc
+        </span>
       </template>
       <template slot="bottom">
         <tms-flex :elasticItems="[0]">
@@ -21,17 +21,15 @@
     <h3>Text</h3>
     <div style="width:200px">
       <h4>原始文本</h4>
-      <tms-text
-        >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text
-      >
+      <tms-text>这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
       <h4>显示两行</h4>
-      <tms-text :lines="2"
-        >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text
-      >
+      <tms-text
+        :lines="2"
+      >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
       <h4>小屏幕（小于等于768）显示两行</h4>
-      <tms-text :lines-sm="2"
-        >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text
-      >
+      <tms-text
+        :lines-sm="2"
+      >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
     </div>
     <h3>Login</h3>
     <div id="myLogin">
@@ -43,19 +41,18 @@
     </div>
     <h3>JSON Doc</h3>
     <div id="myJsonDoc">
-      <Subscription />
+      <tms-el-json-doc :schema="schema" :model="model" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
     </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
-import { Text, Flex, Card, Login, TmsJsonSchema } from '../../lib'
+import { Text, Flex, Card, Login, TmsJsonSchema, TmsElJsonDoc } from '../../lib'
 import '../../lib/text/style'
 import '../../lib/flex/style'
 import '../../lib/card/style'
 import '../../lib/login/style'
-import Subscription from './Subscription.vue'
 
 Vue.use(Text)
   .use(Flex)
@@ -74,7 +71,7 @@ Vue.use(Login, { fnGetCaptcha: getCaptcha, fnGetToken: getToken })
 
 export default {
   name: 'HelloTmsUI',
-  components: { TmsJsonSchema, Subscription },
+  components: { TmsJsonSchema, TmsElJsonDoc },
   data() {
     return {
       user: [
@@ -99,7 +96,8 @@ export default {
       jsonSchema: {
         $id: 'https://example.com/card.schema.json',
         $schema: 'http://json-schema.org/draft-07/schema#',
-        description: 'A representation of a person, company, organization, or place',
+        description:
+          'A representation of a person, company, organization, or place',
         type: 'object',
         required: ['familyName', 'givenName'],
         properties: {
@@ -192,12 +190,22 @@ export default {
             }
           }
         }
+      },
+      schema: require('./newsletter'),
+      model: {
+        name: 'tms-vue-ui',
+        sub: {
+          sEmail: 'tms-vue-ui@gmail.com'
+        }
       }
     }
   },
   methods: {
     login(token) {
       console.log('已获得token:' + token)
+    },
+    jsonDocSubmit() {
+      alert(JSON.stringify(this.model))
     }
   }
 }
