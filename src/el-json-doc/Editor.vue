@@ -6,7 +6,7 @@
 </template>
 <script>
 import Vue from 'vue'
-import TmsJsonDoc from './Editor.vue'
+import TmsJsonDoc from '../json-doc/Editor.vue'
 import {
   Radio,
   Checkbox,
@@ -111,6 +111,7 @@ TmsJsonDoc.setComponent('error', 'el-alert', ({ vm }) => ({
   title: vm.error
 }))
 export default {
+  name: 'TmsElJsonDoc',
   components: { TmsJsonDoc },
   props: ['schema', 'doc'],
   computed: {

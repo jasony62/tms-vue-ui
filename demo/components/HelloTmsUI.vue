@@ -23,13 +23,9 @@
       <h4>原始文本</h4>
       <tms-text>这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
       <h4>显示两行</h4>
-      <tms-text
-        :lines="2"
-      >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
+      <tms-text :lines="2">这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
       <h4>小屏幕（小于等于768）显示两行</h4>
-      <tms-text
-        :lines-sm="2"
-      >这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
+      <tms-text :lines-sm="2">这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本，这是一段文本</tms-text>
     </div>
     <h3>Login</h3>
     <div id="myLogin">
@@ -48,7 +44,7 @@
 
 <script>
 import Vue from 'vue'
-import { Text, Flex, Card, Login, TmsJsonSchema, TmsElJsonDoc } from '../../lib'
+import { Text, Flex, Card, Login, JsonSchema, ElJsonDoc } from '../../lib'
 import '../../lib/text/style'
 import '../../lib/flex/style'
 import '../../lib/card/style'
@@ -71,7 +67,7 @@ Vue.use(Login, { fnGetCaptcha: getCaptcha, fnGetToken: getToken })
 
 export default {
   name: 'HelloTmsUI',
-  components: { TmsJsonSchema, TmsElJsonDoc },
+  components: { TmsJsonSchema: JsonSchema, TmsElJsonDoc: ElJsonDoc },
   data() {
     return {
       user: [

@@ -3,8 +3,8 @@ import Text from './text'
 import Flex from './flex'
 import Card from './card'
 import Login from './login'
-import TmsJsonSchema from './json-schema/Editor.vue'
-import TmsJsonDoc from './json-doc/Editor.vue'
-import TmsElJsonDoc from './json-doc/El-Editor.vue'
+import JsonSchema from './json-schema/Editor.vue'
+import JsonDoc from './json-doc/Editor.vue'
+import ElJsonDoc from './el-json-doc/Editor.vue'
 
-export { Frame, Text, Flex, Card, Login, TmsJsonSchema, TmsJsonDoc, TmsElJsonDoc }
+export { Frame, Text, Flex, Card, Login, JsonSchema, JsonDoc, ElJsonDoc }

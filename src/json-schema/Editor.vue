@@ -1,12 +1,6 @@
 <template>
   <tms-flex>
-    <el-tree
-      :data="data"
-      :props="defaultProps"
-      default-expand-all
-      :expand-on-click-node="false"
-      @node-click="onNodeClick"
-    ></el-tree>
+    <el-tree :data="data" :props="defaultProps" default-expand-all :expand-on-click-node="false" @node-click="onNodeClick"></el-tree>
     <el-form label-width="80px" :model="form">
       <el-form-item label="键值">
         <el-input v-model="form.key" @change="onChangeKey" :disabled="!form.node"></el-input>
@@ -90,6 +84,7 @@ class FormData {
   }
 }
 export default {
+  name: 'tms-json-schema',
   props: ['schema'],
   data() {
     return {
