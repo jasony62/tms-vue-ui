@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <button @click="show">弹出登录框</button>
     <h3>Card</h3>
     <tms-card id="myCard" thumb="/images/123.jpg" desc="tms-card-desc">
       <template slot="title">
@@ -44,7 +45,7 @@
 
 <script>
 import Vue from 'vue'
-import { Text, Flex, Card, Login, JsonSchema, ElJsonDoc } from '../../lib'
+import { Text, Flex, Card, Login, LoginPlugin, JsonSchema, ElJsonDoc } from '../../lib'
 import '../../lib/text/style'
 import '../../lib/flex/style'
 import '../../lib/card/style'
@@ -53,6 +54,7 @@ import '../../lib/login/style'
 Vue.use(Text)
   .use(Flex)
   .use(Card)
+  .use(LoginPlugin, { fnGetCaptcha: getCaptcha, fnGetToken: getToken })
 
 function getCaptcha() {
   let svg =
@@ -63,7 +65,7 @@ function getToken() {
   return Promise.resolve({ code: 0, result: { access_token: '89898989' } })
 }
 
-Vue.use(Login, { fnGetCaptcha: getCaptcha, fnGetToken: getToken })
+const login = new Login(getCaptcha, getToken)
 
 export default {
   name: 'HelloTmsUI',
@@ -197,6 +199,10 @@ export default {
     }
   },
   methods: {
+    show() {
+      let confirm = new Vue(login.component)
+      confirm.showDialog(confirm.$el)
+    },
     login(token) {
       console.log('已获得token:' + token)
     },

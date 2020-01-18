@@ -18,6 +18,11 @@ class Login {
     return {
       props: { data: { type: Array }, submit: { type: Function } },
       methods: {
+        showDialog(data, submit) {
+          this.data = data
+          this.submit = submit
+          document.body.appendChild(this.$el)
+        },
         refresh() {
           fnCaptcha()
             .then(response => {
