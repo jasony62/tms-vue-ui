@@ -102,7 +102,6 @@ class Login {
         )
         let className = asDialog ? 'modal tms-login__form': 'tms-login__form'
 
-
         return (
           <div {...{ class: className}}>
             {data.map(item => (item.type == 'code' ? captchaEle(item) : textEle(item)))}

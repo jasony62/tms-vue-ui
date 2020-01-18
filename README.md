@@ -173,7 +173,7 @@ Vue.use(Login, { fnGetCaptcha, fnGetToken })
 | 参数         | 说明                               | 类型     | 默认值 | 备注                                       |
 | ------------ | ---------------------------------- | -------- | ------ | ------------------------------------------ |
 | fnGetCaptcha | 获得验证码的回调函数，返回 promise | function | -      | {code: "0", msg: "\*\*", result:值为 svg } |
-| fnGetToken   | 获得验证码的回调函数，返回 promise | function | -      | -                                          |
+| fnGetToken   | 获得token的回调函数，返回 promise | function | -      | -                                          |
 
 ### 属性（props）
 

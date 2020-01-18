@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <div @click="show">打开登录弹框</div> 
+    <button @click="show">弹出登录框</button>
     <h3>Card</h3>
     <tms-card id="myCard" thumb="/images/123.jpg" desc="tms-card-desc">
       <template slot="title">
@@ -30,7 +30,7 @@
     </div>
     <h3>Login</h3>
     <div id="myLogin">
-      <!-- <tms-login :data="user" :on-success="fnSuccessToken" ></tms-login> -->
+      <tms-login :data="user" :on-success="fnSuccessToken" ></tms-login>
     </div>
     <h3>JSON Schema</h3>
     <div id="myJsonSchema">
@@ -45,7 +45,7 @@
 
 <script>
 import Vue from 'vue'
-import { Text, Flex, Card, Login, JsonSchema, ElJsonDoc } from '../../lib'
+import { Text, Flex, Card, Login, LoginPlugin, JsonSchema, ElJsonDoc } from '../../lib'
 import '../../lib/text/style'
 import '../../lib/flex/style'
 import '../../lib/card/style'
@@ -54,7 +54,7 @@ import '../../lib/login/style'
 Vue.use(Text)
   .use(Flex)
   .use(Card)
-  .use(Login, { fnGetCaptcha: getCaptcha, fnGetToken: getToken })
+  .use(LoginPlugin, { fnGetCaptcha: getCaptcha, fnGetToken: getToken })
 
 function getCaptcha() {
   let svg =
@@ -64,6 +64,8 @@ function getCaptcha() {
 function getToken() {
   return Promise.resolve({ code: 0, result: { access_token: '89898989' } })
 }
+
+const login = new Login(getCaptcha, getToken)
 
 export default {
   name: 'HelloTmsUI',
@@ -197,12 +199,12 @@ export default {
     }
   },
   methods: {
-    fnSuccessToken(token) {
-      console.log('已获得token:' + token)
-    },
     show() {
-      let confirm = new Vue(Login)
+      let confirm = new Vue(login.component)
       confirm.showDialog(this.user, this.fnSuccessToken)
+    },
+    login(token) {
+      console.log('已获得token:' + token)
     },
     jsonDocSubmit() {
       alert(JSON.stringify(this.model))
