@@ -1,6 +1,5 @@
 <template>
   <div class="hello">
-    <button @click="show">弹出登录框</button>
     <h3>Card</h3>
     <tms-card id="myCard" thumb="/images/123.jpg" desc="tms-card-desc">
       <template slot="title">
@@ -30,7 +29,7 @@
     </div>
     <h3>Login</h3>
     <div id="myLogin">
-      <tms-login :data="user" :on-success="fnSuccessToken" ></tms-login>
+      <tms-login :data="user" :on-success="fnSuccessToken" :on-fail="fnFailToken"></tms-login>
     </div>
     <h3>JSON Schema</h3>
     <div id="myJsonSchema">
@@ -62,7 +61,8 @@ function getCaptcha() {
   return Promise.resolve({ code: 0, result: svg})
 }
 function getToken() {
-  return Promise.resolve({ code: 0, result: { access_token: '89898989' } })
+  //return Promise.resolve({ code: 0, msg: '成功', result: { access_token: '89898989' } })
+  return Promise.resolve({ code: -1, msg: '失败' })
 }
 
 const login = new Login(getCaptcha, getToken)
@@ -203,8 +203,11 @@ export default {
       let confirm = new Vue(login.component)
       confirm.showDialog(this.user, this.fnSuccessToken)
     },
-    login(token) {
+    fnSuccessToken(token) {
       console.log('已获得token:' + token)
+    },
+    fnFailToken(msg) {
+      console.log(msg)
     },
     jsonDocSubmit() {
       alert(JSON.stringify(this.model))

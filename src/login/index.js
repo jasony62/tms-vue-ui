@@ -14,7 +14,6 @@ class Login {
   }
   get component() {
     const loginData = {}
-    const asDialog = false
     const { fnCaptcha, fnToken } = this
     return {
       props: { data: { type: Array }, onSuccess: { type: Function }, onFail: { type: Function } },
@@ -34,8 +33,8 @@ class Login {
             .then(response => {
               let { code, result, msg } = response
               if (code !== 0) {
-                if (typeof onFail==='function') {
-                  this.onFail()
+                if (typeof this.onFail==='function') {
+                  this.onFail(msg)
                   return false
                 }
                 Toast(msg)
@@ -64,6 +63,7 @@ class Login {
           this.onSuccess = onSuccess
           this.onFail = onFail
           this.$mount()
+          this.$el.classList.add('modal')
           document.body.appendChild(this.$el) 
           this.showOverlay()
           return new Promise(resolve => {
@@ -100,10 +100,9 @@ class Login {
             </van-button>
           </van-cell-group>
         )
-        let className = asDialog ? 'modal tms-login__form': 'tms-login__form'
 
         return (
-          <div {...{ class: className}}>
+          <div class="tms-login__form">
             {data.map(item => (item.type == 'code' ? captchaEle(item) : textEle(item)))}
             <div class="tms-login__button">
               <van-button size="large" type="info" onClick={this.login}>登录</van-button>
