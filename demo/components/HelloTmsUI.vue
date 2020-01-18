@@ -61,8 +61,8 @@ function getCaptcha() {
   return Promise.resolve({ code: 0, result: svg})
 }
 function getToken() {
-  //return Promise.resolve({ code: 0, msg: '成功', result: { access_token: '89898989' } })
-  return Promise.resolve({ code: -1, msg: '失败' })
+  return Promise.resolve({ code: 0, msg: '成功', result: { access_token: '89898989' } })
+  //return Promise.resolve({ code: -1, msg: '失败' })
 }
 
 const login = new Login(getCaptcha, getToken)
