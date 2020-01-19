@@ -1,11 +1,11 @@
 import Vue from 'vue'
-import { Button, Icon, CellGroup, Field, Notify } from 'vant'
+import { Icon, Button, CellGroup, Field, Toast } from 'vant'
 
 Vue.use(Button)
   .use(Icon)
   .use(CellGroup)
   .use(Field)
-  .use(Notify)
+  .use(Toast)
 
 class Login {
   constructor(fnCaptcha, fnToken) {
@@ -16,20 +16,16 @@ class Login {
     const loginData = {}
     const { fnCaptcha, fnToken } = this
     return {
-      props: { data: { type: Array }, submit: { type: Function } },
+      props: { data: { type: Array }, onSuccess: { type: Function }, onFail: { type: Function } },
       methods: {
         refresh() {
           fnCaptcha()
             .then(response => {
-              let { code, result, msg } = response
-              if ( code !== 0 ) {
-                Notify({ type: 'danger', message: msg })
-                return false
+              let { code, result } = response
+              if (code !== 0) {
+                result = '<div style="background:#f5f5f5;color:red;text-align:center;font-size:14px;line-height:44px;">获取错误</div>'
               }
               document.getElementById('captcha').innerHTML = result
-            })
-            .catch(e => {
-              Notify({ type: 'danger', message: e.message })
             })
         },
         login() {
@@ -37,16 +33,46 @@ class Login {
             .then(response => {
               let { code, result, msg } = response
               if (code !== 0) {
-                Notify({ type: 'danger', message: msg })
+                if (typeof this.onFail==='function') {
+                  this.onFail(msg)
+                  return false
+                }
+                Toast(msg)
                 this.refresh()
                 return false
               }
-              let { access_token } = result
-              this.submit(access_token)
+              if (this.asDialog) {
+                this.asDialog = false
+                this.$emit('success', result.access_token)
+              }
+              this.onSuccess(result.access_token)
             })
-            .catch(e => {
-              Notify({ type: 'danger', message: e.message })
+        },
+        showOverlay() {
+          let ele = document.createElement('div')
+          ele.setAttribute('class', 'tms-login__modal')
+          document.body.appendChild(ele) 
+        },
+        removeOverlay() {
+          let ele = document.querySelector('.tms-login__modal')
+          document.body.removeChild(ele)
+        },
+        showDialog(data, onSuccess, onFail) {
+          this.asDialog = true
+          this.data = data
+          this.onSuccess = onSuccess
+          this.onFail = onFail
+          this.$mount()
+          this.$el.classList.add('modal')
+          document.body.appendChild(this.$el) 
+          this.showOverlay()
+          return new Promise(resolve => {
+            this.$once('success', token => {
+              document.body.removeChild(this.$el)
+              this.removeOverlay()
+              resolve(token)
             })
+          })
         }
       },
       mounted() {
@@ -66,9 +92,9 @@ class Login {
         )
         let styleCaptcha = { width: '150px', height: '44px' }
         let captchaEle = item => (
-          <van-cell-group class="tms-login__input flex flex__row">
+          <van-cell-group class="flex">
             <van-field placeholder={item.placeholder} vModel={loginData[item.key]} required></van-field>
-            <span {...{ style: styleCaptcha }} id="captcha"></span>
+            <div {...{ style: styleCaptcha }} id="captcha"></div>
             <van-button type="default" onClick={this.refresh}>
               <van-icon name="replay" />
             </van-button>
@@ -79,9 +105,7 @@ class Login {
           <div class="tms-login__form">
             {data.map(item => (item.type == 'code' ? captchaEle(item) : textEle(item)))}
             <div class="tms-login__button">
-              <van-button size="large" type="info" onClick={this.login}>
-                登录
-              </van-button>
+              <van-button size="large" type="info" onClick={this.login}>登录</van-button>
             </div>
           </div>
         )
