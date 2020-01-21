@@ -7,114 +7,126 @@ Vue.use(Button)
   .use(Field)
   .use(Toast)
 
-class Login {
-  constructor(fnCaptcha, fnToken) {
-    this.fnCaptcha = fnCaptcha
-    this.fnToken = fnToken
-  }
-  get component() {
-    const loginData = {}
-    const { fnCaptcha, fnToken } = this
-    return {
-      props: { data: { type: Array }, onSuccess: { type: Function }, onFail: { type: Function } },
-      methods: {
-        refresh() {
-          fnCaptcha()
-            .then(response => {
-              let { code, result } = response
-              if (code !== 0) {
-                result = '<div style="background:#f5f5f5;color:red;text-align:center;font-size:14px;line-height:44px;">获取错误</div>'
-              }
-              document.getElementById('captcha').innerHTML = result
-            })
-        },
-        login() {
-          fnToken(loginData)
-            .then(response => {
-              let { code, result, msg } = response
-              if (code !== 0) {
-                if (typeof this.onFail==='function') {
-                  this.onFail(msg)
-                  return false
-                }
-                Toast(msg)
-                this.refresh()
-                return false
-              }
-              if (this.asDialog) {
-                this.asDialog = false
-                this.$emit('success', result.access_token)
-              }
-              this.onSuccess(result.access_token)
-            })
-        },
-        showOverlay() {
-          let ele = document.createElement('div')
-          ele.setAttribute('class', 'tms-login__modal')
-          document.body.appendChild(ele) 
-        },
-        removeOverlay() {
-          let ele = document.querySelector('.tms-login__modal')
-          document.body.removeChild(ele)
-        },
-        showDialog(data, onSuccess, onFail) {
-          this.asDialog = true
-          this.data = data
-          this.onSuccess = onSuccess
-          this.onFail = onFail
-          this.$mount()
-          this.$el.classList.add('modal')
-          document.body.appendChild(this.$el) 
-          this.showOverlay()
-          return new Promise(resolve => {
-            this.$once('success', token => {
-              document.body.removeChild(this.$el)
-              this.removeOverlay()
-              resolve(token)
-            })
-          })
-        }
-      },
-      mounted() {
-        this.refresh()
-      },
-      render() {
-        const data = this.data
-        let textEle = item => (
-          <van-cell-group class="tms-login__input">
-            <van-field
-              placeholder={item.placeholder}
-              type={item.type}
-              vModel={loginData[item.key]}
-              required
-            ></van-field>
-          </van-cell-group>
-        )
-        let styleCaptcha = { width: '150px', height: '44px' }
-        let captchaEle = item => (
-          <van-cell-group class="flex">
-            <van-field placeholder={item.placeholder} vModel={loginData[item.key]} required></van-field>
-            <div {...{ style: styleCaptcha }} id="captcha"></div>
-            <van-button type="default" onClick={this.refresh}>
-              <van-icon name="replay" />
-            </van-button>
-          </van-cell-group>
-        )
+const Login = {
+  install(Vue, options) {
+    let { fnGetCaptcha, fnGetToken } = options
 
-        return (
-          <div class="tms-login__form">
-            {data.map(item => (item.type == 'code' ? captchaEle(item) : textEle(item)))}
-            <div class="tms-login__button">
-              <van-button size="large" type="info" onClick={this.login}>登录</van-button>
-            </div>
-          </div>
-        )
+    const Plugin = Login.plugin()
+    const login = new Plugin(fnGetCaptcha, fnGetToken)
+
+    Vue.component('tms-login', login.component)
+  },
+  plugin() {
+    class Plugin {
+      constructor(fnCaptcha, fnToken) {
+        this.fnCaptcha = fnCaptcha
+        this.fnToken = fnToken
+      }
+      get component() {
+        const loginData = {}
+        const { fnCaptcha, fnToken } = this
+        return {
+          props: { data: { type: Array }, onSuccess: { type: Function }, onFail: { type: Function } },
+          methods: {
+            refresh() {
+              fnCaptcha()
+                .then(response => {
+                  let { code, result } = response
+                  if (code !== 0) {
+                    result = '<div style="background:#f5f5f5;color:red;text-align:center;font-size:14px;line-height:44px;">获取错误</div>'
+                  }
+                  document.getElementById('captcha').innerHTML = result
+                })
+            },
+            login() {
+              fnToken(loginData)
+                .then(response => {
+                  let { code, result, msg } = response
+                  if (code !== 0) {
+                    if (typeof this.onFail==='function') {
+                      this.onFail(msg)
+                      return false
+                    }
+                    Toast(msg)
+                    this.refresh()
+                    return false
+                  }
+                  if (this.asDialog) {
+                    this.asDialog = false
+                    this.$emit('success', result.access_token)
+                  }
+                  this.onSuccess(result.access_token)
+                })
+            },
+            showOverlay() {
+              let ele = document.createElement('div')
+              ele.setAttribute('class', 'tms-login__modal')
+              document.body.appendChild(ele) 
+            },
+            removeOverlay() {
+              let ele = document.querySelector('.tms-login__modal')
+              document.body.removeChild(ele)
+            },
+            showDialog(data, onSuccess, onFail) {
+              this.asDialog = true
+              this.data = data
+              this.onSuccess = onSuccess
+              this.onFail = onFail
+              this.$mount()
+              this.$el.classList.add('modal')
+              document.body.appendChild(this.$el) 
+              this.showOverlay()
+              return new Promise(resolve => {
+                this.$once('success', token => {
+                  document.body.removeChild(this.$el)
+                  this.removeOverlay()
+                  resolve(token)
+                })
+              })
+            }
+          },
+          mounted() {
+            this.refresh()
+          },
+          render() {
+            const data = this.data
+            let textEle = item => (
+              <van-cell-group class="tms-login__input">
+                <van-field
+                  placeholder={item.placeholder}
+                  type={item.type}
+                  vModel={loginData[item.key]}
+                  required
+                ></van-field>
+              </van-cell-group>
+            )
+            let styleCaptcha = { width: '150px', height: '44px' }
+            let captchaEle = item => (
+              <van-cell-group class="flex">
+                <van-field placeholder={item.placeholder} vModel={loginData[item.key]} required></van-field>
+                <div {...{ style: styleCaptcha }} id="captcha"></div>
+                <van-button type="default" onClick={this.refresh}>
+                  <van-icon name="replay" />
+                </van-button>
+              </van-cell-group>
+            )
+    
+            return (
+              <div class="tms-login__form">
+                {data.map(item => (item.type == 'code' ? captchaEle(item) : textEle(item)))}
+                <div class="tms-login__button">
+                  <van-button size="large" type="info" onClick={this.login}>登录</van-button>
+                </div>
+              </div>
+            )
+          }
+        }
       }
     }
+    return Plugin
   }
 }
 
-export { Login }
 /**
  *
  * @param {*} Vue
@@ -122,10 +134,4 @@ export { Login }
  * @param {object} options.fnGetCaptcha 获得验证码的回调函数，返回promise
  * @param {object} options.fnGetToken 获取accessToken的回调函数，返回promise
  */
-export default function(Vue, options) {
-  let { fnGetCaptcha, fnGetToken } = options
-
-  const login = new Login(fnGetCaptcha, fnGetToken)
-
-  Vue.component('tms-login', login.component)
-}
+export default Login
