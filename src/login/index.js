@@ -75,7 +75,7 @@ class Login {
         }
       },
       mounted() {
-        this.refresh()
+        Vue.nextTick(() => this.refresh())
       },
       render() {
         let textEle = item => (
