@@ -22,14 +22,19 @@ class Login {
       props: { data: { type: Array }, onSuccess: { type: Function }, onFail: { type: Function } },
       methods: {
         refresh() {
-          fnCaptcha().then(response => {
-            let { code, result } = response
-            if (code !== 0) {
-              result =
-                '<div style="background:#f5f5f5;color:red;text-align:center;font-size:14px;line-height:44px;">获取错误</div>'
+          if (typeof fnCaptcha === 'function') {
+            let eleCaptcha = document.getElementById(captchaId)
+            if (eleCaptcha) {
+              fnCaptcha().then(response => {
+                let { code, result } = response
+                if (code !== 0) {
+                  result =
+                    '<div style="background:#f5f5f5;color:red;text-align:center;font-size:14px;line-height:44px;">获取错误</div>'
+                }
+                eleCaptcha.innerHTML = result
+              })
             }
-            document.getElementById(captchaId).innerHTML = result
-          })
+          }
         },
         login() {
           fnToken(loginData).then(response => {
@@ -52,7 +57,7 @@ class Login {
           let ele = document.querySelector('.tms-login__modal')
           document.body.removeChild(ele)
         },
-        showDialog(data, onFail) {
+        showAsDialog(data, onFail) {
           this.asDialog = true
           this.data = data
           this.onFail = onFail
@@ -97,7 +102,7 @@ class Login {
 
         return (
           <div class="tms-login__form">
-            {data.map(item => (item.type == 'code' ? captchaEle(item) : textEle(item)))}
+            {data.map(item => (item.type === 'code' ? captchaEle(item) : textEle(item)))}
             <div class="tms-login__button">
               <van-button size="large" type="info" onClick={this.login}>
                 登录
@@ -108,6 +113,21 @@ class Login {
       }
     }
   }
+  /**
+   * 以对话框的方式打开
+   *
+   * @param {Array} data
+   * @param {*} onFail
+   */
+  showAsDialog(data, onFail) {
+    let dialog = new Vue(this.component)
+    return dialog.showAsDialog(data, onFail)
+  }
+  /**
+   *
+   * @param {*} Vue
+   * @param {*} options
+   */
   static install(Vue, options) {
     let { fnGetCaptcha, fnGetToken } = options
 
