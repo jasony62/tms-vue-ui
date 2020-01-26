@@ -72,8 +72,6 @@ function getToken() {
   })
 }
 
-const login = new Login(getCaptcha, getToken)
-
 export default {
   name: 'HelloTmsUI',
   components: { TmsJsonSchema: JsonSchema, TmsElJsonDoc: ElJsonDoc },
@@ -207,11 +205,8 @@ export default {
   },
   methods: {
     showLoginDialog() {
-      let confirm = new Vue(login.component)
-      confirm
-        .showDialog(this.user)
-        .then(this.fnSuccessToken)
-        .catch(this.fnFailToken)
+      const login = new Login(getCaptcha, getToken)
+      login.showAsDialog(this.user).then(this.fnSuccessToken)
     },
     fnSuccessToken(token) {
       console.log('已获得token:' + token)
