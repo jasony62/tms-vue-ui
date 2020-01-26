@@ -7,14 +7,17 @@ Vue.use(Button)
   .use(Field)
   .use(Toast)
 
+let idCounter = 0
+
 class Login {
   constructor(fnCaptcha, fnToken) {
     this.fnCaptcha = fnCaptcha
     this.fnToken = fnToken
+    this.captchaId = `captcha-${++idCounter}`
   }
   get component() {
     const loginData = {}
-    const { fnCaptcha, fnToken } = this
+    const { fnCaptcha, fnToken, captchaId } = this
     return {
       props: { data: { type: Array }, onSuccess: { type: Function }, onFail: { type: Function } },
       methods: {
@@ -25,26 +28,19 @@ class Login {
               result =
                 '<div style="background:#f5f5f5;color:red;text-align:center;font-size:14px;line-height:44px;">获取错误</div>'
             }
-            document.getElementById('captcha').innerHTML = result
+            document.getElementById(captchaId).innerHTML = result
           })
         },
         login() {
           fnToken(loginData).then(response => {
             let { code, result, msg } = response
             if (code !== 0) {
-              if (typeof this.onFail === 'function') {
-                this.onFail(msg)
-                return false
-              }
-              Toast(msg)
               this.refresh()
-              return false
+              return typeof this.onFail === 'function' ? this.onFail(response) : Toast(msg)
             }
-            if (this.asDialog) {
-              this.asDialog = false
-              this.$emit('success', result.access_token)
-            }
-            this.onSuccess(result.access_token)
+            if (this.asDialog) this.$emit('success', result.access_token)
+
+            if (typeof this.onSuccess === 'function') this.onSuccess(result.access_token)
           })
         },
         showOverlay() {
@@ -56,10 +52,9 @@ class Login {
           let ele = document.querySelector('.tms-login__modal')
           document.body.removeChild(ele)
         },
-        showDialog(data, onSuccess, onFail) {
+        showDialog(data, onFail) {
           this.asDialog = true
           this.data = data
-          this.onSuccess = onSuccess
           this.onFail = onFail
           this.$mount()
           this.$el.classList.add('modal')
@@ -93,7 +88,7 @@ class Login {
         let captchaEle = item => (
           <van-cell-group class="flex">
             <van-field placeholder={item.placeholder} vModel={loginData[item.key]} required></van-field>
-            <div {...{ style: styleCaptcha }} id="captcha"></div>
+            <div {...{ style: styleCaptcha }} id={captchaId}></div>
             <van-button type="default" onClick={this.refresh}>
               <van-icon name="replay" />
             </van-button>
