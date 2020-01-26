@@ -10,16 +10,17 @@ Vue.use(Button)
 let idCounter = 0
 
 class Login {
-  constructor(fnCaptcha, fnToken) {
+  constructor(schema, fnCaptcha, fnToken) {
+    this.schema = schema
     this.fnCaptcha = fnCaptcha
     this.fnToken = fnToken
     this.captchaId = `captcha-${++idCounter}`
   }
   get component() {
     const loginData = {}
-    const { fnCaptcha, fnToken, captchaId } = this
+    const { schema, fnCaptcha, fnToken, captchaId } = this
     return {
-      props: { data: { type: Array }, onSuccess: { type: Function }, onFail: { type: Function } },
+      props: { onSuccess: { type: Function }, onFail: { type: Function } },
       methods: {
         refresh() {
           if (typeof fnCaptcha === 'function') {
@@ -57,9 +58,8 @@ class Login {
           let ele = document.querySelector('.tms-login__modal')
           document.body.removeChild(ele)
         },
-        showAsDialog(data, onFail) {
+        showAsDialog(onFail) {
           this.asDialog = true
-          this.data = data
           this.onFail = onFail
           this.$mount()
           this.$el.classList.add('modal')
@@ -78,7 +78,6 @@ class Login {
         this.refresh()
       },
       render() {
-        const data = this.data
         let textEle = item => (
           <van-cell-group class="tms-login__input">
             <van-field
@@ -102,7 +101,7 @@ class Login {
 
         return (
           <div class="tms-login__form">
-            {data.map(item => (item.type === 'code' ? captchaEle(item) : textEle(item)))}
+            {schema.map(item => (item.type === 'code' ? captchaEle(item) : textEle(item)))}
             <div class="tms-login__button">
               <van-button size="large" type="info" onClick={this.login}>
                 登录
@@ -116,12 +115,12 @@ class Login {
   /**
    * 以对话框的方式打开
    *
-   * @param {Array} data
+   * @param {Array} schema
    * @param {*} onFail
    */
-  showAsDialog(data, onFail) {
+  showAsDialog(onFail) {
     let dialog = new Vue(this.component)
-    return dialog.showAsDialog(data, onFail)
+    return dialog.showAsDialog(onFail)
   }
   /**
    *
@@ -129,9 +128,9 @@ class Login {
    * @param {*} options
    */
   static install(Vue, options) {
-    let { fnGetCaptcha, fnGetToken } = options
+    let { schema, fnGetCaptcha, fnGetToken } = options
 
-    const login = new Login(fnGetCaptcha, fnGetToken)
+    const login = new Login(schema, fnGetCaptcha, fnGetToken)
 
     Vue.component('tms-login', login.component)
   }
