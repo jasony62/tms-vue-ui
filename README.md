@@ -164,11 +164,30 @@ Vue.use(Frame)
 
 ### 使用
 
+同时支持组件调用和函数调用两种方式
+
+(1) 组件调用
+```template
+<tms-login :data="data"></tms-login>
+```
 ```js
 import Vue from 'vue'
 import { Login } from 'tms-vue-ui'
 Vue.use(Login, { fnGetCaptcha, fnGetToken })
 ```
+
+(2) 函数调用
+```js
+import Vue from 'vue'
+import { Login } from 'tms-vue-ui'
+
+const Plugin = Login.plugin()
+const login = new Plugin(fnGetCaptcha, fnGetToken)
+
+let confirm = new Vue(login.component)
+confirm.showDialog(data, onSuccess)
+```
+
 
 | 参数         | 说明                               | 类型     | 默认值 | 备注                                       |
 | ------------ | ---------------------------------- | -------- | ------ | ------------------------------------------ |
@@ -176,6 +195,8 @@ Vue.use(Login, { fnGetCaptcha, fnGetToken })
 | fnGetToken   | 获得token的回调函数，返回 promise | function | -      | -                                          |
 
 ### 属性（props）
+
+通过组件调用时，支持以下 Props：
 
 | 参数   | 说明                 | 类型     | 默认值 |
 | ------ | -------------------- | -------- | ------ |
