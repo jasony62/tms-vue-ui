@@ -167,45 +167,46 @@ Vue.use(Frame)
 同时支持组件调用和函数调用两种方式
 
 (1) 组件调用
+
 ```template
-<tms-login :data="data"></tms-login>
+<tms-login :on-success="fnOnSuccess" on-fail="fnOnFail"></tms-login>
 ```
+
 ```js
 import Vue from 'vue'
 import { Login } from 'tms-vue-ui'
-Vue.use(Login, { fnGetCaptcha, fnGetToken })
+Vue.use(Login, { schema, fnGetCaptcha, fnGetToken })
 ```
 
 (2) 函数调用
+
 ```js
 import Vue from 'vue'
 import { Login } from 'tms-vue-ui'
 
-const Plugin = Login.plugin()
-const login = new Plugin(fnGetCaptcha, fnGetToken)
+const login = new Login(schema, fnGetCaptcha, fnGetToken)
 
 let confirm = new Vue(login.component)
-confirm.showDialog(data, onSuccess)
+confirm.showAsDialog().then(fnOnSuccess)
 ```
 
-
-| 参数         | 说明                               | 类型     | 默认值 | 备注                                       |
-| ------------ | ---------------------------------- | -------- | ------ | ------------------------------------------ |
-| fnGetCaptcha | 获得验证码的回调函数，返回 promise | function | -      | {code: "0", msg: "\*\*", result:值为 svg } |
-| fnGetToken   | 获得token的回调函数，返回 promise | function | -      | -                                          |
+| 参数         | 说明                                | 类型     | 默认值 | 备注                                       |
+| ------------ | ----------------------------------- | -------- | ------ | ------------------------------------------ |
+| schema       | 给后台传递的键和配置                | Array    | -      |                                            |
+| fnGetCaptcha | 获得验证码的回调函数，返回 promise  | function | -      | {code: "0", msg: "\*\*", result:值为 svg } |
+| fnGetToken   | 获得 token 的回调函数，返回 promise | function | -      | -                                          |
 
 ### 属性（props）
 
 通过组件调用时，支持以下 Props：
 
-| 参数   | 说明                 | 类型     | 默认值 |
-| ------ | -------------------- | -------- | ------ |
-| data   | 给后台传递的键和配置 | Array    | -      |
-| on-success | 获取token成功的回调函数             | Function | -      |
-| on-fail | 获取token失败的回调函数             | Function | -      |
+| 参数       | 说明                      | 类型     | 默认值 |
+| ---------- | ------------------------- | -------- | ------ |
+| on-success | 获取 token 成功的回调函数 | Function | -      |
+| on-fail    | 获取 token 失败的回调函数 | Function | -      |
 
 ```javascript
-data: [
+schema: [
   {
     // 当前双向绑定的属性名
     key: 'uname',
