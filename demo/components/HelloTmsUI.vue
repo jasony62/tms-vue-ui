@@ -41,7 +41,7 @@
     </div>
     <h3>JSON Doc</h3>
     <div id="myJsonDoc">
-      <tms-el-json-doc :schema="schema" :model="model" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
+      <tms-el-json-doc :schema="schema" :doc="model" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
     </div>
   </div>
 </template>
@@ -173,7 +173,9 @@ export default {
         name: 'tms-vue-ui',
         sub: {
           sEmail: 'tms-vue-ui@gmail.com'
-        }
+        },
+        lists2: [],
+        lists3: []
       }
     }
   },
@@ -188,8 +190,8 @@ export default {
     fnFailToken(msg) {
       console.log(msg)
     },
-    jsonDocSubmit() {
-      alert(JSON.stringify(this.model))
+    jsonDocSubmit(newModel) {
+      alert(JSON.stringify(newModel))
     }
   }
 }

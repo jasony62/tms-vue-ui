@@ -91,11 +91,11 @@
       "type": "array",
       "title": "List3",
       "oneOf": [{
-          "value": "daily",
+          "value": "Daily New",
           "label": "Daily New"
         },
         {
-          "value": "promotion",
+          "value": "Promotion",
           "label": "Promotion"
         }
       ]

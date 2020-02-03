@@ -8,6 +8,9 @@
 import Vue from 'vue'
 import TmsJsonDoc from '../json-doc/Editor.vue'
 import {
+  Form,
+  FormItem,
+  Alert,
   Radio,
   Checkbox,
   Option,
@@ -20,7 +23,10 @@ import {
   CheckboxGroup,
   InputNumber
 } from 'element-ui'
-Vue.use(Radio)
+Vue.use(Form)
+  .use(FormItem)
+  .use(Alert)
+  .use(Radio)
   .use(Checkbox)
   .use(Option)
   .use(Rate)
@@ -117,11 +123,10 @@ export default {
   computed: {
     editingDoc: {
       get: function() {
-        return Object.assign({}, this.doc)
+        let obj = this.doc ? JSON.parse(JSON.stringify(this.doc)) : {}
+        return obj
       },
-      set: function(newValue) {
-        // do nothing
-      }
+      set: function() {}
     }
   },
   methods: {
