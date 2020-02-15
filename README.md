@@ -227,6 +227,61 @@ schema: [
 ]
 ```
 
-## json-schema 编辑器
+## JSONSchema 编辑器（json-schema）
 
-## json 编辑器
+编辑 json-schema 的编辑器。
+
+```js
+import { JsonSchema } from 'tms-vue-ui'
+```
+
+```html
+<tms-json-schema :schema="jsonSchema"></tms-json-schema>
+```
+
+> 注意在 JavaScript 中对象和数组是通过引用传入的，所以对于一个数组或对象类型的 prop 来说，在子组件中改变这个对象或数组本身将会影响到父组件的状态。
+
+参考：https://json-schema.org
+
+## json 对象编辑器（json-doc）
+
+根据 json-schema 编辑 json 数据。
+
+```js
+import { ElJsonDoc } from 'tms-vue-ui'
+```
+
+```html
+<tms-el-json-doc :schema="schema" :doc="doc" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
+```
+
+必须传入 schema 对象。
+
+name
+type
+visible
+
+参考：https://json-schema.org
+
+## 在线组件（comp-online）
+
+显示`tms-vue`中的`runtime-lib`加载的组件。
+
+```js
+import { CompOnline } from 'tms-vue-ui'
+```
+
+```html
+<comp-online :url="url" :includeCss="includeCss" :props="onlineProps" :events="onlineEvents"></comp-online>
+```
+
+### 属性（props）
+
+通过组件调用时，支持以下 Props：
+
+| 参数       | 说明                                                   | 类型    | 默认值 |
+| ---------- | ------------------------------------------------------ | ------- | ------ |
+| url        | 在线组件的地址，参考：`runtime-lib`。                  | String  | -      |
+| includeCss | 是否包含 css 文件。                                    | Boolean | -      |
+| props      | 在线组件的接收的属性（和 Vue 组件中的 props 对应）。   | Object  | -      |
+| events     | 在线组件事件名称的数组，这些事件会通过`emit`向外抛出。 | Array   | -      |

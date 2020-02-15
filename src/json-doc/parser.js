@@ -164,6 +164,8 @@ export function loadFields(vm, schema, fields = vm.fields, sub) {
 
   const schemaName = sub ? sub.join('.') : schema.name
 
+  if (schema.type !== 'object' && !schemaName) return
+
   switch (schema.type) {
     case 'object':
       for (const key in schema.properties) {
