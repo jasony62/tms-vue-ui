@@ -4,10 +4,19 @@
       <div>this is header section</div>
     </template>
     <template v-slot:center>
-      <HelloTmsUI />
+      <router-view />
     </template>
     <template v-slot:left>
-      <div>this is left section</div>
+      <div id="nav">
+        <tms-flex direction="column">
+          <router-link to="/">首页</router-link>
+          <router-link to="/layout">布局组件</router-link>
+          <router-link to="/login">登录框</router-link>
+          <router-link to="/array-input">数组输入框</router-link>
+          <router-link to="/json-schema">JSON定义</router-link>
+          <router-link to="/json-doc">JSON文档</router-link>
+        </tms-flex>
+      </div>
     </template>
     <template v-slot:right>
       <div>this is right section</div>
@@ -20,17 +29,14 @@
 
 <script>
 import Vue from 'vue'
-import { Frame } from '@/lib'
+import { Frame, Flex } from '@/lib'
 import '@/lib/frame/style'
-Vue.use(Frame)
+import '@/lib/flex/style'
 
-import HelloTmsUI from './components/HelloTmsUI.vue'
+Vue.use(Frame).use(Flex)
 
 export default {
-  name: 'app',
-  components: {
-    HelloTmsUI
-  }
+  name: 'app'
 }
 </script>
 

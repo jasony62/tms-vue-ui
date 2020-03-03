@@ -1,16 +1,20 @@
-# tms-vue-ui
+`tms-vue-ui`是一个基于`Vue`实现的常用 UI 组件库。
 
-## 运行和打包
+# 运行和打包
 
 运行演示程序，需执行`cnpm i vue`（注意不要-S 或-D）。
 
 运行演示程序，需执行`cnpm i vant`（注意不要-S 或-D）。
 
+运行演示程序，需执行`cnpm i element-ui`（注意不要-S 或-D）。
+
+运行演示程序，需执行`cnpm i tms-vue`（注意不要-S 或-D）。
+
 执行`yarn serve`启动演示程序。
 
 执行`yarn build`编译组件库。
 
-## 在项目中使用
+# 在项目中使用
 
 安装组件库。
 
@@ -279,9 +283,84 @@ import { CompOnline } from 'tms-vue-ui'
 
 通过组件调用时，支持以下 Props：
 
-| 参数       | 说明                                                   | 类型    | 默认值 |
+| 属性       | 说明                                                   | 类型    | 默认值 |
 | ---------- | ------------------------------------------------------ | ------- | ------ |
 | url        | 在线组件的地址，参考：`runtime-lib`。                  | String  | -      |
 | includeCss | 是否包含 css 文件。                                    | Boolean | -      |
 | props      | 在线组件的接收的属性（和 Vue 组件中的 props 对应）。   | Object  | -      |
 | events     | 在线组件事件名称的数组，这些事件会通过`emit`向外抛出。 | Array   | -      |
+
+## 数组输入（array-input）
+
+输入一组数据。
+
+```js
+import { ArrayInput } from 'tms-vue-ui'
+```
+
+```html
+<template>
+  <div class="array-input">
+    <tms-array-input :lines="array" @add="add">
+      <template v-slot:default="lineProps">
+        <el-input-number size="mini" v-model="lineProps.line.number"></el-input-number>
+      </template>
+      <template v-slot:add>+ 添加</template>
+      <template v-slot:empty>x 清空</template>
+      <template v-slot:remove></template>
+      <template v-slot:moveup></template>
+      <template v-slot:movedown></template>
+    </tms-array-input>
+  </div>
+</template>
+```
+
+### 属性（props）
+
+通过组件调用时，支持以下 Props：
+
+| 属性  | 说明                 | 类型  | 默认值 |
+| ----- | -------------------- | ----- | ------ |
+| lines | 需要处理的数组数据。 | Array | -      |
+
+### 事件
+
+通过组件调用时，支持以下 Props：
+
+| 属性 | 说明                   | 参数 |
+| ---- | ---------------------- | ---- |
+| add  | 请求向数组添加新元素。 | -    |
+
+### 插槽
+
+| 名称     | 说明                   | 属性 | 默认值 |
+| -------- | ---------------------- | ---- | ------ |
+| default  | 指定显示一行数据的模板 | line | -      |
+| add      | 添加一行数据按钮的文字 | -    | 添加   |
+| empty    | 清空所有数据按钮的文字 | -    | 清空   |
+| remove   | 删除一行数据按钮的文字 | -    | 删除   |
+| moveup   | 上移一行数据按钮的文字 | -    | 上移   |
+| movedown | 下移一行数据按钮的文字 | -    | 下移   |
+
+### 替换组件
+
+```js
+AarryInput.setComponent('layout.root', 'tms-flex', options)
+AarryInput.setComponent('button.add', 'el-button', options)
+```
+
+| 名称                | 说明                   | 默认值 |
+| ------------------- | ---------------------- | ------ |
+| button.add          | 添加一行数据按钮的文字 | button |
+| button.empty        | 清空所有数据按钮的文字 | button |
+| button.remove       | 删除一行数据按钮的文字 | button |
+| button.moveup       | 上移一行数据按钮的文字 | button |
+| button.movedown     | 下移一行数据按钮的文字 | button |
+| layout.root         | 组件根元素             | div    |
+| layout.lines        | 数组数据展示区         | div    |
+| layout.line         | 单行数组数据展示区     | div    |
+| layout.line-slots   | 单行数据展示区         | div    |
+| layout.line-buttons | 单数数据操作按钮区     | div    |
+| layout.bottom       | 数组操作按钮区         | div    |
+
+`options`参数请参考`Vue`官网文档。参考：https://cn.vuejs.org/v2/guide/render-function.html#深入数据对象
