@@ -34,6 +34,37 @@ import '@/lib/frame/style'
 import '@/lib/flex/style'
 
 Vue.use(Frame).use(Flex)
+/**
+ * 初始化全局组件TmsArrayInput
+ */
+import { Button, InputNumber } from 'element-ui'
+import { ArrayInput } from '@/lib'
+
+Vue.use(Button).use(InputNumber)
+
+ArrayInput.setComponent('layout.root', 'tms-flex', {
+  props: { direction: 'column' }
+})
+ArrayInput.setComponent('layout.lines', 'tms-flex', {
+  props: { direction: 'column' }
+})
+ArrayInput.setComponent('layout.line', 'tms-flex')
+ArrayInput.setComponent('button.add', 'el-button', {
+  props: { type: 'primary' }
+})
+ArrayInput.setComponent('button.empty', 'el-button', {
+  props: { type: 'danger' }
+})
+ArrayInput.setComponent('button.remove', 'el-button', {
+  props: { size: 'mini', icon: 'el-icon-minus' }
+})
+ArrayInput.setComponent('button.moveup', 'el-button', {
+  props: { size: 'mini', icon: 'el-icon-caret-top' }
+})
+ArrayInput.setComponent('button.movedown', 'el-button', {
+  props: { size: 'mini', icon: 'el-icon-caret-bottom' }
+})
+Vue.use(ArrayInput)
 
 export default {
   name: 'app'
