@@ -1,4 +1,5 @@
 'use strict'
+
 const { initChild, getChild } = require('./utils')
 
 const ARRAY_KEYWORDS = ['anyOf', 'oneOf', 'enum']
@@ -6,7 +7,6 @@ const ARRAY_KEYWORDS = ['anyOf', 'oneOf', 'enum']
 function setCommonFields(schema, field, schemaName) {
   // eslint-disable-next-line no-nested-ternary
   field.value = schema.hasOwnProperty('default') ? schema.default : field.hasOwnProperty('value') ? field.value : ''
-
   field.component = schema.component
   field.schemaType = schema.type
   field.label = schema.title || ''
@@ -14,20 +14,28 @@ function setCommonFields(schema, field, schemaName) {
   field.required = schema.required || false
   field.disabled = schema.disabled || false
   field.name = schemaName
+  field.schema = schema
 }
-
+/**
+ * 初始化form的数据对象
+ *
+ * @param {*} vm
+ * @param {*} field
+ */
 function setFormValue(vm, field) {
+  const { editDoc } = vm
   const ns = field.name.split('.')
-  const vmValue = getChild(vm.value, ns)
-  if (vm.value && !vmValue) {
+  const vmValue = getChild(editDoc, ns)
+  if (!vmValue) {
     const n = ns.pop()
-    const ret = ns.length > 0 ? initChild(vm.value, ns) : vm.value
+    const ret = ns.length > 0 ? initChild(editDoc, ns) : editDoc
     vm.$set(ret, n, field.value)
   }
 }
-
+export class Field {}
 export function parseBoolean(vm, schema, schemaName) {
-  const field = schema.attrs || {}
+  const field = new Field()
+  if (schema.attrs) Object.assign(field, schema.attrs)
 
   setCommonFields(schema, field, schemaName)
 
@@ -47,7 +55,8 @@ export function parseBoolean(vm, schema, schemaName) {
 }
 
 export function parseString(vm, schema, schemaName) {
-  const field = schema.attrs || {}
+  const field = new Field()
+  if (schema.attrs) Object.assign(field, schema.attrs)
 
   if (schema.format) {
     switch (schema.format) {
@@ -112,11 +121,13 @@ export function parseItems(items) {
 }
 
 export function parseArray(vm, schema, schemaName) {
-  const field = schema.attrs || {}
+  const field = new Field()
+  if (schema.attrs) Object.assign(field, schema.attrs)
 
   setCommonFields(schema, field, schemaName)
 
   field.multiple = schema.minItems > 1
+
   field.items = []
 
   for (const keyword of ARRAY_KEYWORDS) {
@@ -126,19 +137,22 @@ export function parseArray(vm, schema, schemaName) {
           if (!field.type) {
             field.type = 'select'
           }
-          field.value = field.value || ''
+          field.itemType = 'option'
+          field.value = field.hasOwnProperty('value') ? field.value : ''
           field.items = parseItems(schema[keyword])
           break
 
         case 'oneOf':
-          field.type = 'radio'
-          field.value = field.value || ''
+          field.type = 'radiogroup'
+          field.itemType = 'radio'
+          field.value = field.hasOwnProperty('value') ? field.value : ''
           field.items = parseItems(schema[keyword])
           break
 
         case 'anyOf':
-          field.type = 'checkbox'
-          field.value = field.value || []
+          field.type = 'checkboxgroup'
+          field.itemType = 'checkbox'
+          field.value = Array.isArray(field.value) ? field.value : []
           field.items = parseItems(schema[keyword])
           break
       }
@@ -146,7 +160,7 @@ export function parseArray(vm, schema, schemaName) {
   }
   if (!field.type) {
     field.type = schema.type
-    field.value = field.value || []
+    field.value = field.hasOwnProperty('value') ? field.value : []
     field.items = []
   }
 
@@ -158,11 +172,33 @@ export function parseArray(vm, schema, schemaName) {
 
   return field
 }
+export function parseFreeArray(vm, schema, schemaName) {
+  if (schema.attrs) Object.assign(field, schema.attrs)
+  const field = schema.attrs || {}
 
+  setCommonFields(schema, field, schemaName)
+
+  field.multiple = schema.minItems > 1
+  field.type = schema.type
+  field.itemSchema = schema.items
+  field.value = []
+  setFormValue(vm, field)
+
+  return field
+}
+/**
+ * 根据schema生成field
+ *
+ * @param {*} vm
+ * @param {*} schema
+ * @param {Object} fields 属性名和属性定义的对应。field是一个对象。
+ * @param {Array<String>} sub field的路径
+ */
 export function loadFields(vm, schema, fields = vm.fields, sub) {
   if (!schema || schema.visible === false) return
 
   const schemaName = sub ? sub.join('.') : schema.name
+  if (schema.type !== 'object' && !schemaName) return
 
   switch (schema.type) {
     case 'object':
@@ -176,9 +212,10 @@ export function loadFields(vm, schema, fields = vm.fields, sub) {
             }
           }
         }
+        // 给对象创建一个field，对象下的filed都放在该field中，便于后续显示时，将对象作为一个整体处理
         if (schema.name && !fields[schemaName]) {
           fields[schemaName] = {
-            $sub: true,
+            $sub: true, // 指明这是嵌套定义
             $title: schema.title,
             $description: schema.description
           }
@@ -197,7 +234,9 @@ export function loadFields(vm, schema, fields = vm.fields, sub) {
       break
 
     case 'array':
-      fields[schemaName] = parseArray(vm, schema, schemaName)
+      fields[schemaName] = ARRAY_KEYWORDS.some(kw => schema.hasOwnProperty(kw))
+        ? parseArray(vm, schema, schemaName)
+        : parseFreeArray(vm, schema, schemaName)
       break
 
     case 'integer':

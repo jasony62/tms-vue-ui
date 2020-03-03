@@ -1,16 +1,20 @@
-# tms-vue-ui
+`tms-vue-ui`是一个基于`Vue`实现的常用 UI 组件库。
 
-## 运行和打包
+# 运行和打包
 
 运行演示程序，需执行`cnpm i vue`（注意不要-S 或-D）。
 
 运行演示程序，需执行`cnpm i vant`（注意不要-S 或-D）。
 
+运行演示程序，需执行`cnpm i element-ui`（注意不要-S 或-D）。
+
+运行演示程序，需执行`cnpm i tms-vue`（注意不要-S 或-D）。
+
 执行`yarn serve`启动演示程序。
 
 执行`yarn build`编译组件库。
 
-## 在项目中使用
+# 在项目中使用
 
 安装组件库。
 
@@ -167,45 +171,46 @@ Vue.use(Frame)
 同时支持组件调用和函数调用两种方式
 
 (1) 组件调用
+
 ```template
-<tms-login :data="data"></tms-login>
+<tms-login :on-success="fnOnSuccess" on-fail="fnOnFail"></tms-login>
 ```
+
 ```js
 import Vue from 'vue'
 import { Login } from 'tms-vue-ui'
-Vue.use(Login, { fnGetCaptcha, fnGetToken })
+Vue.use(Login, { schema, fnGetCaptcha, fnGetToken })
 ```
 
 (2) 函数调用
+
 ```js
 import Vue from 'vue'
 import { Login } from 'tms-vue-ui'
 
-const Plugin = Login.plugin()
-const login = new Plugin(fnGetCaptcha, fnGetToken)
+const login = new Login(schema, fnGetCaptcha, fnGetToken)
 
 let confirm = new Vue(login.component)
-confirm.showDialog(data, onSuccess)
+confirm.showAsDialog().then(fnOnSuccess)
 ```
 
-
-| 参数         | 说明                               | 类型     | 默认值 | 备注                                       |
-| ------------ | ---------------------------------- | -------- | ------ | ------------------------------------------ |
-| fnGetCaptcha | 获得验证码的回调函数，返回 promise | function | -      | {code: "0", msg: "\*\*", result:值为 svg } |
-| fnGetToken   | 获得token的回调函数，返回 promise | function | -      | -                                          |
+| 参数         | 说明                                | 类型     | 默认值 | 备注                                       |
+| ------------ | ----------------------------------- | -------- | ------ | ------------------------------------------ |
+| schema       | 给后台传递的键和配置                | Array    | -      |                                            |
+| fnGetCaptcha | 获得验证码的回调函数，返回 promise  | function | -      | {code: "0", msg: "\*\*", result:值为 svg } |
+| fnGetToken   | 获得 token 的回调函数，返回 promise | function | -      | -                                          |
 
 ### 属性（props）
 
 通过组件调用时，支持以下 Props：
 
-| 参数   | 说明                 | 类型     | 默认值 |
-| ------ | -------------------- | -------- | ------ |
-| data   | 给后台传递的键和配置 | Array    | -      |
-| on-success | 获取token成功的回调函数             | Function | -      |
-| on-fail | 获取token失败的回调函数             | Function | -      |
+| 参数       | 说明                      | 类型     | 默认值 |
+| ---------- | ------------------------- | -------- | ------ |
+| on-success | 获取 token 成功的回调函数 | Function | -      |
+| on-fail    | 获取 token 失败的回调函数 | Function | -      |
 
 ```javascript
-data: [
+schema: [
   {
     // 当前双向绑定的属性名
     key: 'uname',
@@ -226,6 +231,198 @@ data: [
 ]
 ```
 
-## json-schema 编辑器
+## JSONSchema 编辑器（json-schema）
 
-## json 编辑器
+编辑 json-schema 的编辑器。
+
+```js
+import { JsonSchema } from 'tms-vue-ui'
+```
+
+```html
+<tms-json-schema :schema="jsonSchema"></tms-json-schema>
+```
+
+> 注意在 JavaScript 中对象和数组是通过引用传入的，所以对于一个数组或对象类型的 prop 来说，在子组件中改变这个对象或数组本身将会影响到父组件的状态。
+
+参考：https://json-schema.org
+
+## json 文档编辑器（json-doc）
+
+根据指定的`JSONSchema`编辑 json 数据。
+
+### 属性（props）
+
+通过组件调用时，支持以下 Props：
+
+| 参数               | 说明                             | 类型    | 默认值 |
+| ------------------ | -------------------------------- | ------- | ------ |
+| schema             | JSONSchema 定义                  | Object  | -      |
+| value              | 要编辑的 json 文档对象           | Object  | -      |
+| inputWrappingClass | 输入控件的包括类                 | String  | -      |
+| requireButtons     | 是否显示表单操作按钮，例如：提交 | Boolean | true   |
+| oneWay             | 传入数据是单向的，不会被修改     | Boolean | true   |
+
+必须传入`schema`对象。支持`v-model`传递要编辑的 json 文档。
+
+### 方法
+
+| 名称    | 说明             | 参数                                                      |
+| ------- | ---------------- | --------------------------------------------------------- |
+| editing | 返回表单中的数据 | isCheckValidity，返回前是否做合规性检查，不合规返回 false |
+| reset   | 恢复数据原始值   | -                                                         |
+
+### 事件
+
+通过组件调用时，支持以下事件：
+
+| 名称   | 说明                   | 参数 |
+| ------ | ---------------------- | ---- |
+| submit | 选择表单的提交按钮时。 | -    |
+
+参考：https://json-schema.org
+
+### 定制（setComponent 方法）
+
+使用`setComponent`方法替换组件。
+
+| 参数           | 说明                                                              | 类型     | 默认   |
+| -------------- | ----------------------------------------------------------------- | -------- | ------ |
+| type           | 控件名称                                                          | String   | -      |
+| tag            | 组件名称，例如：`el-input`等                                      | String   | -      |
+| options        | 传入 `createElement` 函数的组件选项                               | Object   | 空对象 |
+| options.native | true 将指定的值添加到`attrs`否则添加到`props`                     | Boolean  | 空对象 |
+| options        | 指定为一个函数，将被调用，传入参数`{vm,field,item}`，返回属性设置 | Function | -      |
+
+支持设置的控件及组件：
+
+| 控件名称      | 说明                     | 默认组件 |
+| ------------- | ------------------------ | -------- |
+| title         | JSONSchema.\$title       | h1       |
+| description   | JSONSchema.\$description | p        |
+| error         | 错误提示                 | div      |
+| form          | -                        | form     |
+| label         | -                        | label    |
+| input         | -                        | input    |
+| textarea      | -                        | textarea |
+| radio         | 定义中出现`oneOf`时      | input    |
+| radiogroup    | -                        | div      |
+| select        | 定义中包含`enum:[]`      | select   |
+| option        | select 控件中的选项      | option   |
+| checkbox      | -                        | input    |
+| checkboxgroup | -                        | div      |
+| file          | -                        | input    |
+| button        | -                        | div      |
+| jsondoc       | -                        | div      |
+
+### 嵌套使用 json-doc
+
+### 返回数据的方式
+
+## json 文档编辑器（element-ui 版）
+
+```js
+import { ElJsonDoc } from 'tms-vue-ui'
+```
+
+```html
+<tms-el-json-doc :schema="schema" :doc="doc" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
+```
+
+## 在线组件（comp-online）
+
+显示`tms-vue`中的`runtime-lib`加载的组件。
+
+```js
+import { CompOnline } from 'tms-vue-ui'
+```
+
+```html
+<comp-online :url="url" :includeCss="includeCss" :props="onlineProps" :events="onlineEvents"></comp-online>
+```
+
+### 属性（props）
+
+通过组件调用时，支持以下 Props：
+
+| 属性       | 说明                                                   | 类型    | 默认值 |
+| ---------- | ------------------------------------------------------ | ------- | ------ |
+| url        | 在线组件的地址，参考：`runtime-lib`。                  | String  | -      |
+| includeCss | 是否包含 css 文件。                                    | Boolean | -      |
+| props      | 在线组件的接收的属性（和 Vue 组件中的 props 对应）。   | Object  | -      |
+| events     | 在线组件事件名称的数组，这些事件会通过`emit`向外抛出。 | Array   | -      |
+
+## 数组输入（array-input）
+
+输入一组数据。
+
+```js
+import { ArrayInput } from 'tms-vue-ui'
+```
+
+```html
+<template>
+  <div class="array-input">
+    <tms-array-input :lines="array" @add="add">
+      <template v-slot:default="lineProps">
+        <el-input-number size="mini" v-model="lineProps.line.number"></el-input-number>
+      </template>
+      <template v-slot:add>+ 添加</template>
+      <template v-slot:empty>x 清空</template>
+      <template v-slot:remove></template>
+      <template v-slot:moveup></template>
+      <template v-slot:movedown></template>
+    </tms-array-input>
+  </div>
+</template>
+```
+
+### 属性（props）
+
+通过组件调用时，支持以下 Props：
+
+| 属性  | 说明                 | 类型  | 默认值 |
+| ----- | -------------------- | ----- | ------ |
+| lines | 需要处理的数组数据。 | Array | -      |
+
+### 事件
+
+通过组件调用时，支持以下事件：
+
+| 属性 | 说明                   | 参数 |
+| ---- | ---------------------- | ---- |
+| add  | 请求向数组添加新元素。 | -    |
+
+### 插槽
+
+| 名称     | 说明                   | 属性 | 默认值 |
+| -------- | ---------------------- | ---- | ------ |
+| default  | 指定显示一行数据的模板 | line | -      |
+| add      | 添加一行数据按钮的文字 | -    | 添加   |
+| empty    | 清空所有数据按钮的文字 | -    | 清空   |
+| remove   | 删除一行数据按钮的文字 | -    | 删除   |
+| moveup   | 上移一行数据按钮的文字 | -    | 上移   |
+| movedown | 下移一行数据按钮的文字 | -    | 下移   |
+
+### 替换组件
+
+```js
+AarryInput.setComponent('layout.root', 'tms-flex', options)
+AarryInput.setComponent('button.add', 'el-button', options)
+```
+
+| 名称                | 说明                   | 默认值 |
+| ------------------- | ---------------------- | ------ |
+| button.add          | 添加一行数据按钮的文字 | button |
+| button.empty        | 清空所有数据按钮的文字 | button |
+| button.remove       | 删除一行数据按钮的文字 | button |
+| button.moveup       | 上移一行数据按钮的文字 | button |
+| button.movedown     | 下移一行数据按钮的文字 | button |
+| layout.root         | 组件根元素             | div    |
+| layout.lines        | 数组数据展示区         | div    |
+| layout.line         | 单行数组数据展示区     | div    |
+| layout.line-slots   | 单行数据展示区         | div    |
+| layout.line-buttons | 单数数据操作按钮区     | div    |
+| layout.bottom       | 数组操作按钮区         | div    |
+
+`options`参数请参考`Vue`官网文档。参考：https://cn.vuejs.org/v2/guide/render-function.html#深入数据对象

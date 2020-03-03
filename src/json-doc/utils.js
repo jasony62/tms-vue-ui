@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
@@ -13,18 +15,19 @@ export function getExtendibleLeaf(obj, n, initIt) {
 }
 
 export function getChild(data, ns) {
-  if (ns.length === 1) {
-    return data[ns[0]]
-  }
-  let obj = data[ns[0]]
-  if (obj === undefined) return obj
-  let i = 1
-  const end = ns.length - 1
-  for (; i < end; i++) {
-    obj = getExtendibleLeaf(obj, ns[i], false)
-    if (obj === undefined) return obj
-  }
-  return obj[ns[i]]
+  return _.get(data, ns)
+  // if (ns.length === 1) {
+  //   return data[ns[0]]
+  // }
+  // let obj = data[ns[0]]
+  // if (obj === undefined) return obj
+  // let i = 1
+  // const end = ns.length - 1
+  // for (; i < end; i++) {
+  //   obj = getExtendibleLeaf(obj, ns[i], false)
+  //   if (obj === undefined) return obj
+  // }
+  // return obj[ns[i]]
 }
 
 export function initChild(data, ns) {

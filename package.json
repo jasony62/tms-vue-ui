@@ -11,7 +11,7 @@
   "files": [
     "lib"
   ],
-  "version": "0.0.15",
+  "version": "0.0.17",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "node build/build-lib",
@@ -20,14 +20,18 @@
   },
   "peerDependencies": {
     "core-js": "^2.6.5",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "tms-vue": "^0.0.8"
   },
   "dependencies": {
     "element-ui": "^2.12.0",
-    "vant": "^2.2.11"
+    "lodash": "^4.17.15",
+    "vant": "^2.2.11",
+    "vue-router": "^3.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
+    "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.6.2",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
     "@vue/babel-preset-jsx": "^1.1.0",
@@ -53,5 +57,11 @@
     "shelljs": "^0.8.3",
     "signale": "^1.4.0",
     "vue-template-compiler": "^2.6.10"
-  }
+  },
+  "keywords": [
+    "vue",
+    "element-ui",
+    "vant",
+    "tms"
+  ]
 }
