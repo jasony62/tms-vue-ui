@@ -27,6 +27,7 @@
         <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object'">添加属性</el-button>
       </el-form-item>
     </el-form>
+    <div>{{jsonString}}</div>
   </tms-flex>
 </template>
 <script>
@@ -53,7 +54,7 @@ class SchemaWrap {
   }
   appendChild(child) {
     this.children.push(child)
-    this.schema.properties[child.key] = child.schema
+    Vue.set(this.schema.properties, child.key, child.schema)
     child.parent = this
   }
 }
@@ -79,7 +80,7 @@ class FormData {
   }
   reset() {
     this.key = ''
-    this.schema = {}
+    this.schema = { title: '', type: 'string', description: '' }
     this.node = null
   }
 }
@@ -93,7 +94,17 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      jsonString: ''
+    }
+  },
+  watch: {
+    schema: {
+      handler: function(val) {
+        this.jsonString = typeof val === 'object' ? JSON.stringify(val) : '{}'
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
@@ -107,8 +118,12 @@ export default {
       if (this.form.key !== schemaWrap.key) {
         const newKey = this.form.key
         if (schemaWrap.parent && schemaWrap.parent.schema.properties) {
-          delete schemaWrap.parent.schema.properties[schemaWrap.key]
-          schemaWrap.parent.schema.properties[newKey] = schemaWrap.schema
+          this.$delete(schemaWrap.parent.schema.properties, schemaWrap.key)
+          this.$set(
+            schemaWrap.parent.schema.properties,
+            newKey,
+            schemaWrap.schema
+          )
         }
         schemaWrap.label = schemaWrap.key = newKey
       }
@@ -133,7 +148,7 @@ export default {
       const index = children.findIndex(d => d.key === data.key)
       children.splice(index, 1)
       const properties = parent.data.schema.properties
-      properties && delete properties[data.key]
+      properties && this.$delete(properties, data.key)
       this.form.reset()
     }
   },
