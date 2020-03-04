@@ -1,4 +1,4 @@
-'use strict'
+import { FieldBoolean, FieldText, FieldArray, FieldFreeArray } from './fields'
 
 const { initChild, getChild } = require('./utils')
 
@@ -32,10 +32,9 @@ function setFormValue(vm, field) {
     vm.$set(ret, n, field.value)
   }
 }
-export class Field {}
 export function parseBoolean(vm, schema, schemaName) {
-  const field = new Field()
-  if (schema.attrs) Object.assign(field, schema.attrs)
+  const field = new FieldBoolean(schema.attrs)
+  //if (schema.attrs) Object.assign(field, schema.attrs)
 
   setCommonFields(schema, field, schemaName)
 
@@ -54,9 +53,9 @@ export function parseBoolean(vm, schema, schemaName) {
   return field
 }
 
-export function parseString(vm, schema, schemaName) {
-  const field = new Field()
-  if (schema.attrs) Object.assign(field, schema.attrs)
+export function parseText(vm, schema, schemaName) {
+  const field = new FieldText(schema.attrs)
+  //if (schema.attrs) Object.assign(field, schema.attrs)
 
   if (schema.format) {
     switch (schema.format) {
@@ -121,8 +120,8 @@ export function parseItems(items) {
 }
 
 export function parseArray(vm, schema, schemaName) {
-  const field = new Field()
-  if (schema.attrs) Object.assign(field, schema.attrs)
+  const field = new FieldArray(schema.attrs)
+  //if (schema.attrs) Object.assign(field, schema.attrs)
 
   setCommonFields(schema, field, schemaName)
 
@@ -173,8 +172,8 @@ export function parseArray(vm, schema, schemaName) {
   return field
 }
 export function parseFreeArray(vm, schema, schemaName) {
-  if (schema.attrs) Object.assign(field, schema.attrs)
-  const field = schema.attrs || {}
+  const field = new FieldFreeArray(schema.attrs)
+  //if (schema.attrs) Object.assign(field, schema.attrs)
 
   setCommonFields(schema, field, schemaName)
 
@@ -252,9 +251,9 @@ export function loadFields(vm, schema, fields = vm.fields, sub) {
           return
         }
       }
-      fields[schemaName] = parseString(vm, schema, schemaName)
+      fields[schemaName] = parseText(vm, schema, schemaName)
       break
     default:
-      fields[schemaName] = parseString(vm, schema, schemaName)
+      fields[schemaName] = parseText(vm, schema, schemaName)
   }
 }

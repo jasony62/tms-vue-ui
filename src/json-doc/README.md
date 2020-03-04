@@ -8,6 +8,8 @@
 
 `items`是`{value,label}`的数组
 
+schema->field->input->form
+
 替换默认组件
 
 以最简单的 string 为例。
