@@ -19,9 +19,10 @@ export default {
     return {
       schema: {
         $schema: 'http://json-schema.org/draft-07/schema#',
+        $id: '#demo',
         type: 'object',
-        title: 'Json-Doc(数组)',
-        description: 'Demo for vue-json-ui-editor using element-ui',
+        title: 'JsonDoc',
+        description: '演示vue-json-ui-editor using element-ui',
         properties: {
           message: { type: 'string', title: '字符串' },
           textarea: {
@@ -122,6 +123,13 @@ export default {
             default: '#409EFF',
             attrs: {
               type: 'color'
+            }
+          },
+          inheritance: {
+            type: 'array',
+            title: '引用定义',
+            items: {
+              $ref: '#demo'
             }
           }
         }

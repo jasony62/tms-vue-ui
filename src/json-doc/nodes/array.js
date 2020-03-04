@@ -1,5 +1,5 @@
-import { deepClone } from './utils'
-import { components } from './node'
+import { deepClone } from '../utils'
+import { components } from './index'
 import { FieldNode } from './field-node'
 
 export class ArrayNode extends FieldNode {
@@ -14,6 +14,7 @@ export class ArrayNode extends FieldNode {
         const index = fieldValue.indexOf(props.line)
         const itemSchema = deepClone(field.itemSchema)
         itemSchema.name = `[${index}]`
+        console.log('iiii', itemSchema)
         return createElement(components.jsondoc.tag, {
           props: {
             schema: itemSchema,

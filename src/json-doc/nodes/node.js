@@ -1,32 +1,3 @@
-const option = { native: true }
-/**
- * 支持的组件类型
- */
-export const components = {
-  title: { tag: 'h1', option },
-  description: { tag: 'p', option },
-  error: { tag: 'div', option },
-  form: { tag: 'form', option },
-  label: { tag: 'label', option },
-  input: { tag: 'input', option },
-  textarea: { tag: 'textarea', option },
-  radio: { tag: 'input', option },
-  radiogroup: { tag: 'div', option },
-  select: { tag: 'select', option },
-  option: { tag: 'option', option },
-  checkbox: { tag: 'input', option },
-  checkboxgroup: { tag: 'div', option },
-  file: { tag: 'input', option },
-  button: {
-    tag: 'button',
-    option: {
-      ...option,
-      type: 'submit',
-      label: 'Submit'
-    }
-  },
-  jsondoc: { tag: 'tms-json-doc', option }
-}
 /**
  * 表单中的节点
  */

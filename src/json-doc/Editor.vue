@@ -1,7 +1,7 @@
 <script>
-import { loadFields } from './parser'
+import { Parser } from './parser'
 import { initChild, getChild, deepClone } from './utils'
-import { components } from './node'
+import { components } from './nodes'
 import CreateEditor from './creator'
 
 /**
@@ -55,7 +55,7 @@ export default {
   },
   created() {
     this.editDoc = this.oneWay === false ? this.value : deepClone(this.value)
-    loadFields(this, deepClone(this.schema))
+    Parser.parse(this, deepClone(this.schema))
     this.default = deepClone(this.editDoc)
   },
   render(createElement) {

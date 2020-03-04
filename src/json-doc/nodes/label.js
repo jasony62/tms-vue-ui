@@ -1,4 +1,4 @@
-import { Node, components } from './node'
+import { Node, components } from './index'
 /**
  *
  */

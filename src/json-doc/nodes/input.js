@@ -1,4 +1,4 @@
-import { initChild, getChild } from './utils'
+import { initChild, getChild } from '../utils'
 import { FieldNode } from './field-node'
 
 export class Input extends FieldNode {

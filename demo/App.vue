@@ -38,7 +38,8 @@ Vue.use(Frame).use(Flex)
  * 初始化全局组件TmsArrayInput
  */
 import { Button, InputNumber } from 'element-ui'
-import { ArrayInput } from '@/lib'
+//import { ArrayInput } from '@/lib'
+import { ArrayInput } from '../src'
 
 Vue.use(Button).use(InputNumber)
 

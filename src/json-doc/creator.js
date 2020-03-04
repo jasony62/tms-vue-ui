@@ -1,27 +1,5 @@
 import { setVal, getChild } from './utils'
-import { Node, components } from './node'
-import { Input } from './input'
-import { Textarea } from './textarea'
-import { Select } from './select'
-import { Checkboxgroup } from './checkboxgroup'
-import { ArrayNode } from './array'
-import { FormNode } from './form'
-import { LabelNode } from './label'
-
-function prepareFieldNode(vm, createElement, field) {
-  switch (field.type) {
-    case 'textarea':
-      return new Textarea(vm, createElement, field)
-    case 'select':
-      return new Select(vm, createElement, field)
-    case 'checkboxgroup':
-      return new Checkboxgroup(vm, createElement, field)
-    case 'array':
-      return new ArrayNode(vm, createElement, field)
-    default:
-      return new Input(vm, createElement, field)
-  }
-}
+import { Node, prepareFieldNode, components, FormNode, LabelNode } from './nodes'
 
 /**
  * 创建编辑器

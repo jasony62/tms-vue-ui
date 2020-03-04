@@ -8,7 +8,38 @@
 
 `items`是`{value,label}`的数组
 
-schema->field->input->form
+schema->field->vnode->form
+
+# parse 阶段
+
+schema->field
+
+## field.name
+
+## field.type
+
+schema.type 有 6 种有效的 type，需要设置成对应的 field.type
+
+`parser`将 schema 转换成输入控件，对应关系如下：
+
+| schema  | 属性         | field    | 初始值                  |
+| ------- | ------------ | -------- | ----------------------- |
+| boolean | -            | checkbox | schema.checked 或 false |
+| integer |              | number   |                         |
+| number  |              |          | number                  |
+| string  |              | text     |                         |
+| string  | format=email | email    |                         |
+| string  | format=url   | email    |                         |
+| string  | format=regex | text     |                         |
+| enum    |              | select   |                         |
+| oneOf   |              | radio    |                         |
+| anyOf   |              | checkbox |                         |
+
+## field.value
+
+初始化 model 的值
+
+`schema.defalut`或者`schema.attrs.value`
 
 替换默认组件
 
@@ -82,21 +113,6 @@ return createElement('div', nodes)
   </form>
 </div>
 ```
-
-`parser`将 schema 转换成输入控件，对应关系如下：
-
-| schema  | 属性         | field    | 初始值                  |
-| ------- | ------------ | -------- | ----------------------- |
-| boolean | -            | checkbox | schema.checked 或 false |
-| integer |              | number   |                         |
-| number  |              |          | number                  |
-| string  |              | text     |                         |
-| string  | format=email | email    |                         |
-| string  | format=url   | email    |                         |
-| string  | format=regex | text     |                         |
-| enum    |              | select   |                         |
-| oneOf   |              | radio    |                         |
-| anyOf   |              | checkbox |                         |
 
 sub 是个奇怪的东西！
 

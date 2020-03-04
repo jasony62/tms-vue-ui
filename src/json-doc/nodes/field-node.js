@@ -1,5 +1,5 @@
-import { getChild } from './utils'
-import { Node, components } from './node'
+import { getChild } from '../utils'
+import { components, Node } from './index'
 
 const option = { native: true }
 const defaultInput = { tag: 'input', option }
