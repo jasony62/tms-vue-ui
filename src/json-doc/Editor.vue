@@ -46,24 +46,24 @@ export default {
     oneWay: { type: Boolean, default: () => true }
   },
   data() {
+    const editDoc = this.oneWay === false ? this.value : deepClone(this.value)
+    const fields = Parser.parse(this, editDoc, deepClone(this.schema))
+    const defaultDoc = deepClone(editDoc)
     return {
-      fields: {},
-      default: {},
-      editDoc: {},
+      fields,
+      defaultDoc,
+      editDoc,
       error: null
     }
   },
-  created() {
-    this.editDoc = this.oneWay === false ? this.value : deepClone(this.value)
-    Parser.parse(this, deepClone(this.schema))
-    this.default = deepClone(this.editDoc)
-  },
   render(createElement) {
+    console.log('Editor.render', this._uid)
     const nodes = CreateEditor(this, createElement)
     return createElement('div', nodes)
   },
   mounted() {
-    this.reset()
+    // ??? 为什么
+    //this.reset()
   },
   setComponent(type, tag, option = {}) {
     components[type] = { tag, option }
@@ -108,7 +108,7 @@ export default {
         const ns = key.split('.')
         const n = ns.pop()
         const ret = ns.length > 0 ? initChild(editDoc, ns) : editDoc
-        const value = getChild(this.default, key.split('.'))
+        const value = getChild(this.defaultDoc, key.split('.'))
         this.$set(ret, n, value)
       }
     },

@@ -2,7 +2,7 @@ import { Field, ARRAY_KEYWORDS } from './field'
 import { FieldBoolean } from './boolean'
 import { FieldText } from './text'
 import { FieldArray } from './array'
-import { FieldFreeArray } from './free-array'
+import { FieldObject } from './object'
 
 function createField(schema, schemaName, refs) {
   let newField
@@ -14,9 +14,11 @@ function createField(schema, schemaName, refs) {
     case 'array':
       newField = ARRAY_KEYWORDS.some(kw => schema.hasOwnProperty(kw))
         ? new FieldArray(schema, schemaName)
-        : new FieldFreeArray(schema, schemaName, refs)
+        : new FieldObject(schema, schemaName, refs)
       break
-
+    case 'object':
+      newField = new FieldObject(schema, schemaName, refs)
+      break
     case 'integer':
     case 'number':
     case 'string':
@@ -38,4 +40,4 @@ function createField(schema, schemaName, refs) {
   return newField
 }
 
-export { createField, Field, ARRAY_KEYWORDS, FieldBoolean, FieldText, FieldArray, FieldFreeArray }
+export { createField, Field, ARRAY_KEYWORDS, FieldBoolean, FieldText, FieldArray, FieldObject }

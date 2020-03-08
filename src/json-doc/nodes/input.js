@@ -11,7 +11,8 @@ export class Input extends FieldNode {
     const ns = fieldName.split('.')
     const n = ns.pop()
     const formModel = ns.length > 0 ? initChild(this.vm.editDoc, ns) : this.vm.editDoc
-    this.vm.$set(formModel, n, newValue)
+    //this.vm.$set(formModel, n, newValue)
+    formModel[n] = newValue
   }
   /**
    *

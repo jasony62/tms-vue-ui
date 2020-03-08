@@ -12,7 +12,7 @@
           <router-link to="/">首页</router-link>
           <router-link to="/layout">布局组件</router-link>
           <router-link to="/login">登录框</router-link>
-          <router-link to="/array-input">数组输入框</router-link>
+          <router-link to="/object-input">对象输入框</router-link>
           <router-link to="/json-schema">JSON定义</router-link>
           <router-link to="/json-doc">JSON文档</router-link>
         </tms-flex>
@@ -35,37 +35,38 @@ import '@/lib/flex/style'
 
 Vue.use(Frame).use(Flex)
 /**
- * 初始化全局组件TmsArrayInput
+ * 初始化全局组件TmsObjectInput
  */
-import { Button, InputNumber } from 'element-ui'
-//import { ArrayInput } from '@/lib'
-import { ArrayInput } from '../src'
+import { Button, Input } from 'element-ui'
+//import { ObjectInput } from '@/lib'
+import { ObjectInput } from '../src'
 
-Vue.use(Button).use(InputNumber)
+Vue.use(Button).use(Input)
 
-ArrayInput.setComponent('layout.root', 'tms-flex', {
+ObjectInput.setComponent('layout.root', 'tms-flex', {
   props: { direction: 'column' }
 })
-ArrayInput.setComponent('layout.lines', 'tms-flex', {
+ObjectInput.setComponent('layout.lines', 'tms-flex', {
   props: { direction: 'column' }
 })
-ArrayInput.setComponent('layout.line', 'tms-flex')
-ArrayInput.setComponent('button.add', 'el-button', {
+ObjectInput.setComponent('layout.line', 'tms-flex')
+ObjectInput.setComponent('layout.line-key', 'el-input')
+ObjectInput.setComponent('button.add', 'el-button', {
   props: { type: 'primary' }
 })
-ArrayInput.setComponent('button.empty', 'el-button', {
+ObjectInput.setComponent('button.empty', 'el-button', {
   props: { type: 'danger' }
 })
-ArrayInput.setComponent('button.remove', 'el-button', {
+ObjectInput.setComponent('button.remove', 'el-button', {
   props: { size: 'mini', icon: 'el-icon-minus' }
 })
-ArrayInput.setComponent('button.moveup', 'el-button', {
+ObjectInput.setComponent('button.moveup', 'el-button', {
   props: { size: 'mini', icon: 'el-icon-caret-top' }
 })
-ArrayInput.setComponent('button.movedown', 'el-button', {
+ObjectInput.setComponent('button.movedown', 'el-button', {
   props: { size: 'mini', icon: 'el-icon-caret-bottom' }
 })
-Vue.use(ArrayInput)
+Vue.use(ObjectInput)
 
 export default {
   name: 'app'

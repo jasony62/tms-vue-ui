@@ -1,9 +1,8 @@
 import { Field } from './field'
 
-export class FieldFreeArray extends Field {
+export class FieldObject extends Field {
   constructor(schema, schemaName, refs) {
     super(schema, schemaName)
-
     this.multiple = schema.minItems > 1
     this.type = schema.type
     if (schema.items.$ref) {
@@ -13,6 +12,7 @@ export class FieldFreeArray extends Field {
     } else {
       this.itemSchema = schema.items
     }
-    this.value = Array.isArray(this.value) ? this.value : []
+    if (schema.type === 'array') this.value = Array.isArray(this.value) ? this.value : []
+    else if (schema.type === 'object') this.value = typeof this.value === 'object' ? this.value : {}
   }
 }

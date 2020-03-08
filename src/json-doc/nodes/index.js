@@ -4,7 +4,7 @@ import { Input } from './input'
 import { Select } from './select'
 import { Textarea } from './textarea'
 import { Checkboxgroup } from './checkboxgroup'
-import { ArrayNode } from './array'
+import { ObjectNode } from './object'
 import { LabelNode } from './label'
 import { FormNode } from './form'
 
@@ -47,7 +47,8 @@ function prepareFieldNode(vm, createElement, field) {
     case 'checkboxgroup':
       return new Checkboxgroup(vm, createElement, field)
     case 'array':
-      return new ArrayNode(vm, createElement, field)
+    case 'object':
+      return new ObjectNode(vm, createElement, field)
     default:
       return new Input(vm, createElement, field)
   }
@@ -62,7 +63,7 @@ export {
   Select,
   Textarea,
   Checkboxgroup,
-  ArrayNode,
+  ObjectNode,
   LabelNode,
   FormNode
 }

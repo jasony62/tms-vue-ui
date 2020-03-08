@@ -107,7 +107,7 @@ return createElement('div', nodes)
       </label>
       <textarea></textarea>
       <select></select>
-      <tms-array-input></tms-array-input>
+      <tms-object-input></tms-object-input>
     </div>
     <buttons></buttons>
   </form>

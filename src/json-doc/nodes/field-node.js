@@ -55,8 +55,8 @@ export class FieldNode extends Node {
 
     if (!Array.isArray(children)) children = this.children()
 
-    const inputElement = createElement(this.rawArgs.tag, nodeOptions, children)
+    const eleInput = createElement(this.rawArgs.tag, nodeOptions, children)
 
-    return inputElement
+    return eleInput
   }
 }

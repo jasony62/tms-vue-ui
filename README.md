@@ -352,18 +352,18 @@ import { CompOnline } from 'tms-vue-ui'
 | props      | 在线组件的接收的属性（和 Vue 组件中的 props 对应）。   | Object  | -      |
 | events     | 在线组件事件名称的数组，这些事件会通过`emit`向外抛出。 | Array   | -      |
 
-## 数组输入（array-input）
+## 对象输入（object-input）
 
-输入一组数据。
+编辑一个对象或数组。
 
 ```js
-import { ArrayInput } from 'tms-vue-ui'
+import { ObjectInput } from 'tms-vue-ui'
 ```
 
 ```html
 <template>
-  <div class="array-input">
-    <tms-array-input :lines="array" @add="add">
+  <div class="object-input">
+    <tms-object-input :value="array" @add="add">
       <template v-slot:default="lineProps">
         <el-input-number size="mini" v-model="lineProps.line.number"></el-input-number>
       </template>
@@ -372,7 +372,7 @@ import { ArrayInput } from 'tms-vue-ui'
       <template v-slot:remove></template>
       <template v-slot:moveup></template>
       <template v-slot:movedown></template>
-    </tms-array-input>
+    </tms-object-input>
   </div>
 </template>
 ```
@@ -381,9 +381,9 @@ import { ArrayInput } from 'tms-vue-ui'
 
 通过组件调用时，支持以下 Props：
 
-| 属性  | 说明                 | 类型  | 默认值 |
-| ----- | -------------------- | ----- | ------ |
-| lines | 需要处理的数组数据。 | Array | -      |
+| 属性  | 说明                       | 类型         | 默认值 |
+| ----- | -------------------------- | ------------ | ------ |
+| value | 需要处理的对象或数组数据。 | Object/Array | -      |
 
 ### 事件
 
@@ -407,8 +407,8 @@ import { ArrayInput } from 'tms-vue-ui'
 ### 替换组件
 
 ```js
-AarryInput.setComponent('layout.root', 'tms-flex', options)
-AarryInput.setComponent('button.add', 'el-button', options)
+ObjectInput.setComponent('layout.root', 'tms-flex', options)
+ObjectInput.setComponent('button.add', 'el-button', options)
 ```
 
 | 名称                | 说明                   | 默认值 |

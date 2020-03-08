@@ -1,10 +1,12 @@
 import { createField } from './fields'
 
-import { initChild, getChild } from './utils'
+import { initChild, getChild, setVal } from './utils'
 
 export class Parser {
-  constructor(vm, schema) {
+  constructor(vm, editDoc, schema) {
+    this.fields = {}
     this.vm = vm
+    this.editDoc = editDoc
     this.rootSchema = schema
     this.schemaRefs = {}
   }
@@ -14,24 +16,25 @@ export class Parser {
    * @param {Field} field
    */
   setModelValue(field) {
-    const { editDoc } = this.vm
+    const { editDoc } = this
     const ns = field.name.split('.')
     const vmValue = getChild(editDoc, ns)
     if (!vmValue) {
       const n = ns.pop()
       const ret = ns.length > 0 ? initChild(editDoc, ns) : editDoc
       this.vm.$set(ret, n, field.value)
+      //setVal(ret, n, field.value)
     }
   }
 
-  parse(schema = this.rootSchema, fields = this.vm.fields, sub) {
+  parse(schema = this.rootSchema, fields = this.fields, sub) {
     if (!schema || schema.visible === false) return
     const schemaName = sub ? sub.join('.') : schema.name
     if (schema.type !== 'object' && !schemaName) return
 
     if (schema.$id) this.schemaRefs[schema.$id] = schema
 
-    if (schema.type === 'object') {
+    if (schema.type === 'object' && !schema.items) {
       for (const key in schema.properties) {
         schema.properties[key].name = key
 
@@ -61,8 +64,9 @@ export class Parser {
     fields[schemaName] = newField
   }
 
-  static parse(vm, schema) {
-    const parser = new Parser(vm, schema)
+  static parse(vm, editDoc, schema) {
+    const parser = new Parser(vm, editDoc, schema)
     parser.parse()
+    return parser.fields
   }
 }

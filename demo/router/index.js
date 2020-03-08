@@ -5,7 +5,7 @@ import LayoutUi from '../views/LayoutUi.vue'
 import LoginUi from '../views/LoginUi.vue'
 import JsonSchemaUi from '../views/JsonSchemaUi.vue'
 import JsonDocUi from '../views/JsonDocUi.vue'
-import ArrayInputUi from '../views/ArrayInputUi.vue'
+import ObjectInputUi from '../views/ObjectInputUi.vue'
 
 Vue.use(VueRouter)
 
@@ -26,9 +26,9 @@ const routes = [
     component: LoginUi
   },
   {
-    path: '/array-input',
-    name: 'array-input',
-    component: ArrayInputUi
+    path: '/object-input',
+    name: 'object-input',
+    component: ObjectInputUi
   },
   {
     path: '/json-schema',

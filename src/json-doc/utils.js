@@ -31,29 +31,30 @@ export function getChild(data, ns) {
 }
 
 export function initChild(data, ns) {
-  if (ns.length === 1) {
-    const ret = getExtendibleLeaf(data, ns[0], true)
-    if (ret === undefined) {
-      throw new TypeError('fail to init because namespace ' + ns[0] + ' = ' + data[ns[0]])
-    }
-    return ret
-  }
-  let parent = data
-  let obj = data[ns[0]]
-  if (obj === undefined) obj = data[ns[0]] = {}
-  for (let i = 1; i < ns.length; i++) {
-    const n = ns[i]
-    const ret = getExtendibleLeaf(obj, n, true)
-    if (ret === undefined) {
-      throw new TypeError('fail to init because namespace ' + ns.join('.') + ' = ' + obj + '(' + typeof obj + ')')
-    }
-    parent = obj
-    obj = ret
-    if (parent[n] === undefined) {
-      throw new TypeError('fail to init because namespace ' + ns.slice(0, i).join('.') + ' = ' + parent)
-    }
-  }
-  return obj
+  return data
+  // if (ns.length === 1) {
+  //   const ret = getExtendibleLeaf(data, ns[0], true)
+  //   if (ret === undefined) {
+  //     throw new TypeError('fail to init because namespace ' + ns[0] + ' = ' + data[ns[0]])
+  //   }
+  //   return ret
+  // }
+  // let parent = data
+  // let obj = data[ns[0]]
+  // if (obj === undefined) obj = data[ns[0]] = {}
+  // for (let i = 1; i < ns.length; i++) {
+  //   const n = ns[i]
+  //   const ret = getExtendibleLeaf(obj, n, true)
+  //   if (ret === undefined) {
+  //     throw new TypeError('fail to init because namespace ' + ns.join('.') + ' = ' + obj + '(' + typeof obj + ')')
+  //   }
+  //   parent = obj
+  //   obj = ret
+  //   if (parent[n] === undefined) {
+  //     throw new TypeError('fail to init because namespace ' + ns.slice(0, i).join('.') + ' = ' + parent)
+  //   }
+  // }
+  // return obj
 }
 
 export function setVal(data, n, v) {

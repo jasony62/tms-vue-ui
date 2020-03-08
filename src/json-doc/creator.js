@@ -1,13 +1,18 @@
 import { setVal, getChild } from './utils'
 import { Node, prepareFieldNode, components, FormNode, LabelNode } from './nodes'
-
+let _uid = 0
 /**
- * 创建编辑器
+ * 创建编辑器（一套schema的节点应该只创建一次，否则会多次render）
  */
 class Creator {
   constructor(vm, createElement) {
+    this._uid = ++_uid
     this.vm = vm
     this.createElement = createElement
+    // 表单节点
+    this.formNode = {
+      root: {}
+    }
   }
   createLabelAndDesc(field, inputElement) {
     const { vm, createElement } = this
@@ -185,14 +190,12 @@ class Creator {
       const errorNode = new Node(vm, createElement, components.error)
       nodesTopLevel.push(errorNode.createElem(errorNodes))
     }
-    // 表单节点
-    const formNode = {
-      root: {} // 根表单
-    }
 
-    this.createNodesByForm(formNode, vm.fields)
+    //if (Object.keys(this.formNode.root).length === 0) {
+    this.createNodesByForm(this.formNode, vm.fields)
+    //}
 
-    const formNodes = this.arrangeAllNode(formNode, vm.fields)
+    const formNodes = this.arrangeAllNode(this.formNode, vm.fields)
 
     const allFormNodes = [] //form内的所有节点，包括按钮
     allFormNodes.push(formNodes)
@@ -218,8 +221,11 @@ let mapCreators = new Map()
  * @param {*} createElement
  */
 export default function(vm, createElement) {
-  let creator = mapCreators.has(vm)
-  if (!creator) creator = new Creator(vm, createElement)
+  let creator = mapCreators.get(vm)
+  if (!creator) {
+    creator = new Creator(vm, createElement)
+    mapCreators.set(vm, creator)
+  }
 
   return creator.render()
 }

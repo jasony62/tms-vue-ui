@@ -6,11 +6,12 @@
 
 <script>
 import Vue from 'vue'
-//import { ArrayInput, JsonDoc, ElJsonDoc } from '@/lib'
-import { ArrayInput, JsonDoc, ElJsonDoc } from '../../src'
+//import { ObjectInput, JsonDoc, ElJsonDoc } from '@/lib'
+import { ObjectInput, JsonDoc, ElJsonDoc } from '../../src'
 
-Vue.component('tms-array-input', ArrayInput)
-JsonDoc.setComponent('array', 'tms-array-input')
+Vue.component('tms-object-input', ObjectInput)
+JsonDoc.setComponent('array', 'tms-object-input')
+JsonDoc.setComponent('object', 'tms-object-input')
 
 Vue.component('tms-el-json-doc', ElJsonDoc)
 export default {
@@ -108,6 +109,19 @@ export default {
               }
             }
           },
+          objarr: {
+            type: 'object',
+            title: '对象',
+            items: {
+              type: 'object',
+              properties: {
+                text: {
+                  type: 'string',
+                  default: ''
+                }
+              }
+            }
+          },
           rate: {
             type: 'number',
             title: '打分',
@@ -134,7 +148,7 @@ export default {
           }
         }
       },
-      model: { message: '你好' }
+      model: { message: '你好', textarea: '', array: [], inheritance: [] }
     }
   },
   methods: {
