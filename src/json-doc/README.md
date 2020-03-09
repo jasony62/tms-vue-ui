@@ -14,6 +14,9 @@ schema->field->vnode->form
 
 schema->field
 
+field 是嵌套的关系
+sub 节点
+
 ## field.name
 
 ## field.type

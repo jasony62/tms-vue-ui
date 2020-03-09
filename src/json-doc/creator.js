@@ -9,10 +9,6 @@ class Creator {
     this._uid = ++_uid
     this.vm = vm
     this.createElement = createElement
-    // 表单节点
-    this.formNode = {
-      root: {}
-    }
   }
   createLabelAndDesc(field, inputElement) {
     const { vm, createElement } = this
@@ -147,7 +143,10 @@ class Creator {
         )
       } else if (subName) {
         // 子表单下的node
-        nodes.push(getChild(formNode, subName.split('.'))[key])
+        const subForm = getChild(formNode, subName.split('.'))
+        if (subForm && subForm[key]) {
+          nodes.push(subForm[key])
+        }
       } else {
         // 根表单下的node
         nodes.push(formNode.root[key])
@@ -190,12 +189,12 @@ class Creator {
       const errorNode = new Node(vm, createElement, components.error)
       nodesTopLevel.push(errorNode.createElem(errorNodes))
     }
+    const formNode = {
+      root: {}
+    }
+    this.createNodesByForm(formNode, vm.fields)
 
-    //if (Object.keys(this.formNode.root).length === 0) {
-    this.createNodesByForm(this.formNode, vm.fields)
-    //}
-
-    const formNodes = this.arrangeAllNode(this.formNode, vm.fields)
+    const formNodes = this.arrangeAllNode(formNode, vm.fields)
 
     const allFormNodes = [] //form内的所有节点，包括按钮
     allFormNodes.push(formNodes)
