@@ -1,6 +1,6 @@
 import { createField, FieldNest } from './fields'
 
-import { initChild, getChild, setVal } from './utils'
+import { initChild, getChild } from './utils'
 
 export class Parser {
   constructor(vm, editDoc, schema) {

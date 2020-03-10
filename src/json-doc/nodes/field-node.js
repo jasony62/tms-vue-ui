@@ -1,6 +1,6 @@
 import { getChild } from '../utils'
 import { components, Node } from './index'
-
+import Comp from '../../object-input'
 const option = { native: true }
 const defaultInput = { tag: 'input', option }
 const defaultGroup = { tag: 'div', option }
@@ -55,7 +55,10 @@ export class FieldNode extends Node {
 
     if (!Array.isArray(children)) children = this.children()
 
-    const eleInput = createElement(this.rawArgs.tag, nodeOptions, children)
+    const args = [this.rawArgs.tag, nodeOptions]
+    children.length && args.push(children)
+
+    const eleInput = createElement.apply(this, args)
 
     return eleInput
   }

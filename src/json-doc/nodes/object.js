@@ -2,30 +2,31 @@ import { deepClone } from '../utils'
 import { components } from './index'
 import { FieldNode } from './field-node'
 
+// 使用插槽会导致render，所以将插槽的render作为属性值传递
+function createSlotRender(field) {
+  return function slotRender(createElement, props) {
+    if (!field.itemSchema || typeof field.itemSchema !== 'object') {
+      return createElement('div', [`[JsonDoc:ObjectNode]: 没有指定渲染对象的schema`])
+    }
+    const itemSchema = deepClone(field.itemSchema)
+    return createElement(components.jsondoc.tag, {
+      props: {
+        schema: itemSchema,
+        doc: props.line,
+        requireButtons: false,
+        oneWay: false
+      }
+    })
+  }
+}
+
 export class ObjectNode extends FieldNode {
   options() {
     const fieldValue = this.fieldValue()
-    const { createElement, field } = this
+    const { field } = this
     const { schema } = field
     const options = {
-      props: { value: fieldValue }
-    }
-    options.scopedSlots = {
-      default: props => {
-        const itemSchema = deepClone(field.itemSchema)
-        if (schema.type === 'array') {
-          const index = fieldValue.indexOf(props.line)
-          itemSchema.name = `[${index}]`
-        }
-        return createElement(components.jsondoc.tag, {
-          props: {
-            schema: itemSchema,
-            doc: props.line,
-            requireButtons: false,
-            oneWay: false
-          }
-        })
-      }
+      props: { value: fieldValue, slotRender: createSlotRender(field) }
     }
     options.on = {
       add: cbAdd => {

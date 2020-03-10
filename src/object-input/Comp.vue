@@ -135,6 +135,8 @@ function createLine(createElement, line, index, key) {
     [
       this.$scopedSlots.hasOwnProperty('default')
         ? this.$scopedSlots.default({ line })
+        : typeof this.slotRender === 'function'
+        ? this.slotRender(createElement, { line })
         : line
     ]
   )
@@ -190,29 +192,28 @@ export default {
     }
   },
   props: {
-    value: [Array, Object]
-  },
-  computed: {
-    isInputObject: function() {
-      return Array.isArray(this.value) === false
-    }
+    value: { type: [Array, Object], required: true },
+    slotRender: [Function]
   },
   data() {
-    const lines = new Objarr(this.value, {
-      defineProperty: (target, property, value) => {
-        this.$set(target, property, value)
-      },
-      deleteProperty: (target, property) => {
-        this.$delete(target, property)
-      }
-    })
+    const lines =
+      typeof this.value === 'object'
+        ? new Objarr(this.value, {
+            defineProperty: (target, property, value) => {
+              this.$set(target, property, value)
+            },
+            deleteProperty: (target, property) => {
+              this.$delete(target, property)
+            }
+          })
+        : null
+
+    const isInputObject = Array.isArray(this.value) === false
 
     return {
-      lines
+      lines,
+      isInputObject
     }
-  },
-  created() {
-    console.log('ObjectInput.created', this._uid)
   },
   methods: {
     emitAdd() {
@@ -240,6 +241,11 @@ export default {
   },
   render(createElement) {
     console.log('ObjectInput.render', this._uid)
+    if (!this.lines) {
+      return createElement('div', [
+        `[ObjectInput-${this._uid}]: 传入的的属性（value）为空`
+      ])
+    }
     const nodes = []
     let { layout } = components
     let linesNode = createElement(
