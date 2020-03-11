@@ -121,7 +121,7 @@ export default {
                 }
               }
             }
-          }
+          },
           rate: {
             type: 'number',
             title: '打分',

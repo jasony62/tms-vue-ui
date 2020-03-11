@@ -35,7 +35,7 @@ export default {
     /**
      * Define the inputs wrapping class. Leave `undefined` to disable input wrapping.
      */
-    inputWrappingClass: { type: String },
+    fieldWrapClass: { type: String },
     /**
      * 是否需要显示表单按钮
      */

@@ -1,4 +1,3 @@
-import { setVal, getChild } from './utils'
 import { Node, prepareFieldNode, components, FormNode, LabelNode } from './nodes'
 let _uid = 0
 /**
@@ -10,9 +9,8 @@ class Creator {
     this.vm = vm
     this.createElement = createElement
   }
-  createLabelAndDesc(field, inputElement) {
+  createLabelAndDesc(field, fieldNode) {
     const { vm, createElement } = this
-    const formControlsNodes = []
     if (field.label) {
       const labelNode = new LabelNode(vm, createElement, field)
       const labelNodes = []
@@ -29,76 +27,82 @@ class Creator {
           )
         )
       }
-      labelNodes.push(inputElement)
+      labelNodes.push(fieldNode)
       if (field.description) {
         labelNodes.push(createElement('br'))
         labelNodes.push(createElement('small', field.description))
       }
-      formControlsNodes.push(labelNode.createElem(labelNodes))
+      return labelNode.createElem(labelNodes)
     } else {
-      formControlsNodes.push(inputElement)
+      const descNodes = []
+      descNodes.push(fieldNode)
       if (field.description) {
-        formControlsNodes.push(createElement('br'))
-        formControlsNodes.push(createElement('small', field.description))
+        descNodes.push(createElement('br'))
+        descNodes.push(createElement('small', field.description))
       }
+      return createElement('div', descNodes)
     }
-    return formControlsNodes
   }
 
-  createWrappingClass(formNodes, formControlsNodes) {
+  createWrapClass(labelAndDescNodes) {
     const { createElement } = this
-    if (this.inputWrappingClass) {
-      formNodes.push(
-        createElement(
-          'div',
-          {
-            class: this.inputWrappingClass
-          },
-          formControlsNodes
-        )
+    if (this.fieldWrapClass) {
+      return createElement(
+        'div',
+        {
+          class: this.fieldWrapClass
+        },
+        labelAndDescNodes
       )
-    } else {
-      formControlsNodes.forEach(node => formNodes.push(node))
     }
+    return labelAndDescNodes
   }
-
-  createNodeByField(fields, key) {
+  /**
+   * 创建字段的包裹节点，包括：包裹节点，label节点，description节点和字段节点
+   *
+   * @param {object} field
+   */
+  createFieldWrapNode(field) {
     const { vm, createElement } = this
-    const field = fields[key]
-    const formNodes = [] // 当前form中的节点
 
     const node = prepareFieldNode(vm, createElement, field)
-    const inputNode = node.createElem()
+    const fieldNode = node.createElem()
 
-    const formControlsNodes = this.createLabelAndDesc(field, inputNode)
+    const labelAndDesc = this.createLabelAndDesc(field, fieldNode)
 
-    this.createWrappingClass(formNodes, formControlsNodes)
-
-    return formNodes[0]
+    return this.createWrapClass(labelAndDesc)
   }
-
+  getNestFieldNodes(fieldNodes, nestPath) {
+    if (!nestPath) return fieldNodes.root
+    const sNestPath = nestPath.join('.')
+    if (!fieldNodes[sNestPath]) fieldNodes[sNestPath] = {}
+    return fieldNodes[sNestPath]
+  }
   /**
-   * 按表单创建组件
+   * 按嵌套关系，创建每个嵌套下的字段节点
+   * 执行的结果保留在fieldNodes中，根表单放在root中，其他子表单放在自表单名命名（name）的对象中
    *
-   * 执行的结果保留在formNode中，根表单放在root中，其他子表单放在自表单名命名（name）的对象中
+   * @param {object} fieldNodes 保存表单中的节点，嵌套节点和字段节点的对应关系
+   * @param {objectt} fields 当前嵌套节点下的字段
+   * @param {array} nestPath 当前嵌套节点的路径
    */
-  createNodesByForm(formNode, fields, sub) {
+  createFieldNodes(fieldNodes, fields, nestPath) {
     if (Object.keys(fields).length === 0) return
 
-    // 引用formNode中的表单（root或嵌套表单），记录当前表单包含的节点
-    let singleFormNodes = sub ? setVal(formNode, sub.pop(), {}) : formNode.root
+    // 引用fieldNodes中的嵌套节点（root或嵌套节点），记录当前嵌套节点包含的节点
+    let nestFieldNodes = this.getNestFieldNodes(fieldNodes, nestPath)
 
     Object.keys(fields).forEach(key => {
       if (key.indexOf('$') === 0) return
 
       const field = fields[key]
 
-      // 创建嵌套form中的节点
+      // 创建嵌套节点中的字段节点
       if (field.$sub) {
-        return this.createNodesByForm(formNode, field, sub ? [...sub, key] : [key])
+        return this.createFieldNodes(fieldNodes, field, nestPath ? [...nestPath, key] : [key])
       }
-      // 创建节点
-      singleFormNodes[key] = this.createNodeByField(fields, key, sub, formNode)
+      // 创建本嵌套内的字段节点
+      nestFieldNodes[key] = this.createFieldWrapNode(field)
     })
   }
   /**
@@ -108,52 +112,54 @@ class Creator {
    * 如果存在子表单，将它用<div class="sub"></div>包裹起来
    *
    */
-  arrangeAllNode(formNode, fields, sub) {
+  createNestNodes(fieldNodes, nestField, nestPath) {
     const { createElement } = this
-    const nodes = []
-    const subName = sub && sub.pop()
-    if (fields.$title) {
-      nodes.push(
+    const nestNode = []
+    if (nestField.$title) {
+      nestNode.push(
         createElement(
           'div',
           {
-            class: 'sub-title'
+            class: 'nest-title'
           },
-          fields.$title
+          nestField.$title
         )
       )
     }
-    Object.keys(fields).forEach(key => {
+    /**
+     * 嵌套节点下的字段节点
+     */
+    Object.keys(nestField).forEach(key => {
       if (key.indexOf('$') === 0) return
 
-      const field = fields[key]
+      const subField = nestField[key]
 
-      if (field.$sub) {
-        // 子表单节点
-        const subFormNodes = this.arrangeAllNode(formNode, field, sub ? [...sub, key] : [key])
-        // 将子表单包裹起来
-        nodes.push(
+      if (subField.$sub) {
+        // 嵌套节点下的字段节点
+        const nestFieldNodes = this.createNestNodes(fieldNodes, subField, nestPath ? [...nestPath, key] : [key])
+        // 将嵌套节点包裹起来
+        nestNode.push(
           createElement(
             'div',
             {
-              class: 'sub'
+              class: 'nest'
             },
-            subFormNodes
+            nestFieldNodes
           )
         )
-      } else if (subName) {
-        // 子表单下的node
-        const subForm = getChild(formNode, subName.split('.'))
-        if (subForm && subForm[key]) {
-          nodes.push(subForm[key])
+      } else if (nestPath) {
+        // 嵌套节点下的字段节点
+        const subFieldNodes = this.getNestFieldNodes(fieldNodes, nestPath)
+        if (subFieldNodes && subFieldNodes[key]) {
+          nestNode.push(subFieldNodes[key])
         }
       } else {
         // 根表单下的node
-        nodes.push(formNode.root[key])
+        nestNode.push(fieldNodes.root[key])
       }
     })
 
-    return nodes
+    return nestNode
   }
   createFormButtons(allFormNodes) {
     const { vm, createElement } = this
@@ -170,43 +176,52 @@ class Creator {
       allFormNodes.push(labelNode.createElem([buttonNode.createElem()]))
     }
   }
+  createForm() {
+    const { vm, createElement } = this
+    const fieldNodes = {
+      root: {}
+    }
+    // 创建单独的字段节点保留在fieldNodes中
+    this.createFieldNodes(fieldNodes, vm.fields)
+
+    const nestNodes = this.createNestNodes(fieldNodes, vm.fields)
+
+    const formSubNode = [] //form内的所有节点，包括按钮
+    formSubNode.push(nestNodes)
+
+    if (vm.requireButtons) {
+      this.createFormButtons(formSubNode)
+    }
+
+    const formNode = new FormNode(vm, createElement)
+
+    return formNode.createElem(formSubNode)
+  }
   render() {
     const { vm, createElement } = this
     const { schema } = vm
 
-    const nodesTopLevel = [] // 和form并列的节点
+    const topNodes = []
     if (schema.title) {
-      nodesTopLevel.push(createElement(components.title.tag, schema.title))
+      topNodes.push(createElement(components.title.tag, schema.title))
     }
+
     if (schema.description) {
-      nodesTopLevel.push(createElement(components.description.tag, schema.description))
+      topNodes.push(createElement(components.description.tag, schema.description))
     }
+
     if (vm.error) {
       const errorNodes = []
       if (components.error.option.native) {
         errorNodes.push(vm.error)
       }
       const errorNode = new Node(vm, createElement, components.error)
-      nodesTopLevel.push(errorNode.createElem(errorNodes))
-    }
-    const formNode = {
-      root: {}
-    }
-    this.createNodesByForm(formNode, vm.fields)
-
-    const formNodes = this.arrangeAllNode(formNode, vm.fields)
-
-    const allFormNodes = [] //form内的所有节点，包括按钮
-    allFormNodes.push(formNodes)
-
-    if (vm.requireButtons) {
-      this.createFormButtons(allFormNodes)
+      topNodes.push(errorNode.createElem(errorNodes))
     }
 
-    const formNode2 = new FormNode(vm, createElement)
-    nodesTopLevel.push(formNode2.createElem(allFormNodes))
+    topNodes.push(this.createForm())
 
-    return nodesTopLevel
+    return topNodes
   }
 }
 

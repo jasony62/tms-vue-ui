@@ -255,13 +255,13 @@ import { JsonSchema } from 'tms-vue-ui'
 
 通过组件调用时，支持以下 Props：
 
-| 参数               | 说明                             | 类型    | 默认值 |
-| ------------------ | -------------------------------- | ------- | ------ |
-| schema             | JSONSchema 定义                  | Object  | -      |
-| value              | 要编辑的 json 文档对象           | Object  | -      |
-| inputWrappingClass | 输入控件的包括类                 | String  | -      |
-| requireButtons     | 是否显示表单操作按钮，例如：提交 | Boolean | true   |
-| oneWay             | 传入数据是单向的，不会被修改     | Boolean | true   |
+| 参数           | 说明                             | 类型    | 默认值 |
+| -------------- | -------------------------------- | ------- | ------ |
+| schema         | JSONSchema 定义                  | Object  | -      |
+| value          | 要编辑的 json 文档对象           | Object  | -      |
+| fieldWrapClass | 输入控件的包裹类                 | String  | -      |
+| requireButtons | 是否显示表单操作按钮，例如：提交 | Boolean | true   |
+| oneWay         | 传入数据是单向的，不会被修改     | Boolean | true   |
 
 必须传入`schema`对象。支持`v-model`传递要编辑的 json 文档。
 

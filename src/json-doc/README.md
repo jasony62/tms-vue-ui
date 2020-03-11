@@ -2,20 +2,34 @@
 
 `JSONSchema`支持 7 种（"null", "boolean", "object", "array", "number", "integer", or "string"）基本的属性类型，每个属性和特定输入控件对应。
 
+`object`和`array`分为固定和自由两种情况。
+
 除了 7 种属性类型，还包括元数据（title,description,error）和操作(submit)。
 
 `schema` 中的 `attrs` 会作为 field 的初始值
 
 `items`是`{value,label}`的数组
 
-schema->field->vnode->form
+schema（定义）->field（字段）->vnode（节点）->form（表单）
+
+# schema
+
+| 属性        | 说明       | 是否必填 |
+| ----------- | ---------- | -------- |
+| type        | 类型       | 是       |
+| title       | 标签名     | 否       |
+| description | 描述       | 否       |
+| required    | 是否必填   | 否       |
+| value       | 默认值     | 否       |
+| component   | 指定的组件 | 否       |
 
 # parse 阶段
 
 schema->field
 
 field 是嵌套的关系
-sub 节点
+next 节点
+\$开头的属性不显示
 
 ## field.name
 
@@ -43,6 +57,8 @@ schema.type 有 6 种有效的 type，需要设置成对应的 field.type
 初始化 model 的值
 
 `schema.defalut`或者`schema.attrs.value`
+
+# render 阶段
 
 替换默认组件
 
@@ -82,36 +98,40 @@ createElement(components.form.tag, {}, allFormNodes)
 
 form 被包裹在 div 中
 
+每个输入字段
+
 ```js
 return createElement('div', nodes)
 ```
 
 ```html
 <div>
-  <!-- title -->
+  <!-- schema.title -->
   <h1></h1>
-  <!-- description -->
+  <!-- schema.description -->
   <p></p>
   <!-- error -->
   <div></div>
+  <!--表单-->
   <form>
     <!-- 可选，嵌套表单有效-->
     <div class="sub-title"></div>
     <!-- 可选，嵌套表单有效-->
     <div class="sub">
-      <!-- label可选 -->
-      <label>
-        <!-- 可选 -->
-        <span data-required-field="true/false">label的值</span>
-        <input />
-        <!--下面连个可选，如果属性有描述-->
-        <br />
-        <small></small>
-      </label>
-      <textarea></textarea>
-      <select></select>
-      <tms-object-input></tms-object-input>
+      <!-- wrappingClass 可选 -->
+      <div>
+        <!-- label可选 -->
+        <label>
+          <!-- 可选 -->
+          <span data-required-field="true/false">label的值</span>
+          <input />
+          <!--下面连个可选，如果属性有描述-->
+          <br />
+          <small></small>
+        </label>
+      </div>
     </div>
+    <!--表单按钮-->
     <buttons></buttons>
   </form>
 </div>
@@ -144,3 +164,5 @@ formNode.指定的名字
 参考：https://json-schema.org/draft/2019-09/json-schema-validation.html
 
 在 parse 阶段完成数据的初始化？
+
+# 错误处理

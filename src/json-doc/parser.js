@@ -27,10 +27,10 @@ export class Parser {
     }
   }
 
-  parse(schema = this.rootSchema, fields = this.fields, sub) {
+  parse(schema = this.rootSchema, fields = this.fields, schemaPath) {
     if (!schema || schema.visible === false) return
 
-    const pathname = sub ? sub.join('.') : schema.name // 指定的名字或路径名
+    const pathname = schemaPath ? schemaPath.join('.') : schema.name // 指定的名字或路径名
     if (schema.type !== 'object' && !pathname) return
 
     if (schema.$id) this.schemaRefs[schema.$id] = schema
@@ -53,7 +53,7 @@ export class Parser {
         // 设置子属性的名称
         const child = schema.properties[key]
         child.name = key
-        this.parse(child, fields[schema.name], sub ? [...sub, key] : [key])
+        this.parse(child, fields[schema.name], schemaPath ? [...schemaPath, key] : [key])
       }
       return
     }
@@ -61,7 +61,6 @@ export class Parser {
 
     this.setModelValue(newField)
 
-    //fields[schemaName] = newField
     fields[schema.name] = newField
   }
 
