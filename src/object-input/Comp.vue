@@ -1,5 +1,7 @@
 <script>
 import { Objarr } from './objarr'
+import { Render } from '../utils'
+
 const components = {
   button: {
     add: {
@@ -149,9 +151,11 @@ function createLine(createElement, line, index, key) {
     buttonNodes
   )
   lineChildNodes.push(lineButtonsNode)
-  return createElement(
+
+  return Render.layered(
+    createElement,
     layout.line.component,
-    { ...layout.line.options },
+    layout.line.options,
     lineChildNodes
   )
 }
