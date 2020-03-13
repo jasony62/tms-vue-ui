@@ -10,7 +10,7 @@ export class Input extends FieldNode {
     const fieldName = field.name
     const ns = fieldName.split('.')
     const n = ns.pop()
-    const formModel = ns.length > 0 ? initChild(this.vm.editDoc, ns) : this.vm.editDoc
+    const formModel = ns.length > 0 ? initChild(this.vm, this.vm.editDoc, ns) : this.vm.editDoc
     //this.vm.$set(formModel, n, newValue)
     formModel[n] = newValue
   }
@@ -21,7 +21,7 @@ export class Input extends FieldNode {
    */
   options(attrOrProps) {
     const fieldName = this.field.name
-    const fieldValue = getChild(this.vm.editDoc, fieldName.split('.'))
+    const fieldValue = getChild(this.vm, this.vm.editDoc, fieldName.split('.'))
     const inputOptions = {
       ref: fieldName,
       domProps: {
@@ -31,6 +31,7 @@ export class Input extends FieldNode {
         input: event => {
           const newValue = event && event.target ? event.target.value : event
           this.updateModel(newValue)
+          this.vm.$forceUpdate()
           this.vm.$emit('input', this.vm.editDoc)
         }
       },

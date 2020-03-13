@@ -7,6 +7,7 @@
 <script>
 import Vue from 'vue'
 import TmsJsonDoc from '../json-doc/Editor.vue'
+import { JsonSchema } from '../utils'
 import {
   Form,
   FormItem,
@@ -154,7 +155,7 @@ export default {
       const tmsJsonDoc = this.$refs.TmsJsonDoc
       tmsJsonDoc.form().validate(valid => {
         if (valid) {
-          this.$emit('submit', this.editingDoc)
+          this.$emit('submit', JsonSchema.slim(this.schema, this.editingDoc))
           tmsJsonDoc.clearErrorMessage()
         } else {
           tmsJsonDoc.setErrorMessage('请填写必填字段')

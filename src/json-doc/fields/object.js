@@ -13,6 +13,6 @@ export class FieldObject extends Field {
       this.itemSchema = schema.items
     }
     if (schema.type === 'array') this.value = Array.isArray(this.value) ? this.value : []
-    else if (schema.type === 'object') this.value = typeof this.value === 'object' ? this.value : {}
+    else if (schema.type === 'object') this.value = this.value ? this.value : {}
   }
 }

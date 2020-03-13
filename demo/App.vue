@@ -34,23 +34,31 @@ import '@/lib/frame/style'
 import '@/lib/flex/style'
 
 Vue.use(Frame).use(Flex)
+
 /**
  * 初始化全局组件TmsObjectInput
  */
-import { Button, Input } from 'element-ui'
+import { Button, Input, Collapse, CollapseItem, Card } from 'element-ui'
 //import { ObjectInput } from '@/lib'
 import { ObjectInput } from '../src'
 
-Vue.use(Button).use(Input)
-
+Vue.use(Button)
+  .use(Input)
+  .use(Collapse)
+  .use(CollapseItem)
+  .use(Card)
 ObjectInput.setComponent('layout.root', 'tms-flex', {
   props: { direction: 'column' }
 })
-ObjectInput.setComponent('layout.lines', 'tms-flex', {
-  props: { direction: 'column' }
+ObjectInput.setComponent('layout.lines', 'el-collapse')
+ObjectInput.setComponent('layout.line', 'el-collapse-item.tms-flex', {
+  'tms-flex': { props: { direction: 'column' } }
 })
-ObjectInput.setComponent('layout.line', 'tms-flex')
+ObjectInput.setComponent('layout.line-index', 'div', {
+  style: { display: 'none' }
+})
 ObjectInput.setComponent('layout.line-key', 'el-input')
+ObjectInput.setComponent('layout.line-buttons', 'el-card')
 ObjectInput.setComponent('button.add', 'el-button', {
   props: { type: 'primary' }
 })
@@ -66,7 +74,7 @@ ObjectInput.setComponent('button.moveup', 'el-button', {
 ObjectInput.setComponent('button.movedown', 'el-button', {
   props: { size: 'mini', icon: 'el-icon-caret-bottom' }
 })
-Vue.use(ObjectInput)
+Vue.component('tms-object-input', ObjectInput)
 
 export default {
   name: 'app'

@@ -10,7 +10,7 @@ export class Checkboxgroup extends Input {
     const fieldName = field.name
     const ns = fieldName.split('.')
     const n = ns.pop()
-    const formModel = ns.length > 0 ? initChild(this.vm.editDoc, ns) : this.vm.editDoc
+    const formModel = ns.length > 0 ? initChild(this.vm, this.vm.editDoc, ns) : this.vm.editDoc
     if (!Array.isArray(formModel[n])) formModel[n] = []
     if (field.schema.items && /integer|number/.test(field.schema.items.type)) {
       newValue = Number(newValue)

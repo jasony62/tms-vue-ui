@@ -107,8 +107,8 @@ export default {
       for (const key in editDoc) {
         const ns = key.split('.')
         const n = ns.pop()
-        const ret = ns.length > 0 ? initChild(editDoc, ns) : editDoc
-        const value = getChild(this.defaultDoc, key.split('.'))
+        const ret = ns.length > 0 ? initChild(this, editDoc, ns) : editDoc
+        const value = getChild(this, this.defaultDoc, key.split('.'))
         this.$set(ret, n, value)
       }
     },

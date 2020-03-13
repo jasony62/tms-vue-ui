@@ -13,7 +13,8 @@ export class Field {
     this.description = schema.description || ''
     this.required = schema.required || false
     this.disabled = schema.disabled || false
-    this.name = schema.name ? schema.name : pathname
+    //this.name = schema.name ? schema.name : pathname
+    this.name = pathname
     this.schema = schema
   }
 }

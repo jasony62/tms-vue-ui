@@ -1,6 +1,6 @@
 import { createField, FieldNest } from './fields'
 
-import { initChild, getChild } from './utils'
+import { setVal, initChild, getChild } from './utils'
 
 export class Parser {
   constructor(vm, editDoc, schema) {
@@ -18,12 +18,12 @@ export class Parser {
   setModelValue(field) {
     const { editDoc } = this
     const ns = field.name.split('.')
-    const vmValue = getChild(editDoc, ns)
+    const vmValue = getChild(this.vm, editDoc, ns)
     if (!vmValue) {
       const n = ns.pop()
-      const ret = ns.length > 0 ? initChild(editDoc, ns) : editDoc
-      this.vm.$set(ret, n, field.value)
-      //setVal(ret, n, field.value)
+      const ret = ns.length > 0 ? initChild(this.vm, editDoc, ns) : editDoc
+      //this.vm.$set(ret, n, field.value)
+      setVal(this.vm, ret, n, field.value)
     }
   }
 

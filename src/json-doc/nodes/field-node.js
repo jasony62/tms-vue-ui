@@ -1,6 +1,5 @@
 import { getChild } from '../utils'
 import { components, Node } from './index'
-import Comp from '../../object-input'
 const option = { native: true }
 const defaultInput = { tag: 'input', option }
 const defaultGroup = { tag: 'div', option }
@@ -37,7 +36,7 @@ export class FieldNode extends Node {
   fieldValue() {
     const { field } = this
     const fieldName = field.name
-    const fieldValue = getChild(this.vm.editDoc, fieldName.split('.'))
+    const fieldValue = getChild(this.vm, this.vm.editDoc, fieldName.split('.'))
     if (!field.value) {
       field.value = fieldValue
     }
