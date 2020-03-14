@@ -31,7 +31,7 @@ export class ObjectNode extends FieldNode {
     options.on = {
       add: cbAdd => {
         if (schema.type === 'array') cbAdd({})
-        else if (schema.type === 'object') cbAdd({}, schema.name + parseInt(Math.random() * 100))
+        else if (schema.type === 'object') cbAdd({}, schema.name + (Object.keys(fieldValue).length + 1))
       }
     }
 

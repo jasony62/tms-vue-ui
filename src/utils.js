@@ -25,8 +25,8 @@ export class Render {
   }
 }
 
-const RE_SEPARATOR = '\\.'
-const RE_OBJECT_FIELD = '\\S+?'
+const RE_SEPARATOR = '\\.' // 字段分割符
+const RE_OBJECT_FIELD = '[\\w-]+' // 字段名
 const RE_ARRAY_INDEX = '\\[\\d+\\]'
 
 export class JsonSchema {
@@ -121,6 +121,7 @@ export class JsonSchema {
         if (matched.length === 1) {
           if (!matched[0].match(/\.#/)) return flatSchema.get(matched[0])
           else {
+            // 如果存在引用进行替换
             const [re, ref] = matched[0].split('\\.#')
             const searched2 = searched.replace(new RegExp(`^${re}`), `#${ref}`)
             return findSchema(flatSchema, searched2, [...stack, searched])

@@ -7,7 +7,6 @@
 <script>
 import Vue from 'vue'
 import schema from '../vue-route-schema'
-//import { ObjectInput, JsonDoc, ElJsonDoc } from '@/lib'
 import { ObjectInput, JsonDoc, ElJsonDoc } from '../../src'
 
 Vue.component('tms-object-input', ObjectInput)
