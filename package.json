@@ -9,7 +9,7 @@
   },
   "main": "lib/index.js",
   "files": [
-    "lib"
+    "lib", "doc"
   ],
   "version": "0.0.17",
   "scripts": {
