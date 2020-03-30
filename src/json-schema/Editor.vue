@@ -1,6 +1,6 @@
 <template>
   <tms-flex>
-    <el-tree :data="data" :props="defaultProps" default-expand-all :expand-on-click-node="false" @node-click="onNodeClick"></el-tree>
+    <el-tree :data="data" :props="defaultProps" default-expand-all :expand-on-click-node="false" @node-click="onNodeClick" draggable :allow-drag="allowDrag" :allow-drop="allowDrop" @node-drop="onDragNode"></el-tree>
     <el-form label-width="80px" :model="form">
       <el-form-item label="键值">
         <el-input v-model="form.key" @change="onChangeKey" :disabled="!form.node"></el-input>
@@ -108,6 +108,26 @@ export default {
     }
   },
   methods: {
+    onDragNode(draggingNode, dropNode){
+      let dragKey = draggingNode.data.key
+      let children = dropNode.data.parent.children
+      let { properties}  = this.schema
+      let newProperties = {}
+      children.map(d=>{
+        newProperties[d.key] = properties[d.key]
+      })
+      dropNode.data.parent.schema.properties = newProperties
+    },
+    allowDrop(draggingNode, dropNode, type){
+      if(draggingNode.level === dropNode.level){
+        return type === 'prev' || type === 'next'
+      } else {
+        return false
+      }
+    },
+    allowDrag (draggingNode) {
+      return draggingNode.level === 2
+    },
     onNodeClick(schemaWrap, node) {
       this.form.key = schemaWrap.key
       this.form.schema = schemaWrap.schema
