@@ -116,7 +116,6 @@ export default {
   },
   methods: {
     onDragNode(draggingNode, dropNode){
-      let dragKey = draggingNode.data.key
       let children = dropNode.data.parent.children
       let { properties}  = this.schema
       let newProperties = {}
