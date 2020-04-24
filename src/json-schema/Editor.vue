@@ -22,6 +22,9 @@
       <el-form-item label="描述">
         <el-input type="textarea" v-model="form.schema.description" :disabled="!form.node"></el-input>
       </el-form-item>
+			<el-form-item label="必填" v-if="form.schema.type !== 'object'">
+				<el-switch v-model="form.schema.required" :disabled="!form.node"></el-switch>
+      </el-form-item>
       <el-form-item>
         <el-button size="mini" @click="onRemoveNode" :disabled="!form.node">删除</el-button>
         <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object'">添加属性</el-button>
@@ -32,14 +35,15 @@
 </template>
 <script>
 import Vue from 'vue'
-import { Tree, Form, FormItem, Input, Select, Option, Button } from 'element-ui'
+import { Tree, Form, FormItem, Input, Select, Option, Button, Switch } from 'element-ui'
 Vue.use(Tree)
 Vue.use(Form)
   .use(FormItem)
   .use(Input)
   .use(Select)
   .use(Option)
-  .use(Button)
+	.use(Button)
+	.use(Switch)
 class SchemaWrap {
   /**
    *
@@ -63,9 +67,12 @@ SchemaWrap.build = function(key, schema, parent) {
   switch (schema.type) {
     case 'object':
       if (typeof schema.properties === 'object') {
-        wrap.children = Object.entries(schema.properties).map(([k, s]) =>
-          SchemaWrap.build(k, s, wrap)
-        )
+				wrap.children = Object.entries(schema.properties).map(([k, s]) => {
+					if (schema.required && schema.required.includes(k)) {
+						s.required = true
+					}
+          return SchemaWrap.build(k, s, wrap)
+				})
       }
       break
     case 'array':
@@ -80,7 +87,7 @@ class FormData {
   }
   reset() {
     this.key = ''
-    this.schema = { title: '', type: 'string', description: '' }
+    this.schema = { title: '', type: 'string', description: '', required: false }
     this.node = null
   }
 }

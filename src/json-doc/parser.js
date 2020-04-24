@@ -21,9 +21,8 @@ export class Parser {
     const vmValue = getChild(this.vm, editDoc, ns)
     if (!vmValue) {
       const n = ns.pop()
-      const ret = ns.length > 0 ? initChild(this.vm, editDoc, ns) : editDoc
-      //this.vm.$set(ret, n, field.value)
-      setVal(this.vm, ret, n, field.value)
+			const ret = ns.length > 0 ? initChild(this.vm, editDoc, ns) : editDoc
+			this.vm.oneWay ? setVal(this.vm, ret, n, field.value) : this.vm.$set(ret, n, field.value)
     }
   }
 
