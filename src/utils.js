@@ -142,7 +142,7 @@ export class JsonSchema {
     flatDoc.forEach((val, key) => {
       const schema = findSchema(flatSchema, key)
       if (schema) {
-        if (_.isBoolean(val) || !_.isEmpty(val)) flatSlimDoc.set(key, val)
+        if (_.isNumber(val) || _.isBoolean(val) || !_.isEmpty(val)) flatSlimDoc.set(key, val)
         else if (schema.value) flatSlimDoc.set(key, schema.value)
       }
     })
