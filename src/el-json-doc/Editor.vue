@@ -155,7 +155,7 @@ export default {
       const tmsJsonDoc = this.$refs.TmsJsonDoc
       tmsJsonDoc.form().validate(valid => {
         if (valid) {
-          this.$emit('submit', JsonSchema.slim(this.schema, this.editingDoc))
+          this.$emit('submit', JsonSchema.slim(this.schema, this.editingDoc), this.editingDoc)
           tmsJsonDoc.clearErrorMessage()
         } else {
           tmsJsonDoc.setErrorMessage('请填写必填字段')
