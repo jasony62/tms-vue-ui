@@ -7,6 +7,7 @@ import { Checkboxgroup } from './checkboxgroup'
 import { ObjectNode } from './object'
 import { LabelNode } from './label'
 import { FormNode } from './form'
+import { ObjectFile } from './file'
 
 const option = { native: true }
 /**
@@ -48,7 +49,9 @@ function prepareFieldNode(vm, createElement, field) {
       return new Checkboxgroup(vm, createElement, field)
     case 'array':
     case 'object':
-      return new ObjectNode(vm, createElement, field)
+			return new ObjectNode(vm, createElement, field)
+		case 'file':
+			return new ObjectFile(vm, createElement, field)
     default:
       return new Input(vm, createElement, field)
   }

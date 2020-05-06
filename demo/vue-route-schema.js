@@ -4,6 +4,23 @@ const Schema = {
   description: 'tms-portal路由定义',
   type: 'object',
   properties: {
+		file2: {
+			type: 'array',
+			title: '上传图片和文件',
+			format: 'file',
+			items: {
+				type: 'object',
+				properties: {
+					name: { title: '名字', type: 'string', format: 'filename' },
+					url: { title: '地址', type: 'string', format: 'fileurl' }, 
+				},
+				attrs: {
+					accept: 'image/png, image/jpeg', 
+					size: "20MB",
+					limit: 2
+				}
+			}
+		},
     name: {
       title: '路由定义名称',
       type: 'string'

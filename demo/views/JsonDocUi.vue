@@ -1,6 +1,6 @@
 <template>
   <div id="myJsonDoc">
-    <tms-el-json-doc :schema="schema" :doc="model" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
+    <tms-el-json-doc :schema="schema" :doc="model" :on-file-submit="handleFileSubmit" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
   </div>
 </template>
 
@@ -21,12 +21,38 @@ export default {
       schema,
       model: {}
     }
-  },
+	},
   methods: {
     jsonDocSubmit(newModel) {
       alert(JSON.stringify(newModel))
       console.log(JSON.stringify(newModel))
-    }
+		},
+		async handleFileSubmit(ref, files) {
+			let fileName, fileUrl;
+			Object.entries(this.schema.properties[ref].items.properties).forEach(([key, value]) => {
+				if (value.format==='filename') {
+					fileName = key
+				}
+				if (value.format==='fileurl') {
+					fileUrl = key
+				}
+			})
+
+			let result = [], i = 0;
+			function doRequest (file) {
+				return new Promise ((resolve, reject) => {
+					setTimeout(() => {
+						resolve({[fileName]: file.name, [fileUrl]: location.href})
+					}, 0)
+				});
+			} 
+			while(i < files.length) {
+				const allContent = await doRequest(files[i])
+				result.push(allContent)
+				i++
+			}
+			return Promise.resolve(result)
+		}
   }
 }
 </script>

@@ -117,3 +117,8 @@ export default {
   }
 }
 </script>
+<style>
+.tms-flex .tms-flex__item:last-child {
+	flex: 1
+}
+</style>

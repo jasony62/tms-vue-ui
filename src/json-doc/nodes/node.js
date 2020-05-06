@@ -20,7 +20,7 @@ export class Node {
 
     let options
     if (typeof rawOption === 'function') {
-      options = rawOption({ vm: this.vm, field, item })
+      options = rawOption({ vm: this.vm, field, item, h: this.createElement })
     } else {
       options = { ...rawOption, native: undefined }
     }

@@ -4,6 +4,7 @@ import { FieldText } from './text'
 import { FieldArray } from './array'
 import { FieldObject } from './object'
 import { FieldNest } from './nest'
+import { FieldFile } from './file'
 
 function createField(schema, pathname, refs) {
   let newField
@@ -13,9 +14,13 @@ function createField(schema, pathname, refs) {
       break
 
     case 'array':
-      newField = ARRAY_KEYWORDS.some(kw => schema.hasOwnProperty(kw))
-        ? new FieldArray(schema, pathname)
-        : new FieldObject(schema, pathname, refs)
+      if (schema.format==='file') {
+				newField = new FieldFile(schema, pathname)
+			} else if (ARRAY_KEYWORDS.some(kw => schema.hasOwnProperty(kw))) {
+				newField = new FieldArray(schema, pathname)
+			} else {
+				newField = new FieldObject(schema, pathname, refs)
+			}
       break
     case 'object':
       newField = new FieldObject(schema, pathname, refs)

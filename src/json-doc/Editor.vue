@@ -63,7 +63,7 @@ export default {
   },
   mounted() {
     // ??? 为什么
-    //this.reset()
+		//this.reset()
   },
   setComponent(type, tag, option = {}) {
     components[type] = { tag, option }
@@ -141,7 +141,17 @@ export default {
      */
     clearErrorMessage() {
       this.error = null
-    }
+		},
+		/**
+     * File methods
+     */
+		handleSubmitUpload(ref, files) {
+			this.$refs[ref].submit()
+			this.handleEmitFile(ref, files)
+		},
+		handleEmitFile(field, datas) {
+			this.$emit('filesubmit', field, datas) 
+		}
   }
 }
 </script>

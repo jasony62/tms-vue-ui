@@ -1,5 +1,5 @@
 <template>
-  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false">
+  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false" v-on:filesubmit="elFileSubmit">
     <el-button type="primary" @click="submit">提交</el-button>
     <el-button type="reset" @click="reset">重置</el-button>
   </tms-json-doc>
@@ -92,6 +92,80 @@ TmsJsonDoc.setComponent('label', 'el-form-item', ({ field }) => ({
   prop: field.name
 }))
 
+TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field, items, h }) => {
+	const action = ""
+	const autoUpload = false
+	let fileList = field.value
+	let accept = field.accept ? field.accept : ""
+	let limit = field.limit
+
+	if (vm.$refs[field.name]) {
+		vm.$refs[field.name].$slots.trigger = h('el-button', {
+			style: {
+				marginLeft: '20px'
+			},
+			attrs: {
+				size: 'small',
+				type: 'primary'
+			}   
+		}, '选取文件')
+		vm.$refs[field.name].$slots.default = h('el-button', {
+			style: {
+				marginLeft: '20px'
+			},
+			attrs: {
+				size: 'small',
+				type: 'success',
+				dataRef: field.name,
+				dataList: fileList
+			},
+			on: {
+				click: function() {
+					return vm.handleSubmitUpload(field.name, fileList)
+				}
+			}    
+		}, '上传到服务器')
+	}
+
+	function handleExceed() {
+		const message = `文件上传失败,个数不能超过 ${limit} 个`
+		vm.error = message
+	}
+	const onExceed = handleExceed
+
+	function handleRemove(file, filelist) {
+		vm.handleEmitFile(field.name, filelist)
+	}
+	const onRemove = handleRemove
+
+	function handlebeforeUpload(file) {
+		if (!file) {
+			const message = `请选择需要上传的文件`
+			vm.error = message
+			return false
+		}
+		const isAccept = accept ? accept.replace(/\s*/g,"").split(',').includes(file.type) : true
+		const isLtSize = parseInt(field.size) * 1024 * 1024 < file.size
+		if (!isAccept) {
+			const message = `${file.name}文件上传失败,只能上传${accept}格式的文件`
+			vm.error = message
+		}
+		if (isLtSize) {
+			const message = `${file.name}文件上传失败,大小不能超过${field.size}M`
+			vm.error = message
+		}
+
+		return isAccept&&!isLtSize
+	}
+	const beforeUpload = handlebeforeUpload
+
+	function handleHttpRequest(raw) {
+		fileList.push(raw.file)
+	}
+	const httpRequest = handleHttpRequest
+	
+	return { action, autoUpload, fileList, accept, limit, beforeUpload, onRemove, onExceed, httpRequest}
+})
 TmsJsonDoc.setComponent('email', 'el-input')
 TmsJsonDoc.setComponent('url', 'el-input')
 TmsJsonDoc.setComponent('number', 'el-input-number')
@@ -139,11 +213,12 @@ export default {
     schema: { type: Object },
     doc: { type: Object },
     requireButtons: { type: Boolean, default: () => true },
-    oneWay: { type: Boolean, default: () => true }
+		oneWay: { type: Boolean, default: () => true },
+		onFileSubmit: { type: Function }
   },
   data() {
     return {
-      editingDoc: {}
+			editingDoc: {}
     }
   },
   created() {
@@ -151,8 +226,13 @@ export default {
     else this.editingDoc = this.doc ? this.doc : {}
   },
   methods: {
+		elFileSubmit(ref, files) {
+			this.onFileSubmit(ref, files).then(result => {
+				this.editingDoc[ref] = result
+			})
+		},
     submit() {
-      const tmsJsonDoc = this.$refs.TmsJsonDoc
+			const tmsJsonDoc = this.$refs.TmsJsonDoc
       tmsJsonDoc.form().validate(valid => {
         if (valid) {
           this.$emit('submit', JsonSchema.slim(this.schema, this.editingDoc), this.editingDoc)
