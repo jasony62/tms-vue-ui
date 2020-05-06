@@ -38,6 +38,12 @@ const Schema = {
                     title: '包括CSS',
                     default: false
                   },
+                  radioOptions: {
+                    type: 'string',
+                    title: '单选测试',
+                    radioType: '2',
+                    oneOf: ['选项1', '选项2']
+                  },
                   events: {
                     type: 'object',
                     title: '事件',
