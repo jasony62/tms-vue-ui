@@ -22,6 +22,19 @@
       <el-form-item label="描述">
         <el-input type="textarea" v-model="form.schema.description" :disabled="!form.node"></el-input>
       </el-form-item>
+      <el-form-item label="形式" v-if="form.schema.type === 'string'">
+        <el-radio-group v-model="form.schema.radioType" :disabled="!form.node" @change="onShiftRadio">
+          <el-radio label="1">输入框</el-radio>
+          <el-radio label="2">单选框</el-radio>
+        </el-radio-group>
+        <div v-if="form.schema.radioType=='2'">
+          <div v-for="(v, i) in form.schema.oneOf" :key="i">
+              <el-input size="mini" v-model="form.schema.oneOf[i]"></el-input>
+              <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
+          </div>
+        </div>
+        <el-button size="mini"  type="primary" @click="onAddOption"  v-if="form.schema.radioType=='2'" :disabled="!form.node">新增选项</el-button>
+      </el-form-item>
 			<el-form-item label="必填" v-if="form.schema.type !== 'object'">
 				<el-switch v-model="form.schema.required" :disabled="!form.node"></el-switch>
       </el-form-item>
@@ -35,7 +48,7 @@
 </template>
 <script>
 import Vue from 'vue'
-import { Tree, Form, FormItem, Input, Select, Option, Button, Switch } from 'element-ui'
+import { Tree, Form, FormItem, Input, Select, Option, Button, Switch, Radio, RadioGroup } from 'element-ui'
 Vue.use(Tree)
 Vue.use(Form)
   .use(FormItem)
@@ -44,6 +57,8 @@ Vue.use(Form)
   .use(Option)
 	.use(Button)
 	.use(Switch)
+	.use(Radio)
+	.use(RadioGroup)
 class SchemaWrap {
   /**
    *
@@ -87,7 +102,7 @@ class FormData {
   }
   reset() {
     this.key = ''
-    this.schema = { title: '', type: 'string', description: '', required: false }
+    this.schema = { title: '', type: 'string', description: '', radioType: '1', required: false }
     this.node = null
   }
 }
@@ -115,8 +130,24 @@ export default {
     }
   },
   methods: {
+    onShiftRadio(label){
+      if (label==1) {
+        this.$delete(this.form.schema, 'oneOf')
+      }else{
+        this.$set(this.form.schema, 'oneOf', ['选项1', '选项2'])
+      }
+    },
+    onAddOption(){
+      if (!this.form.schema.oneOf) {
+        this.$set(this.form.schema, 'oneOf', ['选项1', '选项2'])
+      }else{
+        this.form.schema.oneOf.push('新选项')
+      }
+    },
+    onDelOption(v, i){
+      this.form.schema.oneOf.splice(i, 1)
+    },
     onDragNode(draggingNode, dropNode){
-      let dragKey = draggingNode.data.key
       let children = dropNode.data.parent.children
       let { properties}  = this.schema
       let newProperties = {}
@@ -166,7 +197,7 @@ export default {
       ) {
         this.$set(data.schema, 'properties', {})
       }
-      const newChild = new SchemaWrap('newKey', { type: 'string' })
+      const newChild = new SchemaWrap('newKey', { type: 'string', radioType: '1' })
       data.appendChild(newChild)
     },
     onRemoveNode() {
