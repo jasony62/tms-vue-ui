@@ -24,7 +24,8 @@ import {
   Card,
   CheckboxGroup,
   InputNumber,
-  Button
+	Button,
+	Upload
 } from 'element-ui'
 Vue.use(Form)
   .use(FormItem)
@@ -41,7 +42,8 @@ Vue.use(Form)
   .use(Card)
   .use(CheckboxGroup)
   .use(InputNumber)
-  .use(Button)
+	.use(Button)
+	.use(Upload)
 
 TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
   // vm is the JsonDoc VM
@@ -116,8 +118,6 @@ TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field, items, h }) => {
 			attrs: {
 				size: 'small',
 				type: 'success',
-				dataRef: field.name,
-				dataList: fileList
 			},
 			on: {
 				click: function() {
