@@ -19,21 +19,7 @@
       <el-form-item label="标题">
         <el-input v-model="form.schema.title" :disabled="!form.node"></el-input>
       </el-form-item>
-			<el-form-item label="形式" v-if="form.schema.type === 'array'" :disabled="!form.node">
-        <el-select v-model="form.schema.format" placeholder="请选择形式" :disabled="!form.node">
-          <el-option label="file" value="file"></el-option>
-        </el-select>
-      </el-form-item>
-			<el-form-item label="文件类型" v-if="form.schema.type === 'object' && form.schema.attrs" :disabled="!form.node">
-				<el-input v-model="form.schema.attrs.accept" placeholder="标准格式,如'image/png,image/jpeg'"></el-input>
-			</el-form-item>
-			<el-form-item label="最大值" v-if="form.schema.type === 'object' && form.schema.attrs" :disabled="!form.node">
-				<el-input v-model="form.schema.attrs.size" placeholder="以MB为单位,如'20MB'"></el-input>
-			</el-form-item>
-			<el-form-item label="文件个数" v-if="form.schema.type === 'object' && form.schema.attrs" :disabled="!form.node">
-				<el-input v-model="form.schema.attrs.limit" placeholder="请输入数字,0无意义"></el-input>
-			</el-form-item>
-      <el-form-item label="描述">
+			<el-form-item label="描述">
         <el-input type="textarea" v-model="form.schema.description" :disabled="!form.node"></el-input>
       </el-form-item>
       <el-form-item label="形式" v-if="form.schema.type === 'string'">
@@ -41,14 +27,31 @@
           <el-radio label="1">输入框</el-radio>
           <el-radio label="2">单选框</el-radio>
         </el-radio-group>
-        <div v-if="form.schema.radioType=='2'">
+				<div v-if="form.schema.radioType=='1'">
+					<el-input v-model="form.schema.default" placeholder="请输入默认值" :disabled="!form.node"></el-input>
+				</div>
+        <div v-else-if="form.schema.radioType=='2'">
           <div v-for="(v, i) in form.schema.oneOf" :key="i">
               <el-input size="mini" v-model="form.schema.oneOf[i]"></el-input>
               <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
           </div>
+					<el-button size="mini"  type="primary" @click="onAddOption" :disabled="!form.node">新增选项</el-button>
         </div>
-        <el-button size="mini"  type="primary" @click="onAddOption"  v-if="form.schema.radioType=='2'" :disabled="!form.node">新增选项</el-button>
       </el-form-item>
+			<el-form-item label="形式" v-if="form.schema.type === 'array'">
+        <el-select v-model="form.schema.format" placeholder="请选择形式" :disabled="!form.node">
+          <el-option label="file" value="file"></el-option>
+        </el-select>
+      </el-form-item>
+			<el-form-item label="文件类型" v-if="form.schema.type === 'object' && form.schema.attrs">
+				<el-input v-model="form.schema.attrs.accept" placeholder="标准格式,如'image/png,image/jpeg'" :disabled="!form.node"></el-input>
+			</el-form-item>
+			<el-form-item label="最大值" v-if="form.schema.type === 'object' && form.schema.attrs">
+				<el-input v-model="form.schema.attrs.size" placeholder="以MB为单位,如'20MB'" :disabled="!form.node"></el-input>
+			</el-form-item>
+			<el-form-item label="文件个数" v-if="form.schema.type === 'object' && form.schema.attrs">
+				<el-input v-model="form.schema.attrs.limit" placeholder="请输入数字,0无意义" :disabled="!form.node"></el-input>
+			</el-form-item>
 			<el-form-item label="必填" v-if="form.schema.type !== 'object'">
 				<el-switch v-model="form.schema.required" :disabled="!form.node"></el-switch>
       </el-form-item>

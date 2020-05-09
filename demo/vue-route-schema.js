@@ -6,7 +6,8 @@ const Schema = {
   properties: {
     name: {
       title: '路由定义名称',
-      type: 'string'
+			type: 'string',
+			default: '20'
     },
     routes: {
       title: '路由表',
