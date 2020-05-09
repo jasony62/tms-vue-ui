@@ -23,7 +23,8 @@ const Schema = {
 		},
     name: {
       title: '路由定义名称',
-      type: 'string'
+			type: 'string',
+			default: '20'
     },
     routes: {
       title: '路由表',
@@ -54,6 +55,12 @@ const Schema = {
                     type: 'boolean',
                     title: '包括CSS',
                     default: false
+                  },
+                  radioOptions: {
+                    type: 'string',
+                    title: '单选测试',
+                    radioType: '2',
+                    oneOf: ['选项1', '选项2']
                   },
                   events: {
                     type: 'object',

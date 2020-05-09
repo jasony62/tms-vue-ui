@@ -19,23 +19,53 @@
       <el-form-item label="标题">
         <el-input v-model="form.schema.title" :disabled="!form.node"></el-input>
       </el-form-item>
-      <el-form-item label="描述">
+			<el-form-item label="描述">
         <el-input type="textarea" v-model="form.schema.description" :disabled="!form.node"></el-input>
       </el-form-item>
+      <el-form-item label="形式" v-if="form.schema.type === 'string'">
+        <el-radio-group v-model="form.schema.radioType" :disabled="!form.node" @change="onShiftRadio">
+          <el-radio label="1">输入框</el-radio>
+          <el-radio label="2">单选框</el-radio>
+        </el-radio-group>
+				<div v-if="form.schema.radioType=='1'">
+					<el-input v-model="form.schema.default" placeholder="请输入默认值" :disabled="!form.node"></el-input>
+				</div>
+        <div v-else-if="form.schema.radioType=='2'">
+          <div v-for="(v, i) in form.schema.oneOf" :key="i">
+              <el-input size="mini" v-model="form.schema.oneOf[i]"></el-input>
+              <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
+          </div>
+					<el-button size="mini"  type="primary" @click="onAddOption" :disabled="!form.node">新增选项</el-button>
+        </div>
+      </el-form-item>
+			<el-form-item label="形式" v-if="form.schema.type === 'array'">
+        <el-select v-model="form.schema.format" placeholder="请选择形式" :disabled="!form.node">
+          <el-option label="file" value="file"></el-option>
+        </el-select>
+      </el-form-item>
+			<el-form-item label="文件类型" v-if="form.schema.type === 'object' && form.schema.attrs">
+				<el-input v-model="form.schema.attrs.accept" placeholder="标准格式,如'image/png,image/jpeg'" :disabled="!form.node"></el-input>
+			</el-form-item>
+			<el-form-item label="最大值" v-if="form.schema.type === 'object' && form.schema.attrs">
+				<el-input v-model="form.schema.attrs.size" placeholder="以MB为单位,如'20MB'" :disabled="!form.node"></el-input>
+			</el-form-item>
+			<el-form-item label="文件个数" v-if="form.schema.type === 'object' && form.schema.attrs">
+				<el-input v-model="form.schema.attrs.limit" placeholder="请输入数字,0无意义" :disabled="!form.node"></el-input>
+			</el-form-item>
 			<el-form-item label="必填" v-if="form.schema.type !== 'object'">
 				<el-switch v-model="form.schema.required" :disabled="!form.node"></el-switch>
       </el-form-item>
       <el-form-item>
         <el-button size="mini" @click="onRemoveNode" :disabled="!form.node">删除</el-button>
-        <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object'">添加属性</el-button>
+        <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object' || (form.schema.type === 'array'&&form.schema.format==='file')">添加属性</el-button>
       </el-form-item>
     </el-form>
-    <div>{{jsonString}}</div>
+    <div style="flex:1">{{jsonString}}</div>
   </tms-flex>
 </template>
 <script>
 import Vue from 'vue'
-import { Tree, Form, FormItem, Input, Select, Option, Button, Switch } from 'element-ui'
+import { Tree, Form, FormItem, Input, Select, Option, Button, Switch, Radio, RadioGroup } from 'element-ui'
 Vue.use(Tree)
 Vue.use(Form)
   .use(FormItem)
@@ -44,6 +74,8 @@ Vue.use(Form)
   .use(Option)
 	.use(Button)
 	.use(Switch)
+	.use(Radio)
+	.use(RadioGroup)
 class SchemaWrap {
   /**
    *
@@ -57,13 +89,13 @@ class SchemaWrap {
     this.parent = parent
   }
   appendChild(child) {
-    this.children.push(child)
-    Vue.set(this.schema.properties, child.key, child.schema)
+		this.children.push(child)
+		this.schema.type==='object' ? Vue.set(this.schema.properties, child.key, child.schema) : Vue.set(this.schema, child.key, child.schema)
     child.parent = this
   }
 }
 SchemaWrap.build = function(key, schema, parent) {
-  const wrap = new SchemaWrap(key, schema, parent)
+  let wrap = new SchemaWrap(key, schema, parent)
   switch (schema.type) {
     case 'object':
       if (typeof schema.properties === 'object') {
@@ -76,6 +108,13 @@ SchemaWrap.build = function(key, schema, parent) {
       }
       break
     case 'array':
+			if (typeof schema.items === 'object') {
+				wrap.children = Object.entries(schema).filter(([k]) => {
+					return k === 'items'
+				}).map(([k, s]) => {
+					return SchemaWrap.build(k, s, wrap)
+				})
+      }
       break
   }
   return wrap
@@ -87,7 +126,7 @@ class FormData {
   }
   reset() {
     this.key = ''
-    this.schema = { title: '', type: 'string', description: '', required: false }
+    this.schema = { title: '', type: 'string', description: '', radioType: '1', required: false }
     this.node = null
   }
 }
@@ -97,7 +136,8 @@ export default {
   data() {
     return {
       form: new FormData(),
-      data: [],
+			data: [],
+			isParentArray: false,
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -112,11 +152,40 @@ export default {
       },
       deep: true,
       immediate: true
-    }
+		},
+		"form.schema.type": {
+			handler: function(val) {
+				const currentSchema = this.form.schema
+				switch(val) {
+					case 'string':
+						!currentSchema.hasOwnProperty('radioType') && Vue.set(currentSchema, 'radioType', '1')
+						break;
+					default:
+						if (currentSchema.hasOwnProperty('radioType')) delete currentSchema.radioType
+						break;
+				}
+			}
+		}
   },
   methods: {
+    onShiftRadio(label){
+      if (label==1) {
+        this.$delete(this.form.schema, 'oneOf')
+      }else{
+        this.$set(this.form.schema, 'oneOf', ['选项1', '选项2'])
+      }
+    },
+    onAddOption(){
+      if (!this.form.schema.oneOf) {
+        this.$set(this.form.schema, 'oneOf', ['选项1', '选项2'])
+      }else{
+        this.form.schema.oneOf.push('新选项')
+      }
+    },
+    onDelOption(v, i){
+      this.form.schema.oneOf.splice(i, 1)
+    },
     onDragNode(draggingNode, dropNode){
-      let dragKey = draggingNode.data.key
       let children = dropNode.data.parent.children
       let { properties}  = this.schema
       let newProperties = {}
@@ -136,8 +205,8 @@ export default {
       return draggingNode.level === 2
     },
     onNodeClick(schemaWrap, node) {
-      this.form.key = schemaWrap.key
-      this.form.schema = schemaWrap.schema
+			this.form.key = schemaWrap.key
+			this.form.schema = schemaWrap.schema
       this.form.node = node
     },
     onChangeKey() {
@@ -156,19 +225,25 @@ export default {
       }
     },
     onAppendNode() {
-      const data = this.form.node.data
+			const data = this.form.node.data
+			let newChild
       if (!Array.isArray(data.children)) {
         this.$set(data, 'children', [])
-      }
-      if (
-        typeof data.schema.properties !== 'object' ||
-        Array.isArray(data.schema.properties)
-      ) {
-        this.$set(data.schema, 'properties', {})
-      }
-      const newChild = new SchemaWrap('newKey', { type: 'string' })
-      data.appendChild(newChild)
-    },
+			}
+			if (data.schema.type === 'object') {
+				if (
+					typeof data.schema.properties !== 'object' ||
+					Array.isArray(data.schema.properties)
+				) {
+					this.$set(data.schema, 'properties', {})
+				}
+				newChild = new SchemaWrap('newKey', { type: 'string', radioType: '1' })
+			}
+			if (data.schema.type === 'array') {
+				newChild = new SchemaWrap('items', { type: 'object' })
+			}
+			data.appendChild(newChild)
+		},
     onRemoveNode() {
       const { parent, data } = this.form.node
       const children = parent.data.children || parent.data
@@ -180,7 +255,7 @@ export default {
     }
   },
   mounted() {
-    const root = SchemaWrap.build('root', this.schema)
+		const root = SchemaWrap.build('root', this.schema)
     this.data = [root]
   }
 }
