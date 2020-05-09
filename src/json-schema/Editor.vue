@@ -19,6 +19,20 @@
       <el-form-item label="标题">
         <el-input v-model="form.schema.title" :disabled="!form.node"></el-input>
       </el-form-item>
+			<el-form-item label="形式" v-if="form.schema.type === 'array'" :disabled="!form.node">
+        <el-select v-model="form.schema.format" placeholder="请选择形式" :disabled="!form.node">
+          <el-option label="file" value="file"></el-option>
+        </el-select>
+      </el-form-item>
+			<el-form-item label="文件类型" v-if="form.schema.type === 'object' && form.schema.attrs" :disabled="!form.node">
+				<el-input v-model="form.schema.attrs.accept" placeholder="标准格式,如'image/png,image/jpeg'"></el-input>
+			</el-form-item>
+			<el-form-item label="最大值" v-if="form.schema.type === 'object' && form.schema.attrs" :disabled="!form.node">
+				<el-input v-model="form.schema.attrs.size" placeholder="以MB为单位,如'20MB'"></el-input>
+			</el-form-item>
+			<el-form-item label="文件个数" v-if="form.schema.type === 'object' && form.schema.attrs" :disabled="!form.node">
+				<el-input v-model="form.schema.attrs.limit" placeholder="请输入数字,0无意义"></el-input>
+			</el-form-item>
       <el-form-item label="描述">
         <el-input type="textarea" v-model="form.schema.description" :disabled="!form.node"></el-input>
       </el-form-item>
@@ -40,10 +54,10 @@
       </el-form-item>
       <el-form-item>
         <el-button size="mini" @click="onRemoveNode" :disabled="!form.node">删除</el-button>
-        <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object'">添加属性</el-button>
+        <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object' || (form.schema.type === 'array'&&form.schema.format==='file')">添加属性</el-button>
       </el-form-item>
     </el-form>
-    <div>{{jsonString}}</div>
+    <div style="flex:1">{{jsonString}}</div>
   </tms-flex>
 </template>
 <script>
@@ -72,13 +86,13 @@ class SchemaWrap {
     this.parent = parent
   }
   appendChild(child) {
-    this.children.push(child)
-    Vue.set(this.schema.properties, child.key, child.schema)
+		this.children.push(child)
+		this.schema.type==='object' ? Vue.set(this.schema.properties, child.key, child.schema) : Vue.set(this.schema, child.key, child.schema)
     child.parent = this
   }
 }
 SchemaWrap.build = function(key, schema, parent) {
-  const wrap = new SchemaWrap(key, schema, parent)
+  let wrap = new SchemaWrap(key, schema, parent)
   switch (schema.type) {
     case 'object':
       if (typeof schema.properties === 'object') {
@@ -91,6 +105,13 @@ SchemaWrap.build = function(key, schema, parent) {
       }
       break
     case 'array':
+			if (typeof schema.items === 'object') {
+				wrap.children = Object.entries(schema).filter(([k]) => {
+					return k === 'items'
+				}).map(([k, s]) => {
+					return SchemaWrap.build(k, s, wrap)
+				})
+      }
       break
   }
   return wrap
@@ -112,7 +133,8 @@ export default {
   data() {
     return {
       form: new FormData(),
-      data: [],
+			data: [],
+			isParentArray: false,
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -127,7 +149,20 @@ export default {
       },
       deep: true,
       immediate: true
-    }
+		},
+		"form.schema.type": {
+			handler: function(val) {
+				const currentSchema = this.form.schema
+				switch(val) {
+					case 'string':
+						!currentSchema.hasOwnProperty('radioType') && Vue.set(currentSchema, 'radioType', '1')
+						break;
+					default:
+						if (currentSchema.hasOwnProperty('radioType')) delete currentSchema.radioType
+						break;
+				}
+			}
+		}
   },
   methods: {
     onShiftRadio(label){
@@ -167,8 +202,8 @@ export default {
       return draggingNode.level === 2
     },
     onNodeClick(schemaWrap, node) {
-      this.form.key = schemaWrap.key
-      this.form.schema = schemaWrap.schema
+			this.form.key = schemaWrap.key
+			this.form.schema = schemaWrap.schema
       this.form.node = node
     },
     onChangeKey() {
@@ -187,19 +222,25 @@ export default {
       }
     },
     onAppendNode() {
-      const data = this.form.node.data
+			const data = this.form.node.data
+			let newChild
       if (!Array.isArray(data.children)) {
         this.$set(data, 'children', [])
-      }
-      if (
-        typeof data.schema.properties !== 'object' ||
-        Array.isArray(data.schema.properties)
-      ) {
-        this.$set(data.schema, 'properties', {})
-      }
-      const newChild = new SchemaWrap('newKey', { type: 'string', radioType: '1' })
-      data.appendChild(newChild)
-    },
+			}
+			if (data.schema.type === 'object') {
+				if (
+					typeof data.schema.properties !== 'object' ||
+					Array.isArray(data.schema.properties)
+				) {
+					this.$set(data.schema, 'properties', {})
+				}
+				newChild = new SchemaWrap('newKey', { type: 'string', radioType: '1' })
+			}
+			if (data.schema.type === 'array') {
+				newChild = new SchemaWrap('items', { type: 'object' })
+			}
+			data.appendChild(newChild)
+		},
     onRemoveNode() {
       const { parent, data } = this.form.node
       const children = parent.data.children || parent.data
@@ -211,7 +252,7 @@ export default {
     }
   },
   mounted() {
-    const root = SchemaWrap.build('root', this.schema)
+		const root = SchemaWrap.build('root', this.schema)
     this.data = [root]
   }
 }
