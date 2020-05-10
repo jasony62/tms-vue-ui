@@ -27,17 +27,20 @@
           <el-radio label="1">输入框</el-radio>
           <el-radio label="2">单选框</el-radio>
         </el-radio-group>
-				<div v-if="form.schema.radioType=='1'">
-					<el-input v-model="form.schema.default" placeholder="请输入默认值" :disabled="!form.node"></el-input>
-				</div>
-        <div v-else-if="form.schema.radioType=='2'">
-          <div v-for="(v, i) in form.schema.oneOf" :key="i">
-              <el-input size="mini" v-model="form.schema.oneOf[i]"></el-input>
-              <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
-          </div>
+        <div v-if="form.schema.radioType=='2'">
+          <tms-flex v-for="(v, i) in form.schema.oneOf" :key="i">
+						<el-input size="mini" v-model="form.schema.oneOf[i]"></el-input>
+						<el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
+					</tms-flex>
 					<el-button size="mini"  type="primary" @click="onAddOption" :disabled="!form.node">新增选项</el-button>
         </div>
       </el-form-item>
+			<el-form-item label="默认值" v-if="form.schema.type === 'string' && form.schema.radioType=='1'">
+				<el-input v-model="form.schema.default" :disabled="!form.node"></el-input>
+			</el-form-item>
+			<el-form-item label="不可修改" v-if="form.schema.type === 'string' && form.schema.radioType=='1'">
+				<el-switch v-model="form.schema.disabled" :disabled="!form.node"></el-switch>
+			</el-form-item>
 			<el-form-item label="形式" v-if="form.schema.type === 'array'">
         <el-select v-model="form.schema.format" placeholder="请选择形式" :disabled="!form.node">
           <el-option label="file" value="file"></el-option>

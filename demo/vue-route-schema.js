@@ -23,8 +23,7 @@ const Schema = {
 		},
     name: {
       title: '路由定义名称',
-			type: 'string',
-			default: '20'
+			type: 'string'
     },
     routes: {
       title: '路由表',
