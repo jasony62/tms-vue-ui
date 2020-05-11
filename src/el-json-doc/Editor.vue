@@ -12,6 +12,7 @@ import {
   Form,
   FormItem,
   Input,
+  Upload,
   Alert,
   Radio,
   Checkbox,
@@ -29,6 +30,7 @@ import {
 Vue.use(Form)
   .use(FormItem)
   .use(Input)
+  .use(Upload)
   .use(Alert)
   .use(Radio)
   .use(Checkbox)
@@ -130,6 +132,19 @@ TmsJsonDoc.setComponent('error', 'el-alert', ({ vm }) => ({
   title: vm.error
 }))
 
+TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
+  action: '',
+  autoUpload: false,
+  fileList: field.value,
+  onChange: (file, fileList) => {
+    console.log('onChange', vm.editDoc, fileList)
+    vm.editDoc[field.name].push(file)
+  },
+  onRemove: (file, fileList) => {
+    console.log('onRemove', vm.editDoc, fileList)
+    vm.editDoc[field.name].splice(vm.editDoc[field.name].indexOf(file), 1)
+  }
+}))
 TmsJsonDoc.setComponent('jsondoc', 'tms-el-json-doc')
 
 export default {
@@ -155,7 +170,11 @@ export default {
       const tmsJsonDoc = this.$refs.TmsJsonDoc
       tmsJsonDoc.form().validate(valid => {
         if (valid) {
-          this.$emit('submit', JsonSchema.slim(this.schema, this.editingDoc))
+          this.$emit(
+            'submit',
+            JsonSchema.slim(this.schema, this.editingDoc),
+            this.editingDoc
+          )
           tmsJsonDoc.clearErrorMessage()
         } else {
           tmsJsonDoc.setErrorMessage('请填写必填字段')

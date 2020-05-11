@@ -6,7 +6,7 @@
 
 <script>
 import Vue from 'vue'
-import schema from '../vue-route-schema'
+import schema from '../demo-schema'
 import { ObjectInput, JsonDoc, ElJsonDoc } from '../../src'
 
 Vue.component('tms-object-input', ObjectInput)
@@ -23,9 +23,9 @@ export default {
     }
   },
   methods: {
-    jsonDocSubmit(newModel) {
+    jsonDocSubmit(newSlimModel, newModel) {
       alert(JSON.stringify(newModel))
-      console.log(JSON.stringify(newModel))
+      console.log(JSON.stringify(newSlimModel))
     }
   }
 }
