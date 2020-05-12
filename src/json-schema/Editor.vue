@@ -167,6 +167,8 @@ export default {
       return draggingNode.level === 2
     },
     onNodeClick(schemaWrap, node) {
+      if (!schemaWrap.schema.radioType) 
+      this.$set(schemaWrap.schema, 'radioType', '1')
       this.form.key = schemaWrap.key
       this.form.schema = schemaWrap.schema
       this.form.node = node
