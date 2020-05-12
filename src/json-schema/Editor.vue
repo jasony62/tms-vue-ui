@@ -6,7 +6,7 @@
         <el-input v-model="form.key" @change="onChangeKey" :disabled="!form.node"></el-input>
       </el-form-item>
       <el-form-item label="类型">
-        <el-select v-model="form.schema.type" placeholder="请选择类型" :disabled="!form.node">
+        <el-select v-model="form.schema.type" placeholder="请选择类型" @change="onChangeType" :disabled="!form.node">
           <el-option label="integer" value="integer"></el-option>
           <el-option label="number" value="number"></el-option>
           <el-option label="string" value="string"></el-option>
@@ -167,6 +167,8 @@ export default {
       return draggingNode.level === 2
     },
     onNodeClick(schemaWrap, node) {
+      if (!schemaWrap.schema.radioType && schemaWrap.schema.type ==='string') 
+      this.$set(schemaWrap.schema, 'radioType', '1')
       this.form.key = schemaWrap.key
       this.form.schema = schemaWrap.schema
       this.form.node = node
@@ -185,6 +187,11 @@ export default {
         }
         schemaWrap.label = schemaWrap.key = newKey
       }
+    },
+    onChangeType(type){
+      const schemaWrap = this.form.node.data
+      if (!schemaWrap.schema.radioType && type ==='string') 
+      this.$set(schemaWrap.schema, 'radioType', '1')
     },
     onAppendNode() {
       const data = this.form.node.data
