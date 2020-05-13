@@ -1,5 +1,5 @@
 <template>
-  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false" v-on:filesubmit="elFileSubmit">
+  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false">
     <el-button type="primary" @click="submit">提交</el-button>
     <el-button type="reset" @click="reset">重置</el-button>
   </tms-json-doc>
@@ -139,40 +139,31 @@ TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
 	accept: field.accept ? field.accept : "",
 	limit: field.limit,
 	onExceed: () => {
-		const message = `文件上传失败,个数不能超过 ${limit} 个`
+		const message = `文件总数不能超过 ${field.limit} 个`
 		vm.error = message
 	},
-	beforeUpload: (file) => {
-		if (!file) {
-			const message = `请选择需要上传的文件`
-			vm.error = message
+  onChange: (file, fileList) => {
+		function errorFile(file, filelist) {
+			fileList.splice(file, 1)
 			return false
 		}
-		const isAccept = field.accept ? field.accept.replace(/\s*/g,"").split(',').includes(file.type) : true
-		const isLtSize = parseInt(field.size) * 1024 * 1024 < file.size
+		const isAccept = field.accept ? field.accept.replace(/\s*/g,"").split(',').includes(file.raw.type) : true
 		if (!isAccept) {
-			const message = `${file.name}文件上传失败,只能上传${accept}格式的文件`
-			vm.error = message
+			vm.error = `${file.raw.name}文件上传失败,只能上传${field.accept}格式的文件`
+			return errorFile(file, fileList)
 		}
+		const isLtSize = parseInt(field.size) * 1024 * 1024 < file.raw.size
 		if (isLtSize) {
-			const message = `${file.name}文件上传失败,大小不能超过${field.size}M`
-			vm.error = message
+			vm.error = `${file.raw.name}文件上传失败,大小不能超过${field.size}M`
+			return errorFile(file, fileList)
 		}
-
-		return isAccept&&!isLtSize
-	},
-	httpRequest: (raw) => {
-		vm.editDoc[field.name].push(file)
-	},
-  onChange: (file, fileList) => {
-    console.log('onChange', vm.editDoc, fileList)
-    vm.editDoc[field.name].push(file)
+    vm.editDoc[field.name].push(file.raw)
   },
   onRemove: (file, fileList) => {
-    console.log('onRemove', vm.editDoc, fileList)
     vm.editDoc[field.name].splice(vm.editDoc[field.name].indexOf(file), 1)
   }
 }))
+TmsJsonDoc.setComponent('button', 'el-button')
 TmsJsonDoc.setComponent('jsondoc', 'tms-el-json-doc')
 
 export default {
@@ -189,32 +180,49 @@ export default {
     return {
 			editingDoc: {}
     }
-  },
+	},
+	computed: {
+		fileSchemas() {
+			return Object.keys(this.schema.properties).filter(key => {
+				const value = this.schema.properties[key]
+				if (value.type==='array'&&value.format==='file') return key
+			})
+		}
+	},
   created() {
     if (this.oneWay === false) this.editingDoc = this.doc
     else this.editingDoc = this.doc ? this.doc : {}
   },
   methods: {
-		elFileSubmit(ref, files) {
-			this.onFileSubmit(ref, files).then(result => {
-				this.editingDoc[ref] = result
+		async doFile() {
+			let promises = this.fileSchemas.map(async schema => {
+				const values = this.editingDoc[schema]
+				return await this.onFileSubmit(schema, values)
+			})
+			for (const promise of promises) {
+				console.log(await promise)
+				Object.assign(this.editingDoc, await promise)
+			}
+			this.doSubmit()
+		},
+		doSubmit() {
+			const tmsJsonDoc = this.$refs.TmsJsonDoc
+			tmsJsonDoc.form().validate(valid => {
+				if (valid) {
+					this.$emit(
+						'submit',
+						JsonSchema.slim(this.schema, this.editingDoc),
+						this.editingDoc
+					)
+					tmsJsonDoc.clearErrorMessage()
+				} else {
+					tmsJsonDoc.setErrorMessage('请填写必填字段')
+					return false
+				}
 			})
 		},
     submit() {
-			const tmsJsonDoc = this.$refs.TmsJsonDoc
-      tmsJsonDoc.form().validate(valid => {
-        if (valid) {
-          this.$emit(
-            'submit',
-            JsonSchema.slim(this.schema, this.editingDoc),
-            this.editingDoc
-          )
-          tmsJsonDoc.clearErrorMessage()
-        } else {
-          tmsJsonDoc.setErrorMessage('请填写必填字段')
-          return false
-        }
-      })
+			this.fileSchemas.length ? this.doFile() :	this.doSubmit()
     },
     reset() {
       this.$refs.TmsJsonDoc.reset()

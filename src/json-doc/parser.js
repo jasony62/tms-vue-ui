@@ -26,7 +26,7 @@ export class Parser {
     }
   }
 
-  parse(schema = this.rootSchema, fields = this.fields, schemaPath) {
+  parse(schema = this.rootSchema, fields = this.fields, schemaPath, editDoc = this.editDoc) {
     if (!schema || schema.visible === false) return
 
     const pathname = schemaPath ? schemaPath.join('.') : schema.name // 指定的名字或路径名
@@ -52,11 +52,11 @@ export class Parser {
         // 设置子属性的名称
         const child = schema.properties[key]
         child.name = key
-        this.parse(child, fields[schema.name], schemaPath ? [...schemaPath, key] : [key])
+        this.parse(child, fields[schema.name], schemaPath ? [...schemaPath, key] : [key], editDoc[schema.name])
       }
       return
     }
-    const newField = createField(schema, pathname, this.schemaRefs)
+    const newField = createField(schema, pathname, this.schemaRefs, editDoc[schema.name])
 
     this.setModelValue(newField)
 

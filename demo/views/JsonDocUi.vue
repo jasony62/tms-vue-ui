@@ -19,28 +19,19 @@ export default {
   data() {
     return {
       schema,
-      model: {}
+      model: {file1: [{name: '1.jpg'}]}
     }
 	},
-  methods: {
+  methods: {			
     jsonDocSubmit(newSlimModel, newModel) {
       alert(JSON.stringify(newModel))
       console.log(JSON.stringify(newSlimModel))
 		},
-		async handleFileSubmit(ref, files) {
-			let result = [], i = 0;
-			function doRequest (file) {
-				return new Promise ((resolve, reject) => {
-					setTimeout(() => {
-						resolve({name: file.name, url: location.href})
-					}, 0)
-				});
-			} 
-			while(i < files.length) {
-				const allContent = await doRequest(files[i])
-				result.push(allContent)
-				i++
-			}
+		handleFileSubmit(ref, files) {
+			let result = {}
+			result[ref] = files.map(file => {
+				return {'name': file.name, 'url': location.href}
+			})
 			return Promise.resolve(result)
 		}
   }

@@ -6,7 +6,7 @@ import { FieldFile } from './file'
 import { FieldObject } from './object'
 import { FieldNest } from './nest'
 
-function createField(schema, pathname, refs) {
+function createField(schema, pathname, refs, value) {
   let newField
   switch (schema.type) {
     case 'boolean':
@@ -17,7 +17,7 @@ function createField(schema, pathname, refs) {
       newField = ARRAY_KEYWORDS.some((kw) => schema.hasOwnProperty(kw))
         ? new FieldArray(schema, pathname)
         : schema.format === 'file'
-        ? new FieldFile(schema, pathname)
+        ? new FieldFile(schema, pathname, value)
         : new FieldObject(schema, pathname, refs)
       break
     case 'object':

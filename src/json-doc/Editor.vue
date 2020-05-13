@@ -141,16 +141,6 @@ export default {
      */
     clearErrorMessage() {
       this.error = null
-		},
-		/**
-     * File methods
-     */
-		handleSubmitUpload(ref, files) {
-			this.$refs[ref].submit()
-			this.handleEmitFile(ref, files)
-		},
-		handleEmitFile(field, datas) {
-			this.$emit('filesubmit', field, datas) 
 		}
   }
 }
