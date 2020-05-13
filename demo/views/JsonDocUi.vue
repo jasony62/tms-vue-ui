@@ -6,7 +6,7 @@
 
 <script>
 import Vue from 'vue'
-import schema from '../vue-route-schema'
+import schema from '../demo-schema'
 import { ObjectInput, JsonDoc, ElJsonDoc } from '../../src'
 
 Vue.component('tms-object-input', ObjectInput)
@@ -23,26 +23,16 @@ export default {
     }
 	},
   methods: {
-    jsonDocSubmit(newModel) {
+    jsonDocSubmit(newSlimModel, newModel) {
       alert(JSON.stringify(newModel))
-      console.log(JSON.stringify(newModel))
+      console.log(JSON.stringify(newSlimModel))
 		},
 		async handleFileSubmit(ref, files) {
-			let fileName, fileUrl;
-			Object.entries(this.schema.properties[ref].items.properties).forEach(([key, value]) => {
-				if (value.format==='filename') {
-					fileName = key
-				}
-				if (value.format==='fileurl') {
-					fileUrl = key
-				}
-			})
-
 			let result = [], i = 0;
 			function doRequest (file) {
 				return new Promise ((resolve, reject) => {
 					setTimeout(() => {
-						resolve({[fileName]: file.name, [fileUrl]: location.href})
+						resolve({name: file.name, url: location.href})
 					}, 0)
 				});
 			} 

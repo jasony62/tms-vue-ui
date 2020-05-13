@@ -1,22 +1,12 @@
 import { Field } from './field'
 
-/**
- * file
- */
 export class FieldFile extends Field {
-  constructor(...args) {
-		super(...args)
-		
-		this.multiple = this.schema.minItems > 1
-		
-    if (!this.type ) {
-			this.type = this.schema.format
-		}
-		
+  constructor(schema, schemaName) {
+    super(schema, schemaName)
+    this.type = 'file'
 		this.value = Array.isArray(this.value) ? this.value : []
-
-    if (this.schema.items.attrs) {
-			this.multiple = false
+		this.multiple = false
+		if (this.schema.items.attrs) {
 			Object.entries(this.schema.items.attrs).forEach(([key, value]) => {
 				if (key==='limit') {
 					const val = parseInt(value)

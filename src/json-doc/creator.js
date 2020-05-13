@@ -20,8 +20,8 @@ class Creator {
             'span',
             {
               attrs: {
-                'data-required-field': field.required ? 'true' : 'false'
-              }
+                'data-required-field': field.required ? 'true' : 'false',
+              },
             },
             field.label
           )
@@ -50,7 +50,7 @@ class Creator {
       return createElement(
         'div',
         {
-          class: this.fieldWrapClass
+          class: this.fieldWrapClass,
         },
         labelAndDescNodes
       )
@@ -92,7 +92,7 @@ class Creator {
     // 引用fieldNodes中的嵌套节点（root或嵌套节点），记录当前嵌套节点包含的节点
     let nestFieldNodes = this.getNestFieldNodes(fieldNodes, nestPath)
 
-    Object.keys(fields).forEach(key => {
+    Object.keys(fields).forEach((key) => {
       if (key.indexOf('$') === 0) return
 
       const field = fields[key]
@@ -120,7 +120,7 @@ class Creator {
         createElement(
           'div',
           {
-            class: 'nest-title'
+            class: 'nest-title',
           },
           nestField.$title
         )
@@ -129,7 +129,7 @@ class Creator {
     /**
      * 嵌套节点下的字段节点
      */
-    Object.keys(nestField).forEach(key => {
+    Object.keys(nestField).forEach((key) => {
       if (key.indexOf('$') === 0) return
 
       const subField = nestField[key]
@@ -142,7 +142,7 @@ class Creator {
           createElement(
             'div',
             {
-              class: 'nest'
+              class: 'nest',
             },
             nestFieldNodes
           )
@@ -179,7 +179,7 @@ class Creator {
   createForm() {
     const { vm, createElement } = this
     const fieldNodes = {
-      root: {}
+      root: {},
     }
     // 创建单独的字段节点保留在fieldNodes中
     this.createFieldNodes(fieldNodes, vm.fields)

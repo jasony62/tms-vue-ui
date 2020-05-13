@@ -32,7 +32,6 @@ export class Node {
     const { createElement } = this
 
     const attrOrProps = this.attrOrProps()
-
     const element = createElement(this.rawArgs.tag, attrOrProps, children)
 
     return element

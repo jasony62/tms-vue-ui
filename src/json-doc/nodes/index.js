@@ -4,10 +4,10 @@ import { Input } from './input'
 import { Select } from './select'
 import { Textarea } from './textarea'
 import { Checkboxgroup } from './checkboxgroup'
+import { FileNode } from './file'
 import { ObjectNode } from './object'
 import { LabelNode } from './label'
 import { FormNode } from './form'
-import { ObjectFile } from './file'
 
 const option = { native: true }
 /**
@@ -33,10 +33,10 @@ const components = {
     option: {
       ...option,
       type: 'submit',
-      label: 'Submit'
-    }
+      label: 'Submit',
+    },
   },
-  jsondoc: { tag: 'tms-json-doc', option }
+  jsondoc: { tag: 'tms-json-doc', option },
 }
 
 function prepareFieldNode(vm, createElement, field) {
@@ -49,9 +49,9 @@ function prepareFieldNode(vm, createElement, field) {
       return new Checkboxgroup(vm, createElement, field)
     case 'array':
     case 'object':
-			return new ObjectNode(vm, createElement, field)
-		case 'file':
-			return new ObjectFile(vm, createElement, field)
+      return new ObjectNode(vm, createElement, field)
+    case 'file':
+      return new FileNode(vm, createElement, field)
     default:
       return new Input(vm, createElement, field)
   }
@@ -66,7 +66,8 @@ export {
   Select,
   Textarea,
   Checkboxgroup,
+  FileNode,
   ObjectNode,
   LabelNode,
-  FormNode
+  FormNode,
 }
