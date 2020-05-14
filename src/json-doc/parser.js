@@ -21,12 +21,12 @@ export class Parser {
     const vmValue = getChild(this.vm, editDoc, ns)
     if (!vmValue) {
       const n = ns.pop()
-			const ret = ns.length > 0 ? initChild(this.vm, editDoc, ns) : editDoc
-			this.vm.oneWay ? setVal(this.vm, ret, n, field.value) : this.vm.$set(ret, n, field.value)
+      const ret = ns.length > 0 ? initChild(this.vm, editDoc, ns) : editDoc
+      this.vm.oneWay ? setVal(this.vm, ret, n, field.value) : this.vm.$set(ret, n, field.value)
     }
   }
 
-  parse(schema = this.rootSchema, fields = this.fields, schemaPath) {
+  parse(schema = this.rootSchema, fields = this.fields, schemaPath, editDoc = this.editDoc) {
     if (!schema || schema.visible === false) return
 
     const pathname = schemaPath ? schemaPath.join('.') : schema.name // 指定的名字或路径名
@@ -52,11 +52,11 @@ export class Parser {
         // 设置子属性的名称
         const child = schema.properties[key]
         child.name = key
-        this.parse(child, fields[schema.name], schemaPath ? [...schemaPath, key] : [key])
+        this.parse(child, fields[schema.name], schemaPath ? [...schemaPath, key] : [key], editDoc[schema.name])
       }
       return
     }
-    const newField = createField(schema, pathname, this.schemaRefs)
+    const newField = createField(schema, pathname, this.schemaRefs, editDoc[schema.name])
 
     this.setModelValue(newField)
 

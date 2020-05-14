@@ -45,26 +45,29 @@
 
 支持设置的字段类型及默认组件：
 
-| 控件名称      | 说明                                        | 默认组件 |
-| ------------- | ------------------------------------------- | -------- |
-| title         | JSONSchema.\$title                          | h1       |
-| description   | JSONSchema.\$description                    | p        |
-| error         | 错误提示                                    | div      |
-| form          | -                                           | form     |
-| label         | -                                           | label    |
-| input         | -                                           | input    |
-| textarea      | -                                           | textarea |
-| radio         | 定义中出现`oneOf`时                         | input    |
-| radiogroup    | -                                           | div      |
-| select        | 定义中包含`enum:[]`                         | select   |
-| option        | select 控件中的选项                         | option   |
-| checkbox      | -                                           | input    |
-| checkboxgroup | -                                           | div      |
-| file          | -                                           | input    |
-| button        | -                                           | button   |
-| array         | 不限制输入长度的数组，数组中必须是对象      | -        |
-| object        | 不限制字段数量和名称的独享                  | -        |
-| jsondoc       | 编辑`array`和`object`中的子文档时使用的组件 | div      |
+| 控件名称      | 说明                                           | 默认组件 |
+| ------------- | ---------------------------------------------- | -------- |
+| title         | JSONSchema.\$title                             | h1       |
+| description   | JSONSchema.\$description                       | p        |
+| error         | 错误提示                                       | div      |
+| form          | -                                              | form     |
+| label         | -                                              | label    |
+| input         | -                                              | input    |
+| textarea      | -                                              | textarea |
+| radio         | 定义中出现`oneOf`时                            | input    |
+| radiogroup    | -                                              | div      |
+| select        | 定义中包含`enum:[]`                            | select   |
+| option        | select 控件中的选项                            | option   |
+| checkbox      | -                                              | input    |
+| checkboxgroup | -                                              | div      |
+| file          | -                                              | input    |
+| button        | -                                              | button   |
+| array         | 不限制输入长度的数组，数组中必须是对象         | -        |
+| array         | 不限制输入长度的文件上传数组，`format`是`file` | -        |
+| object        | 不限制字段数量和名称的独享                     | -        |
+| jsondoc       | 编辑`array`和`object`中的子文档时使用的组件    | div      |
+
+## 上传文件
 
 ## 嵌套使用 json-doc
 
@@ -131,7 +134,7 @@ import { ElJsonDoc } from 'tms-vue-ui'
 | rate          |                                             | el-rate           |
 | checkbox      | -                                           | el-checkbox       |
 | checkboxgroup | -                                           | el-checkbox-group |
-| file          | -                                           | input             |
+| file          | -                                           | el-upload         |
 | button        | -                                           | button            |
 | jsondoc       | 编辑`array`和`object`中的子文档时使用的组件 | tms-el-json-doc   |
 | array         | 不限制输入长度的数组，数组中必须是对象      | -                 |

@@ -2,10 +2,11 @@ import { Field, ARRAY_KEYWORDS } from './field'
 import { FieldBoolean } from './boolean'
 import { FieldText } from './text'
 import { FieldArray } from './array'
+import { FieldFile } from './file'
 import { FieldObject } from './object'
 import { FieldNest } from './nest'
 
-function createField(schema, pathname, refs) {
+function createField(schema, pathname, refs, value) {
   let newField
   switch (schema.type) {
     case 'boolean':
@@ -13,8 +14,10 @@ function createField(schema, pathname, refs) {
       break
 
     case 'array':
-      newField = ARRAY_KEYWORDS.some(kw => schema.hasOwnProperty(kw))
+      newField = ARRAY_KEYWORDS.some((kw) => schema.hasOwnProperty(kw))
         ? new FieldArray(schema, pathname)
+        : schema.format === 'file'
+        ? new FieldFile(schema, pathname, value)
         : new FieldObject(schema, pathname, refs)
       break
     case 'object':
@@ -27,7 +30,7 @@ function createField(schema, pathname, refs) {
         if (schema.hasOwnProperty(keyword)) {
           schema.items = {
             type: schema.type,
-            enum: schema[keyword]
+            enum: schema[keyword],
           }
           newField = new FieldArray(schema, pathname)
           break
@@ -41,4 +44,4 @@ function createField(schema, pathname, refs) {
   return newField
 }
 
-export { createField, Field, ARRAY_KEYWORDS, FieldBoolean, FieldText, FieldArray, FieldObject, FieldNest }
+export { createField, Field, ARRAY_KEYWORDS, FieldBoolean, FieldText, FieldArray, FieldFile, FieldObject, FieldNest }

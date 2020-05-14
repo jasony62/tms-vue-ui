@@ -63,7 +63,7 @@ export default {
   },
   mounted() {
     // ??? 为什么
-    //this.reset()
+		//this.reset()
   },
   setComponent(type, tag, option = {}) {
     components[type] = { tag, option }
@@ -141,7 +141,7 @@ export default {
      */
     clearErrorMessage() {
       this.error = null
-    }
+		}
   }
 }
 </script>

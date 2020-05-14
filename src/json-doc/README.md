@@ -46,7 +46,7 @@ schema.type 有 6 种有效的 type，需要设置成对应的 field.type
 | number  |              |          | number                  |
 | string  |              | text     |                         |
 | string  | format=email | email    |                         |
-| string  | format=url   | email    |                         |
+| string  | format=uri   | url    |                         |
 | string  | format=regex | text     |                         |
 | enum    |              | select   |                         |
 | oneOf   |              | radio    |                         |
