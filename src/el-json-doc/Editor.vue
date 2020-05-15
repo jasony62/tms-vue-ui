@@ -206,8 +206,8 @@ export default {
           .catch(err => Promise.reject(err))
 			})
 			Promise.all(promises)
-				.then(res => this.doSubmit())
-				.catch(err => tmsJsonDoc.setErrorMessage('文件上传出错'))  
+				.then(() => this.doSubmit())
+				.catch(err => tmsJsonDoc.setErrorMessage('文件上传出错' + err))  
     },
 		doSubmit() {
 			const tmsJsonDoc = this.$refs.TmsJsonDoc
