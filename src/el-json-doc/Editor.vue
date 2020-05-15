@@ -152,9 +152,10 @@ TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
 			vm.error = `${file.raw.name}文件上传失败,只能上传${field.accept}格式的文件`
 			return errorFile(file, fileList)
 		}
-		const isLtSize = parseInt(field.size) * 1024 * 1024 < file.raw.size
+		let currentSize = field.size ? parseInt(field.size) : 20 
+		const isLtSize = currentSize * 1024 * 1024 < file.raw.size
 		if (isLtSize) {
-			vm.error = `${file.raw.name}文件上传失败,大小不能超过${field.size}M`
+			vm.error = `${file.raw.name}文件上传失败,大小不能超过${currentSize}M`
 			return errorFile(file, fileList)
 		}
     vm.editDoc[field.name].push(file.raw)

@@ -49,7 +49,7 @@
 			<el-form-item label="文件类型" v-if="form.schema.type === 'object' && form.schema.attrs">
 				<el-input v-model="form.schema.attrs.accept" placeholder="标准格式,如'image/png,image/jpeg'" :disabled="!form.node"></el-input>
 			</el-form-item>
-			<el-form-item label="最大值" v-if="form.schema.type === 'object' && form.schema.attrs">
+			<el-form-item label="文件最大" v-if="form.schema.type === 'object' && form.schema.attrs">
 				<el-input v-model="form.schema.attrs.size" placeholder="请输入数字,默认以MB为单位" :disabled="!form.node"></el-input>
 			</el-form-item>
 			<el-form-item label="文件个数" v-if="form.schema.type === 'object' && form.schema.attrs">
