@@ -137,14 +137,14 @@ TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
   autoUpload: false,
 	fileList: field.value,
 	accept: field.accept ? field.accept : "",
-	limit: field.limit,
+	limit: field.limit ? parseInt(field.limit) : 1,
 	onExceed: () => {
 		const message = `文件总数不能超过 ${field.limit} 个`
 		vm.error = message
 	},
   onChange: (file, fileList) => {
-		function errorFile(file, filelist) {
-			fileList.splice(file, 1)
+		function errorFile(file, files) {
+			files.splice(file, 1)
 			return false
 		}
 		const isAccept = field.accept ? field.accept.replace(/\s*/g,"").split(',').includes(file.raw.type) : true
@@ -152,14 +152,15 @@ TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
 			vm.error = `${file.raw.name}文件上传失败,只能上传${field.accept}格式的文件`
 			return errorFile(file, fileList)
 		}
-		const isLtSize = parseInt(field.size) * 1024 * 1024 < file.raw.size
+		let currentSize = field.size ? parseInt(field.size) : 20 
+		const isLtSize = currentSize * 1024 * 1024 < file.raw.size
 		if (isLtSize) {
-			vm.error = `${file.raw.name}文件上传失败,大小不能超过${field.size}M`
+			vm.error = `${file.raw.name}文件上传失败,大小不能超过${currentSize}M`
 			return errorFile(file, fileList)
 		}
     vm.editDoc[field.name].push(file.raw)
   },
-  onRemove: (file, fileList) => {
+  onRemove: (file) => {
     vm.editDoc[field.name].splice(vm.editDoc[field.name].indexOf(file), 1)
   }
 }))
@@ -194,17 +195,21 @@ export default {
     else this.editingDoc = this.doc ? this.doc : {}
   },
   methods: {
-		async doFile() {
-			let promises = this.fileSchemas.map(async schema => {
-				const values = this.editingDoc[schema]
-				return await this.onFileSubmit(schema, values)
+		doFile() {
+			const tmsJsonDoc = this.$refs.TmsJsonDoc
+      let promises = this.fileSchemas.map(schema => {
+        const values = this.editingDoc[schema]
+        return this.onFileSubmit(schema, values)
+          .then(doc => { 
+						Object.assign(this.editingDoc, doc) 
+						return Promise.resolve()
+					})
+          .catch(err => Promise.reject(err))
 			})
-			for (const promise of promises) {
-				console.log(await promise)
-				Object.assign(this.editingDoc, await promise)
-			}
-			this.doSubmit()
-		},
+			Promise.all(promises)
+				.then(() => this.doSubmit())
+				.catch(err => tmsJsonDoc.setErrorMessage('文件上传出错' + err))  
+    },
 		doSubmit() {
 			const tmsJsonDoc = this.$refs.TmsJsonDoc
 			tmsJsonDoc.form().validate(valid => {
