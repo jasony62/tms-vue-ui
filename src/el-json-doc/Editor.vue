@@ -144,17 +144,27 @@ TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
 	},
   onChange: (file, fileList) => {
 		function errorFile(file, files) {
-			files.splice(file, 1)
+			files.forEach((item, index) => {
+				if (item.name===file.name) {
+					files.splice(index, 1)
+				}
+			})
 			return false
 		}
+		let isExist = null
+		isExist = vm.editDoc[field.name].filter(item => item.name===file.name)
+		if (isExist.length) {
+			vm.error = `${file.raw.name}已被选取,请重命名该文件再上传`
+			return errorFile(file, fileList)
+		} 
 		const isAccept = field.accept ? field.accept.replace(/\s*/g,"").split(',').includes(file.raw.type) : true
 		if (!isAccept) {
 			vm.error = `${file.raw.name}文件上传失败,只能上传${field.accept}格式的文件`
 			return errorFile(file, fileList)
 		}
-		const isLtSize = field.size * 1024 * 1024 < file.raw.size
+		const isLtSize = parseInt(field.size) * 1024 * 1024 < file.raw.size
 		if (isLtSize) {
-			vm.error = `${file.raw.name}文件上传失败,大小不能超过${currentSize}M`
+			vm.error = `${file.raw.name}文件上传失败,大小不能超过${field.size}M`
 			return errorFile(file, fileList)
 		}
     vm.editDoc[field.name].push(file.raw)
