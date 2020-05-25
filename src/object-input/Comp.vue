@@ -113,7 +113,8 @@ function createLine(createElement, line, index, key) {
       },
       on: {
         input: event => {
-          this.lines.rename(key, event.target.value)
+					const newValue = event && event.target ? event.target.value : event
+          this.lines.rename(key, newValue)
         }
       },
       ...layout['line-key'].options
