@@ -137,25 +137,34 @@ TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
   autoUpload: false,
 	fileList: field.value,
 	accept: field.accept ? field.accept : "",
-	limit: field.limit ? parseInt(field.limit) : 1,
+	limit: field.limit,
 	onExceed: () => {
 		const message = `文件总数不能超过 ${field.limit} 个`
 		vm.error = message
 	},
   onChange: (file, fileList) => {
 		function errorFile(file, files) {
-			files.splice(file, 1)
+			files.forEach((item, index) => {
+				if (item.name===file.name && item.status==='ready') {
+					files.splice(index, 1)
+				}
+			})
 			return false
 		}
+		let isExist = null
+		isExist = vm.editDoc[field.name].filter(item => item.name===file.name)
+		if (isExist.length) {
+			vm.error = `文件已被选取,请重命名该文件再上传`
+			return errorFile(file, fileList)
+		} 
 		const isAccept = field.accept ? field.accept.replace(/\s*/g,"").split(',').includes(file.raw.type) : true
 		if (!isAccept) {
-			vm.error = `${file.raw.name}文件上传失败,只能上传${field.accept}格式的文件`
+			vm.error = `文件上传失败,只能上传${field.accept}格式的文件`
 			return errorFile(file, fileList)
 		}
-		let currentSize = field.size ? parseInt(field.size) : 20 
-		const isLtSize = currentSize * 1024 * 1024 < file.raw.size
+		const isLtSize = parseInt(field.size) * 1024 * 1024 < file.raw.size
 		if (isLtSize) {
-			vm.error = `${file.raw.name}文件上传失败,大小不能超过${currentSize}M`
+			vm.error = `文件上传失败,大小不能超过${field.size}M`
 			return errorFile(file, fileList)
 		}
     vm.editDoc[field.name].push(file.raw)

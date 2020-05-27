@@ -21,9 +21,9 @@ const Schema = {
 			items: {
 				type: 'object',
 				attrs: {
-					accept: 'image/png, image/jpeg', 
-					size: "20MB",
-					limit: 2
+					accept: '', 
+					size: "",
+					limit: 5
 				}
 			}
 		}
