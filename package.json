@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "vue": "^2.6.11",
-    "tms-vue": "^0.0.8"
+    "tms-vue": "^0.0.9"
   },
   "dependencies": {
     "element-ui": "^2.12.0",
