@@ -9,9 +9,10 @@
   },
   "main": "lib/index.js",
   "files": [
-    "lib", "doc"
+    "lib",
+    "doc"
   ],
-  "version": "0.0.22",
+  "version": "0.0.24",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "node build/build-lib",
