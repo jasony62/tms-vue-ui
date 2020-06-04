@@ -23,6 +23,23 @@ export default {
         type: 'object',
         required: ['familyName', 'givenName'],
         properties: {
+					file: {
+						type: 'array',
+						title: '上传图片和文件',
+						format: 'file',
+						items: {
+							type: 'object',
+							properties: {
+								name: { title: '名字', type: 'string'},
+								url: { title: '地址', type: 'string'}
+							},
+							attrs: {
+								accept: 'image/png,image/jpeg',
+								size: '20MB',
+								limit: 2
+							}
+						}
+					},
           fn: {
             description: 'Formatted Name',
             type: 'string'
@@ -117,3 +134,8 @@ export default {
   }
 }
 </script>
+<style>
+.tms-flex .tms-flex__item:last-child {
+	flex: 1
+}
+</style>

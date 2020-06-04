@@ -111,7 +111,7 @@ export class JsonSchema {
       if (flatSchema.has(searched)) return flatSchema.get(searched)
 
       // 正则匹配
-      const matched = [...flatSchema.keys()].filter(key => {
+      const matched = [...flatSchema.keys()].filter((key) => {
         const key2 = key.match('\\.#') ? `${key.split('\\.#')[0]}\\.` : `${key}$`
         const re = new RegExp(`^${key2}`)
         return re.test(searched)
@@ -133,7 +133,7 @@ export class JsonSchema {
 
       return null
     }
-    const flatSchema = JsonSchema.travel(schema, prop => ({ type: prop.type, value: prop.value }))
+    const flatSchema = JsonSchema.travel(schema, (prop) => ({ type: prop.type, value: prop.value }))
 
     const flatDoc = JsonSchema.flattenObject(doc)
 
@@ -142,7 +142,7 @@ export class JsonSchema {
     flatDoc.forEach((val, key) => {
       const schema = findSchema(flatSchema, key)
       if (schema) {
-        if (_.isBoolean(val) || !_.isEmpty(val)) flatSlimDoc.set(key, val)
+        if (_.isNumber(val) || _.isBoolean(val) || !_.isEmpty(val)) flatSlimDoc.set(key, val)
         else if (schema.value) flatSlimDoc.set(key, schema.value)
       }
     })
