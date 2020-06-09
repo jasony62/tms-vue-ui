@@ -29,7 +29,8 @@
         </el-radio-group>
         <div v-if="form.schema.radioType=='2'">
           <tms-flex v-for="(v, i) in form.schema.oneOf" :key="i">
-						<el-input size="mini" v-model="form.schema.oneOf[i]"></el-input>
+						<el-input size="mini" v-model="JSON.parse(v)['value']" @input="((v)=>{onRadioKey(v, i)})"></el-input>
+						<el-input size="mini" v-model="JSON.parse(v)['label']" @input="((v)=>{onRadioVal(v, i)})"></el-input>
 						<el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
 					</tms-flex>
 					<el-button size="mini"  type="primary" @click="onAddOption" :disabled="!form.node">新增选项</el-button>
@@ -175,18 +176,28 @@ export default {
       if (label==1) {
         this.$delete(this.form.schema, 'oneOf')
       }else{
-        this.$set(this.form.schema, 'oneOf', ['选项1', '选项2'])
+        this.$set(this.form.schema, 'oneOf', ['{"label": "选项1", "value": "a"}', '{"label": "选项2", "value": "b"}'])
       }
     },
     onAddOption(){
       if (!this.form.schema.oneOf) {
-        this.$set(this.form.schema, 'oneOf', ['选项1', '选项2'])
+        this.$set(this.form.schema, 'oneOf', ['{"label": "选项1", "value": "a"}', '{"label": "选项2", "value": "b"}'])
       }else{
-        this.form.schema.oneOf.push('新选项')
+        this.form.schema.oneOf.push('{"label": "新选项", "value": "newKey"}')
       }
     },
     onDelOption(v, i){
       this.form.schema.oneOf.splice(i, 1)
+    },
+    onRadioKey(v, i){
+      let item = JSON.parse(this.form.schema.oneOf[i])
+      item['value'] = v
+      this.$set(this.form.schema.oneOf, i, JSON.stringify(item))
+    },
+    onRadioVal(v, i){
+      let item = JSON.parse(this.form.schema.oneOf[i])
+      item['label'] = v
+      this.$set(this.form.schema.oneOf, i, JSON.stringify(item))
     },
     onDragNode(draggingNode, dropNode){
       let children = dropNode.data.parent.children

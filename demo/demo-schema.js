@@ -12,7 +12,8 @@ const Schema = {
 			title: '特殊资源',
 			type: 'string',
 			radioType: '2',
-			oneOf: ['线上品牌赞助', '线下场地免费']
+			// oneOf: ['线上品牌赞助', '线下场地免费'],
+			oneOf: ['{"label": "线上品牌赞助", "value": "a"}', '{"label": "线下场地免费", "value": "b"}']
 		},
 		file1: {
       title: '上传文件',

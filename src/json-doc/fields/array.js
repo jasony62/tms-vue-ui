@@ -3,9 +3,9 @@ import { Field, ARRAY_KEYWORDS } from './field'
 export function parseItems(items) {
   return items.map(item => {
     if (typeof item !== 'object') {
-      return { value: item, label: item }
+      let newItem = JSON.parse(item)
+      return { value: JSON.stringify(newItem), label:  newItem.label }
     }
-
     return item
   })
 }
