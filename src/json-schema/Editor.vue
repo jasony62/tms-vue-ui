@@ -22,31 +22,34 @@
 			<el-form-item label="描述">
         <el-input type="textarea" v-model="form.schema.description" :disabled="!form.node"></el-input>
       </el-form-item>
-      <el-form-item label="形式" v-if="form.schema.type === 'string'">
-        <el-radio-group v-model="form.schema.radioType" :disabled="!form.node" @change="onShiftRadio">
-          <el-radio label="1">输入框</el-radio>
-          <el-radio label="2">单选框</el-radio>
-        </el-radio-group>
-        <div v-if="form.schema.radioType=='2'">
-          <tms-flex v-for="(v, i) in form.schema.oneOf" :key="i">
-						<el-input size="mini" v-model="JSON.parse(v)['value']" @input="((v)=>{onRadioKey(v, i)})"></el-input>
-						<el-input size="mini" v-model="JSON.parse(v)['label']" @input="((v)=>{onRadioVal(v, i)})"></el-input>
-						<el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
-					</tms-flex>
-					<el-button size="mini"  type="primary" @click="onAddOption" :disabled="!form.node">新增选项</el-button>
-        </div>
-      </el-form-item>
-			<el-form-item label="默认值" v-if="form.schema.type === 'string' && form.schema.radioType=='1'">
-				<el-input v-model="form.schema.default" :disabled="!form.node"></el-input>
-			</el-form-item>
-			<el-form-item label="不可修改" v-if="form.schema.type === 'string' && form.schema.radioType=='1'">
-				<el-switch v-model="form.schema.disabled" :disabled="!form.node"></el-switch>
-			</el-form-item>
-			<el-form-item label="形式" v-if="form.schema.type === 'array'">
-        <el-select v-model="form.schema.format" placeholder="请选择形式" :disabled="!form.node">
-          <el-option label="file" value="file"></el-option>
+      <el-form-item label="形式" v-if="form.schema.type === 'array'">
+        <el-select v-model="form.schema.format" placeholder="请选择形式" :disabled="!form.node" @change="onChangeSelect">
+          <el-option label="文件" value="file"></el-option>
+          <el-option label="多选框" value="checkbox"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="形式" v-if="form.schema.type === 'string'">
+        <el-radio-group v-model="form.schema.radioType" :disabled="!form.node" @change="onChangeRadio">
+          <el-radio :label="1">输入框</el-radio>
+          <el-radio :label="2">单选框</el-radio>
+        </el-radio-group>
+      </el-form-item>
+			<el-form-item label="默认值" v-if="form.schema.type === 'string' || (form.schema.type === 'array' && form.schema.format === 'checkbox')">
+        <template v-if="form.schema.radioType===1">
+          <el-input v-model="form.schema.default" :disabled="!form.node"></el-input>
+        </template>
+				<template v-else-if="form.schema.radioType === 2 || form.schema.format === 'checkbox'">
+          <tms-flex v-for="(v, i) in form.schema[currentFormat]" :key="i">
+            <el-input size="mini" v-model="v.value" @input="onSetValue(v.value, i)"></el-input>
+            <el-input size="mini" v-model="v.label" @input="onSetLabel(v.label, i)"></el-input>
+            <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
+          </tms-flex>
+          <el-button size="mini"  type="primary" @click="onAddOption" :disabled="!form.node">新增选项</el-button>
+        </template>
+			</el-form-item>
+			<el-form-item label="不可修改" v-if="form.schema.type === 'string' && form.schema.radioType===1">
+				<el-switch v-model="form.schema.disabled" :disabled="!form.node"></el-switch>
+			</el-form-item>
 			<el-form-item label="文件类型" v-if="form.schema.type === 'object' && form.schema.attrs">
 				<el-input v-model="form.schema.attrs.accept" placeholder="标准格式,如'image/png,image/jpeg'" :disabled="!form.node"></el-input>
 			</el-form-item>
@@ -130,7 +133,7 @@ class FormData {
   }
   reset() {
     this.key = ''
-    this.schema = { title: '', type: 'string', description: '', radioType: '1', required: false }
+    this.schema = { title: '', type: 'string', description: '', radioType: 1, required: false }
     this.node = null
   }
 }
@@ -146,7 +149,8 @@ export default {
         children: 'children',
         label: 'label'
       },
-      jsonString: ''
+      jsonString: '',
+      currentFormat: 'oneOf'
     }
   },
   watch: {
@@ -162,42 +166,55 @@ export default {
 				const currentSchema = this.form.schema
 				switch(val) {
 					case 'string':
-						!currentSchema.hasOwnProperty('radioType') && Vue.set(currentSchema, 'radioType', '1')
+						!currentSchema.hasOwnProperty('radioType') && Vue.set(currentSchema, 'radioType', 1)
 						break;
 					default:
 						if (currentSchema.hasOwnProperty('radioType')) delete currentSchema.radioType
 						break;
 				}
 			}
-		}
+    },
+    "form.schema.radioType": {
+			handler: function(val) {
+        this.currentFormat = 'oneOf'
+      }
+    },
+    "form.schema.format": {
+			handler: function(val) {
+        this.currentFormat = val === 'checkbox' ? 'anyOf' :'oneOf'
+      }
+    }
   },
   methods: {
-    onShiftRadio(label){
-      if (label==1) {
-        this.$delete(this.form.schema, 'oneOf')
-      }else{
-        this.$set(this.form.schema, 'oneOf', ['{"label": "选项1", "value": "a"}', '{"label": "选项2", "value": "b"}'])
+    onChangeSelect(format) {
+      if(format === 'checkbox' & !this.form.schema.anyOf) {
+        this.$set(this.form.schema, 'anyOf', [{"label": "选项1", "value": "a"}, {"label": "选项2", "value": "b"}])
+      }
+    },
+    onChangeRadio(label){
+      if (label === 1) {
+        this.$delete(this.form.schema, this.currentFormat)
+      }else if(label === 2 && !this.form.schema.oneOf){
+        this.$delete(this.form.schema, 'anyOf')
+        this.$delete(this.form.schema, 'format')
+        this.$set(this.form.schema, 'oneOf', [{"label": "选项1", "value": "a"}, {"label": "选项2", "value": "b"}])
       }
     },
     onAddOption(){
-      if (!this.form.schema.oneOf) {
-        this.$set(this.form.schema, 'oneOf', ['{"label": "选项1", "value": "a"}', '{"label": "选项2", "value": "b"}'])
-      }else{
-        this.form.schema.oneOf.push('{"label": "新选项", "value": "newKey"}')
-      }
+      this.form.schema[this.currentFormat].push('{"label": "新选项", "value": "newKey"}')
     },
     onDelOption(v, i){
-      this.form.schema.oneOf.splice(i, 1)
+      this.form.schema[this.currentFormat].splice(i, 1)
     },
-    onRadioKey(v, i){
-      let item = JSON.parse(this.form.schema.oneOf[i])
+    onSetValue(v, i){
+      let item = this.form.schema[this.currentFormat][i]
       item['value'] = v
-      this.$set(this.form.schema.oneOf, i, JSON.stringify(item))
+      this.$set(this.form.schema[this.currentFormat], i, item)
     },
-    onRadioVal(v, i){
-      let item = JSON.parse(this.form.schema.oneOf[i])
+    onSetLabel(v, i){
+      let item = this.form.schema[this.currentFormat][i]
       item['label'] = v
-      this.$set(this.form.schema.oneOf, i, JSON.stringify(item))
+      this.$set(this.form.schema[this.currentFormat], i, item)
     },
     onDragNode(draggingNode, dropNode){
       let children = dropNode.data.parent.children
@@ -220,7 +237,7 @@ export default {
     },
     onNodeClick(schemaWrap, node) {
       if (!schemaWrap.schema.radioType && schemaWrap.schema.type ==='string') 
-      this.$set(schemaWrap.schema, 'radioType', '1')
+      this.$set(schemaWrap.schema, 'radioType', 1)
       this.form.key = schemaWrap.key
       this.form.schema = schemaWrap.schema
       this.form.node = node
@@ -242,8 +259,14 @@ export default {
     },
     onChangeType(type){
       const schemaWrap = this.form.node.data
-      if (!schemaWrap.schema.radioType && type ==='string') 
-      this.$set(schemaWrap.schema, 'radioType', '1')
+      if (!schemaWrap.schema.radioType && type === 'string') {
+        this.$set(schemaWrap.schema, 'radioType', 1)
+        this.$delete(schemaWrap.schema, 'format')
+        this.$delete(schemaWrap.schema, 'anyOf')
+      } else if(type === 'array'){
+        this.$delete(schemaWrap.schema, 'radioType')
+        this.$delete(schemaWrap.schema, 'oneOf')
+      }
     },
     onAppendNode() {
 			const data = this.form.node.data
@@ -258,7 +281,7 @@ export default {
 				) {
 					this.$set(data.schema, 'properties', {})
 				}
-				newChild = new SchemaWrap('newKey', { type: 'string', radioType: '1' })
+				newChild = new SchemaWrap('newKey', { type: 'string', radioType: 1 })
 			}
 			if (data.schema.type === 'array') {
 				newChild = new SchemaWrap('items', { type: 'object', attrs: {} })
