@@ -13,7 +13,7 @@ const Schema = {
 			type: 'string',
 			radioType: '2',
 			// oneOf: ['线上品牌赞助', '线下场地免费'],
-			oneOf: ['{"label": "线上品牌赞助", "value": "a"}', '{"label": "线下场地免费", "value": "b"}']
+			oneOf: [{"label": "线上品牌赞助", "value": "a"}', '{"label": "线下场地免费", "value": "b"}]
 		},
 		file1: {
       title: '上传文件',
