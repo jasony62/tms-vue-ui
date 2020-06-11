@@ -25,7 +25,7 @@ export default {
   methods: {			
     jsonDocSubmit(newSlimModel, newModel) {
       alert(JSON.stringify(newModel))
-      console.log(JSON.stringify(newSlimModel))
+      console.log(newSlimModel)
 		},
 		handleFileSubmit(ref, files) {
 			let result = {}

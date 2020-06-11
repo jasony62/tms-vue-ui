@@ -2,11 +2,7 @@ import { Field, ARRAY_KEYWORDS } from './field'
 
 export function parseItems(items) {
   return items.map(item => {
-    if (typeof item !== 'object') {
-      return { value: item, label: item }
-    }
-
-    return item
+    return { value: item.value, label: item.label }
   })
 }
 
