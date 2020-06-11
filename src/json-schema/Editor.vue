@@ -248,10 +248,12 @@ export default {
       this.form.schema = schemaWrap.schema
       this.form.node = node
       setTimeout(() => {
-        this.form.schema[this.currentFormat].map(ele => {
-          this.$set(ele, 'disabled', true)
-          return ele
-        })
+        if(this.form.schema[this.currentFormat]) {
+          this.form.schema[this.currentFormat].map(ele => {
+            this.$set(ele, 'disabled', true)
+            return ele
+          })
+        }
       }, 0)
     },
     onChangeKey() {
