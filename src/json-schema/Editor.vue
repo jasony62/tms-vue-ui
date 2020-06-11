@@ -40,7 +40,7 @@
         </template>
 				<template v-else-if="form.schema.radioType === 2 || form.schema.format === 'checkbox'">
           <tms-flex v-for="(v, i) in form.schema[currentFormat]" :key="i">
-            <el-input size="mini" v-model="v.value" @input="onSetValue(v.value, i)"></el-input>
+            <el-input size="mini" v-model="v.value" @input="onSetValue(v.value, i)" :disabled="v.disabled"></el-input>
             <el-input size="mini" v-model="v.label" @input="onSetLabel(v.label, i)"></el-input>
             <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
           </tms-flex>
@@ -177,12 +177,18 @@ export default {
     "form.schema.radioType": {
 			handler: function(val) {
         this.currentFormat = 'oneOf'
-      }
+      },
+      immediate: true
     },
     "form.schema.format": {
 			handler: function(val) {
-        this.currentFormat = val === 'checkbox' ? 'anyOf' :'oneOf'
-      }
+        if (val === 'checkbox') {
+          this.currentFormat = 'anyOf'
+        } else {
+          this.$delete(this.form.schema, 'anyOf')
+        }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -201,7 +207,7 @@ export default {
       }
     },
     onAddOption(){
-      this.form.schema[this.currentFormat].push('{"label": "新选项", "value": "newKey"}')
+      this.form.schema[this.currentFormat].push({"label": "新选项", "value": "newKey"})
     },
     onDelOption(v, i){
       this.form.schema[this.currentFormat].splice(i, 1)
@@ -241,6 +247,12 @@ export default {
       this.form.key = schemaWrap.key
       this.form.schema = schemaWrap.schema
       this.form.node = node
+      setTimeout(() => {
+        this.form.schema[this.currentFormat].map(ele => {
+          this.$set(ele, 'disabled', true)
+          return ele
+        })
+      }, 0)
     },
     onChangeKey() {
       const schemaWrap = this.form.node.data
@@ -301,6 +313,7 @@ export default {
   mounted() {
 		const root = SchemaWrap.build('root', this.schema)
     this.data = [root]
+    
   }
 }
 </script>

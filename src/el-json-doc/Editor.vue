@@ -51,7 +51,6 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
   const rules = {}
   
   function parseField(fields) {
-    console.log('file', fields)
     Object.keys(fields).forEach(key => {
       if (key.indexOf('$') === 0 && key !== '$sub') return
       const field = fields[key]
