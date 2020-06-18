@@ -6,9 +6,9 @@
 
 除了 7 种属性类型，还包括元数据（title,description,error）和操作(submit)。
 
-`schema` 中的 `attrs` 会作为 field 的初始值
+`schema`中的 `attrs`会作为`field`的初始值。
 
-`items`是`{value,label}`的数组
+`items`是`{value,label}`的数组。
 
 schema（定义）->field（字段）->vnode（节点）->form（表单）
 
@@ -46,7 +46,7 @@ schema.type 有 6 种有效的 type，需要设置成对应的 field.type
 | number  |              |          | number                  |
 | string  |              | text     |                         |
 | string  | format=email | email    |                         |
-| string  | format=uri   | url    |                         |
+| string  | format=uri   | url      |                         |
 | string  | format=regex | text     |                         |
 | enum    |              | select   |                         |
 | oneOf   |              | radio    |                         |

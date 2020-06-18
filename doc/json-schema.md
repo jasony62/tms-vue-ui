@@ -1,6 +1,49 @@
 # JSONSchema 编辑器（json-schema）
 
-编辑 json-schema 的编辑器。
+生成`JSONSchema`的编辑器。`JSONSchema`本身是个`json`格式的数据，主要包含自定义的属性（property）和按照`JSONSchema`标准描述每个属性的关键字（keywords）。
+
+## 核心功能
+
+`JSONSchema`支持 7 种基本属性数据类型，包括：`string`，`number`，`integer`，`object`，`array`，`boolean`，`null`。针对每种类型，`JSONSchema`定义了若干关键字（keywords），用来描述每种类型的数据规范化要求，例如：`minLength`和`maxLength`限制字符串类型的长度等。（参考：[Understanding JSON Schema](https://json-schema.org/understanding-json-schema/index.html))
+
+在实际的项目中可能存在两类扩展需求：1、规范中的关键字（keywords）不满足要求需要扩展，例如：指定某些属性只读；2、某些常用类型对象的输入限制条件，例如：手机号码、文件等。
+
+`json-schema`通过`slot`实现关键字扩展，插槽名称为`extKeywords`，示例代码如下。
+
+```
+<tms-json-schema ref="myJsonSchema" :schema="jsonSchema" :extendSchema="extendSchema">
+  <template v-slot:extKeywords="props">
+    <el-form-item label="不可修改">
+      <el-switch v-model="props.schema.readonly"></el-switch>
+    </el-form-item>
+  </template>
+</tms-json-schema>
+```
+
+关键字扩展适用于对所有属性统一添加某种信息。
+
+`JSONSchema`标准对`string`类型提供了格式（format）关键字，说明输入格式要求，`json-schema`将`format`扩展到了`object`类型，例如，限制文件的类型和大小等。`JSONSchema`内置实现了一些常用格式扩展信息，例如：文件。组件的使用者也可以通过`setFormatAttrsComp`方法，指定特定格式对应的扩展信息编辑组件。格式扩展信息记录在`formatAttrs`关键字中。自定义的格式扩展信息编辑组件必须实现`defaultFormatAttrs`方法，提供扩展信息的默认设置。
+
+数组类型（array），字符串类型（string）和整数类型（integer）的属性支持通过`enum`设置可选项范围。目前，`enum`仅支持放`{label:"",value:""}`的对象。
+
+如果数组设置了可选范围，支持设置要求的选项数量`minItems`和`maxItems`。
+
+## 计划内置支持的格式
+
+| 基础类型（type） | 支持的格式（format） | 说明             |
+| ---------------- | -------------------- | ---------------- |
+| string           | name                 | 用户名           |
+| string           | mobile               | 手机号           |
+| string           | email                | 电子邮件         |
+| object           | file                 | 文件             |
+| object           | image                | 图片             |
+| object           | score                | 打分             |
+| object           | url                  | 外部链接         |
+| integer          | date-time            | 日期时间的秒表示 |
+| string           | date                 | 日期             |
+| string           | time                 | 时间             |
+
+## 使用组件
 
 ```js
 import { JsonSchema } from 'tms-vue-ui'
