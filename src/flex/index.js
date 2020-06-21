@@ -16,14 +16,21 @@ export default function(Vue) {
   Vue.component('tms-flex', {
     props: {
       direction: { type: String, default: 'row' },
-      alignItems: { type: String, default: 'flex-start' },
+      alignItems: { type: String },
       elasticItems: { type: Array },
-      gap: { type: Number, default: 2 }
+      gap: { type: Number, default: 2 },
     },
     render(h) {
       let classes = ['tms-flex']
-      classes.push(this.direction === 'column' ? 'tms-flex_column' : 'tms-flex_row')
+      classes.push(
+        this.direction === 'column'
+          ? 'tms-flex_column'
+          : this.direction === 'row-reverse'
+          ? 'tms-flex_row-reverse'
+          : 'tms-flex_row'
+      )
       classes.push(`tms-flex_gap_${this.gap}`)
+      const alignItems = this.alignItems ? this.alignItems : this.direction === 'column' ? 'stretch' : 'flex-start'
       let items = this.$slots.default
       if (items && items.length) {
         items.forEach((item, index) => {
@@ -34,7 +41,7 @@ export default function(Vue) {
           }
         })
       }
-      return h('div', { class: classes, style: { alignItems: this.alignItems } }, items)
-    }
+      return h('div', { class: classes, style: { alignItems } }, items)
+    },
   })
 }
