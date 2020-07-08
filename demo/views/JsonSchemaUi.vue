@@ -2,7 +2,13 @@
   <div class="json-schema-ui">
     <h3>编辑JSONSchema</h3>
     <div id="myJsonSchema">
-      <tms-json-schema :schema="jsonSchema"></tms-json-schema>
+      <tms-json-schema ref="myJsonSchema" :schema="jsonSchema" :extendSchema="extendSchema">
+        <template v-slot:extKeywords="props">
+          <el-form-item label="不可修改">
+            <el-switch v-model="props.schema.readonly"></el-switch>
+          </el-form-item>
+        </template>
+      </tms-json-schema>
     </div>
   </div>
 </template>
@@ -23,26 +29,27 @@ export default {
         type: 'object',
         required: ['familyName', 'givenName'],
         properties: {
-					file: {
-						type: 'array',
-						title: '上传图片和文件',
-						format: 'file',
-						items: {
-							type: 'object',
-							properties: {
-								name: { title: '名字', type: 'string'},
-								url: { title: '地址', type: 'string'}
-							},
-							attrs: {
-								accept: 'image/png,image/jpeg',
-								size: '20MB',
-								limit: 2
-							}
-						}
-					},
+          file: {
+            type: 'array',
+            title: '上传图片和文件',
+            items: {
+              type: 'object',
+              properties: {
+                name: { title: '名字', type: 'string' },
+                url: { title: '地址', type: 'string' }
+              },
+              format: 'file',
+              attrs: {
+                accept: 'image/png,image/jpeg',
+                size: '20MB',
+                limit: 2
+              }
+            }
+          },
           fn: {
             description: 'Formatted Name',
-            type: 'string'
+            type: 'string',
+            enum: []
           },
           familyName: {
             type: 'string'
@@ -129,6 +136,9 @@ export default {
             }
           }
         }
+      },
+      extendSchema: (vm, schema) => {
+        vm.$set(schema, 'readonly', false)
       }
     }
   }
@@ -136,6 +146,6 @@ export default {
 </script>
 <style>
 .tms-flex .tms-flex__item:last-child {
-	flex: 1
+  flex: 1;
 }
 </style>

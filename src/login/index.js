@@ -17,10 +17,14 @@ class Login {
     this.captchaId = `captcha-${++idCounter}`
   }
   get component() {
-    const loginData = {}
     const { schema, fnCaptcha, fnToken, captchaId } = this
     return {
-      props: { onSuccess: { type: Function }, onFail: { type: Function } },
+			props: { onSuccess: { type: Function }, onFail: { type: Function } },
+			data() {
+				return {
+					loginData: {}
+				}
+			},
       methods: {
         refresh() {
           if (typeof fnCaptcha === 'function') {
@@ -38,7 +42,7 @@ class Login {
           }
         },
         login() {
-          fnToken(loginData).then(response => {
+          fnToken(this.loginData).then(response => {
             let { code, result, msg } = response
             if (code !== 0) {
               this.refresh()
@@ -78,6 +82,7 @@ class Login {
         Vue.nextTick(() => this.refresh())
       },
       render() {
+				let loginData = this.loginData
         let textEle = item => (
           <van-cell-group class="tms-login__input">
             <van-field
