@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       schema,
-      model: {file1: [{name: '1.jpg'}]}
+      model: {}
     }
 	},
   methods: {			
