@@ -11,14 +11,30 @@ const Schema = {
     resource: {
       title: '特殊资源',
       type: 'string',
-      radioType: '2',
-      // oneOf: ['线上品牌赞助', '线下场地免费'],
-      oneOf: [{
+      enum: [{
         "label": "线上品牌赞助",
         "value": "a"
       }, {
         "label": "线下场地免费",
         "value": "b"
+      }]
+    },
+    type: {
+      title: '活动性质',
+      type: 'array',
+      minItems: 2,
+      enum: [{
+        "label": "美食/餐厅线上活动",
+        "value": "a"
+      }, {
+        "label": "地推活动",
+        "value": "b"
+      }, {
+        "label": "线下主题活动",
+        "value": "c"
+      }, {
+        "label": "单纯品牌曝光",
+        "value": "d"
       }]
     },
     file1: {
@@ -44,7 +60,6 @@ const Schema = {
         }
       }
     },
-
   }
 }
 

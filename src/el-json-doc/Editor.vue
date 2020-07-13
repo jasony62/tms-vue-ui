@@ -197,7 +197,7 @@ export default {
 		fileSchemas() {	
 			return Object.keys(this.schema.properties).filter(key => {	
 				const value = this.schema.properties[key]	
-				if (value.type==='array'&&value.items.format==='file') return key	
+				if (value.type==='array'&& value.items && value.items.format==='file') return key	
 			})	
 		}	
 	},

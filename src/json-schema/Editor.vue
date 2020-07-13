@@ -286,7 +286,11 @@ export default {
       this.form.key = key
       this.form.schema = schema
       this.form.node = node
-      if (Array.isArray(schema.enum)) this.form.hasEnum = true
+      if (Array.isArray(schema.enum)) {
+        this.form.hasEnum = true
+      } else {
+        this.form.hasEnum = false
+      }
       if (this.extendSchema) this.extendSchema(this, schema)
     },
     onChangeKey() {
