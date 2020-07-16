@@ -1,6 +1,6 @@
 <template>
   <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false">
-    <el-button type="primary" @click="submit">提交</el-button>
+    <el-button type="primary" :loading="isSubmit" @click="submit">提交</el-button>
     <el-button type="reset" @click="reset">重置</el-button>
   </tms-json-doc>
 </template>
@@ -182,6 +182,7 @@ export default {
   name: 'TmsElJsonDoc',
   components: { TmsJsonDoc },
   props: {
+    isSubmit: { type: Boolean, default: false },
     schema: { type: Object },
     doc: { type: Object },
     requireButtons: { type: Boolean, default: () => true },
