@@ -16,7 +16,7 @@ function createField(schema, pathname, refs, value) {
     case 'array':
       newField = ARRAY_KEYWORDS.some((kw) => schema.hasOwnProperty(kw))
         ? new FieldArray(schema, pathname)
-        : schema.format === 'file'
+        : schema.items.format === 'file'
         ? new FieldFile(schema, pathname, value)
         : new FieldObject(schema, pathname, refs)
       break

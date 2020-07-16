@@ -1,16 +1,6 @@
 <template>
   <tms-flex>
-    <el-tree
-      :data="data"
-      :props="defaultProps"
-      default-expand-all
-      :expand-on-click-node="false"
-      @node-click="onNodeClick"
-      draggable
-      :allow-drag="allowDrag"
-      :allow-drop="allowDrop"
-      @node-drop="onDragNode"
-    ></el-tree>
+    <el-tree :data="data" :props="defaultProps" default-expand-all :expand-on-click-node="false" @node-click="onNodeClick" draggable :allow-drag="allowDrag" :allow-drop="allowDrop" @node-drop="onDragNode"></el-tree>
     <el-form label-width="80px" :model="form" :disabled="!form.node">
       <el-form-item label="键值">
         <el-input v-model="form.key" @change="onChangeKey"></el-input>
@@ -28,12 +18,7 @@
       </el-form-item>
       <el-form-item label="格式" v-if="formats">
         <el-select v-model="form.schema.format" placeholder="请选择格式">
-          <el-option
-            v-for="format in formats"
-            :key="format.value"
-            :label="format.label"
-            :value="format.value"
-          ></el-option>
+          <el-option v-for="format in formats" :key="format.value" :label="format.label" :value="format.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="标题">
@@ -53,12 +38,7 @@
       </el-form-item>
       <el-form-item label="选择范围" v-if="form.hasEnum">
         <tms-flex v-for="(v, i) in form.schema.enum" :key="i">
-          <el-input
-            size="mini"
-            v-model="v.value"
-            @input="onSetValue(v.value, i)"
-            :disabled="v.disabled"
-          ></el-input>
+          <el-input size="mini" v-model="v.value" @input="onSetValue(v.value, i)" :disabled="v.disabled"></el-input>
           <el-input size="mini" v-model="v.label" @input="onSetLabel(v.label, i)"></el-input>
           <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
         </tms-flex>
@@ -74,11 +54,7 @@
       <slot name="extKeywords" :schema="form.schema"></slot>
       <el-form-item>
         <el-button size="mini" @click="onRemoveNode">删除</el-button>
-        <el-button
-          size="mini"
-          @click="onAppendNode"
-          v-if="form.schema.type === 'object' || (form.schema.type === 'array'&&form.schema.format==='file')"
-        >添加属性</el-button>
+        <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object' || form.schema.type === 'array'">添加属性</el-button>
       </el-form-item>
     </el-form>
     <div style="flex:1">{{jsonString}}</div>
@@ -310,7 +286,11 @@ export default {
       this.form.key = key
       this.form.schema = schema
       this.form.node = node
-      if (Array.isArray(schema.enum)) this.form.hasEnum = true
+      if (Array.isArray(schema.enum)) {
+        this.form.hasEnum = true
+      } else {
+        this.form.hasEnum = false
+      }
       if (this.extendSchema) this.extendSchema(this, schema)
     },
     onChangeKey() {
