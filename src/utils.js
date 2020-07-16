@@ -134,7 +134,7 @@ export class JsonSchema {
       return null
     }
     const flatSchema = JsonSchema.travel(schema, (prop) => ({ type: prop.type, value: prop.value }))
-
+如果
     const flatDoc = JsonSchema.flattenObject(doc)
 
     const flatSlimDoc = new Map()

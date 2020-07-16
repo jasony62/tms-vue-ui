@@ -6,7 +6,9 @@ const Schema = {
   properties: {
     name: {
       title: '活动名称',
-      type: 'string'
+      type: 'string',
+      default: '10',
+      readonly: true
     },
     resource: {
       title: '特殊资源',
@@ -38,7 +40,7 @@ const Schema = {
         "value": "d"
       }]
     },
-    file1: {
+    files: {
       type: 'array',
       title: '上传图片和文件',
       items: {
@@ -54,7 +56,7 @@ const Schema = {
           }
         },
         format: 'file',
-        attrs: {
+        formatAttrs: {
           accept: 'image/png,image/jpeg',
           size: '20MB',
           limit: 2
