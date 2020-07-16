@@ -13,6 +13,7 @@
 | fieldWrapClass | 输入控件的包裹类                 | String  | -      |
 | requireButtons | 是否显示表单操作按钮，例如：提交 | Boolean | true   |
 | oneWay         | 传入数据是单向的，不会被修改     | Boolean | true   |
+| isSubmit       | 是否提交，若已提交则置为loading状态，防止多次提交     | Boolean | false   |
 
 必须传入`schema`对象。支持`v-model`传递要编辑的 json 文档。
 

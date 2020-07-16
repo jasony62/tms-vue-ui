@@ -39,7 +39,7 @@ export default {
                 url: { title: '地址', type: 'string' }
               },
               format: 'file',
-              attrs: {
+              formatAttrs: {
                 accept: 'image/png,image/jpeg',
                 size: '20MB',
                 limit: 2
