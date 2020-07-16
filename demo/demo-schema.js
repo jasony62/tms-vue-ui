@@ -23,6 +23,7 @@ const Schema = {
       title: '活动性质',
       type: 'array',
       minItems: 2,
+      maxItems: 3,
       enum: [{
         "label": "美食/餐厅线上活动",
         "value": "a"

@@ -72,7 +72,16 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
       const trigger = ['radio', 'checkbox', 'select', 'radiogroup', 'checkboxgroup'].includes(field.type)
         ? 'change'
         : 'blur'
-      rules[field.name].push({ type, required, message, trigger })
+        
+      if (field.schemaType === 'array' && (field.schema.minItems !== undefined || field.maxItems !== undefined)) {
+        const len = model[key].length
+        const max = field.schema.maxItems
+        const min = field.schema.minItems || 0
+        const message = len < min ? `选项不得少于${min}项` : len > max ? `选项不得超过${max}项` : ''
+        rules[field.name].push({ min, max, type, required, message, trigger })
+      } else {
+        rules[field.name].push({ type, required, message, trigger })
+      }
 
       if (field.minlength !== undefined || field.maxlength !== undefined) {
         const max = field.maxlength || 255

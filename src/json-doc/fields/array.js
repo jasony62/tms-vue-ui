@@ -10,7 +10,7 @@ export class FieldArray extends Field {
   constructor(...args) {
     super(...args)
 
-    this.multiple = this.schema.minItems > 1
+    this.multiple = this.schema.type === 'array'
 
     this.items = []
 

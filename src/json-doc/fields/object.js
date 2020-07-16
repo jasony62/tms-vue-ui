@@ -3,7 +3,7 @@ import { Field } from './field'
 export class FieldObject extends Field {
   constructor(schema, schemaName, refs) {
     super(schema, schemaName)
-    this.multiple = schema.minItems > 1
+    this.multiple = schema.type === 'array'
     this.type = schema.type
     if (schema.items.$ref) {
       if (refs[schema.items.$ref]) {
