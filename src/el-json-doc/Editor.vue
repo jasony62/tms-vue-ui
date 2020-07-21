@@ -1,6 +1,6 @@
 <template>
   <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false">
-    <el-button type="primary" @click="submit">提交</el-button>
+    <el-button type="primary" :loading="isSubmit" @click="submit">提交</el-button>
     <el-button type="reset" @click="reset">重置</el-button>
   </tms-json-doc>
 </template>
@@ -72,7 +72,16 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
       const trigger = ['radio', 'checkbox', 'select', 'radiogroup', 'checkboxgroup'].includes(field.type)
         ? 'change'
         : 'blur'
-      rules[field.name].push({ type, required, message, trigger })
+        
+      if (field.schemaType === 'array' && (field.schema.minItems !== undefined || field.maxItems !== undefined)) {
+        const len = model[key].length
+        const max = field.schema.maxItems
+        const min = field.schema.minItems || 0
+        const message = len < min ? `选项不得少于${min}项` : len > max ? `选项不得超过${max}项` : ''
+        rules[field.name].push({ min, max, type, required, message, trigger })
+      } else {
+        rules[field.name].push({ type, required, message, trigger })
+      }
 
       if (field.minlength !== undefined || field.maxlength !== undefined) {
         const max = field.maxlength || 255
@@ -182,6 +191,7 @@ export default {
   name: 'TmsElJsonDoc',
   components: { TmsJsonDoc },
   props: {
+    isSubmit: { type: Boolean, default: false },
     schema: { type: Object },
     doc: { type: Object },
     requireButtons: { type: Boolean, default: () => true },

@@ -1,6 +1,6 @@
 <template>
   <div id="myJsonDoc">
-    <tms-el-json-doc :schema="schema" :doc="model" :on-file-submit="handleFileSubmit" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
+    <tms-el-json-doc :is-submit="isSubmit" :schema="schema" :doc="model" :on-file-submit="handleFileSubmit" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
   </div>
 </template>
 
@@ -18,14 +18,19 @@ export default {
   name: 'HelloTmsUI',
   data() {
     return {
+      isSubmit: false,
       schema,
       model: {}
     }
 	},
   methods: {			
     jsonDocSubmit(newSlimModel, newModel) {
-      alert(JSON.stringify(newModel))
-      console.log(newSlimModel)
+      this.isSubmit = true
+      setTimeout(() => {
+        alert(JSON.stringify(newModel))
+        console.log(newSlimModel)
+        this.isSubmit = false
+      }, 2000)
 		},
 		handleFileSubmit(ref, files) {
 			let result = {}
