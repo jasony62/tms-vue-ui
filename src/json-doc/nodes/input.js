@@ -12,7 +12,13 @@ export class Input extends FieldNode {
     const n = ns.pop()
     const formModel = ns.length > 0 ? initChild(this.vm, this.vm.editDoc, ns) : this.vm.editDoc
     //this.vm.$set(formModel, n, newValue)
-    formModel[n] = newValue
+    Object.keys(formModel).forEach((key)=>{
+      if (typeof formModel[key] === 'string') {
+        formModel[key] = formModel[key].trim()
+      }
+    })
+    if (typeof newValue ==='string') formModel[n] = newValue.trim()
+    else formModel[n] = newValue
   }
   /**
    *
