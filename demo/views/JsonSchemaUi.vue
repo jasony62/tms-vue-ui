@@ -36,112 +36,112 @@ export default {
               type: 'object',
               properties: {
                 name: { title: '名字', type: 'string' },
-                url: { title: '地址', type: 'string' }
+                url: { title: '地址', type: 'string' },
               },
               format: 'file',
               formatAttrs: {
                 accept: 'image/png,image/jpeg',
                 size: '20MB',
-                limit: 2
-              }
-            }
+                limit: 2,
+              },
+            },
           },
           fn: {
             description: 'Formatted Name',
             type: 'string',
-            enum: []
+            enum: [],
           },
           familyName: {
-            type: 'string'
+            type: 'string',
           },
           givenName: {
-            type: 'string'
+            type: 'string',
           },
           additionalName: {
             type: 'array',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           honorificPrefix: {
             type: 'array',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           honorificSuffix: {
             type: 'array',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           nickname: {
-            type: 'string'
+            type: 'string',
           },
           url: {
-            type: 'string'
+            type: 'string',
           },
           email: {
             type: 'object',
             properties: {
               type: {
-                type: 'string'
+                type: 'string',
               },
               value: {
-                type: 'string'
-              }
-            }
+                type: 'string',
+              },
+            },
           },
           tel: {
             type: 'object',
             properties: {
               type: {
-                type: 'string'
+                type: 'string',
               },
               value: {
-                type: 'string'
-              }
-            }
+                type: 'string',
+              },
+            },
           },
           tz: {
-            type: 'string'
+            type: 'string',
           },
           photo: {
-            type: 'string'
+            type: 'string',
           },
           logo: {
-            type: 'string'
+            type: 'string',
           },
           sound: {
-            type: 'string'
+            type: 'string',
           },
           bday: {
-            type: 'string'
+            type: 'string',
           },
           title: {
-            type: 'string'
+            type: 'string',
           },
           role: {
-            type: 'string'
+            type: 'string',
           },
           org: {
             type: 'object',
             properties: {
               organizationName: {
-                type: 'string'
+                type: 'string',
               },
               organizationUnit: {
-                type: 'string'
-              }
-            }
-          }
-        }
+                type: 'string',
+              },
+            },
+          },
+        },
       },
       extendSchema: (vm, schema) => {
         vm.$set(schema, 'readonly', false)
-      }
+      },
     }
-  }
+  },
 }
 </script>
 <style>
