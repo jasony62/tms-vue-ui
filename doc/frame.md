@@ -10,6 +10,10 @@ import { Frame } from 'tms-vue-ui'
 Vue.use(Frame)
 ```
 
+```
+<tms-frame></tms-frame>
+```
+
 ## 插槽（slots）
 
 | 名称   | 说明                                        |

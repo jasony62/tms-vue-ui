@@ -12,7 +12,7 @@
     "lib",
     "doc"
   ],
-  "version": "0.0.26",
+  "version": "0.0.33",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "node build/build-lib",
