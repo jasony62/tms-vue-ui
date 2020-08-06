@@ -1,131 +1,102 @@
 <template>
-  <div>
-    <el-tabs v-model="activeL0Pane" type="card">
-      <el-tab-pane label="属性" name="properties">
-        <tms-flex>
-          <el-tree
-            :data="data"
-            :props="defaultProps"
-            default-expand-all
-            :expand-on-click-node="false"
-            @node-click="onNodeClick"
-            draggable
-            :allow-drag="allowDrag"
-            :allow-drop="allowDrop"
-            @node-drop="onDragNode"
-          ></el-tree>
-          <el-form label-width="80px" :model="form" :disabled="!form.node">
-            <el-form-item label="键值">
-              <el-input v-model="form.key" @change="onChangeKey"></el-input>
-            </el-form-item>
-            <el-form-item label="类型">
-              <el-select v-model="form.schema.type" placeholder="请选择类型">
-                <el-option label="integer" value="integer"></el-option>
-                <el-option label="number" value="number"></el-option>
-                <el-option label="string" value="string"></el-option>
-                <el-option label="object" value="object"></el-option>
-                <el-option label="array" value="array"></el-option>
-                <el-option label="boolean" value="boolean"></el-option>
-                <el-option label="null" value="null"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="格式" v-if="formats">
-              <el-select v-model="form.schema.format" placeholder="请选择格式">
-                <el-option
-                  v-for="format in formats"
-                  :key="format.value"
-                  :label="format.label"
-                  :value="format.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="标题">
-              <el-input v-model="form.schema.title"></el-input>
-            </el-form-item>
-            <el-form-item label="描述">
-              <el-input type="textarea" v-model="form.schema.description"></el-input>
-            </el-form-item>
-            <el-form-item label="必填">
-              <el-switch v-model="form.schema.required"></el-switch>
-            </el-form-item>
-            <el-form-item label="默认值">
-              <el-input v-model="form.schema.default"></el-input>
-            </el-form-item>
-            <el-form-item label="设置范围">
-              <el-switch v-model="form.hasEnum" @change="onChangeHasEnum"></el-switch>
-            </el-form-item>
-            <el-form-item label="选择范围" v-if="form.hasEnum">
-              <tms-flex v-for="(v, i) in form.schema.enum" :key="i">
-                <el-input
-                  size="mini"
-                  v-model="v.value"
-                  @input="onSetValue(v.value, i)"
-                  :disabled="v.disabled"
-                ></el-input>
-                <el-input size="mini" v-model="v.label" @input="onSetLabel(v.label, i)"></el-input>
-                <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
-              </tms-flex>
-              <el-button size="mini" type="primary" @click="onAddOption">新增选项</el-button>
-            </el-form-item>
-            <el-form-item label="至少选" v-if="form.schema.type === 'array'&&form.hasEnum">
-              <el-input-number v-model="form.schema.minItems"></el-input-number>
-            </el-form-item>
-            <el-form-item label="最多选" v-if="form.schema.type === 'array'&&form.hasEnum">
-              <el-input-number v-model="form.schema.maxItems"></el-input-number>
-            </el-form-item>
-            <component :is="compFormatAttrs" v-bind.sync="form.schema.formatAttrs"></component>
-            <slot name="extKeywords" :schema="form.schema"></slot>
-            <el-form-item>
-              <el-button size="mini" @click="onRemoveNode">删除</el-button>
-              <el-button
-                size="mini"
-                @click="onAppendNode"
-                v-if="form.schema.type === 'object' || form.schema.type === 'array'"
-              >添加属性</el-button>
-            </el-form-item>
-          </el-form>
-          <!-- 开始：扩展定义 -->
-          <div>
-            <el-tabs tab-position="left" v-model="activeL1Pane" style="height: 200px;">
-              <el-tab-pane label="属性依赖" name="dependencies">
-                <tms-flex direction="column">
-                  <tms-flex
-                    v-for="(config,p) in form.schema.dependencies"
-                    :key="p"
-                    direction="column"
-                  >
-                    <tms-flex>
-                      <span>{{p}}</span>
-                      <tms-flex direction="column">
-                        <tms-flex v-for="(value,property) in config.rules" :key="property">
-                          <span>{{property}}</span>
-                          <span>{{value}}</span>
-                        </tms-flex>
-                        <div>
-                          <span>{{config.operator}}</span>
-                        </div>
-                      </tms-flex>
-                    </tms-flex>
-                    <div>
-                      <el-button size="mini" @click="onSetDependency(p)">修改</el-button>
-                      <el-button size="mini" @click="onDelDependency(p)">删除</el-button>
-                    </div>
-                  </tms-flex>
-                  <div>
-                    <el-button size="mini" type="default" @click="onAddDependency">添加</el-button>
-                  </div>
-                </tms-flex>
-              </el-tab-pane>
-            </el-tabs>
-          </div>
-          <!-- 结束：扩展定义 -->
+  <tms-flex>
+    <el-tree
+      :data="data"
+      :props="defaultProps"
+      default-expand-all
+      :expand-on-click-node="false"
+      @node-click="onNodeClick"
+      draggable
+      :allow-drag="allowDrag"
+      :allow-drop="allowDrop"
+      @node-drop="onDragNode"
+    ></el-tree>
+    <el-form label-width="80px" :model="form" :disabled="!form.node">
+      <el-form-item label="键值">
+        <el-input v-model="form.key" @change="onChangeKey"></el-input>
+      </el-form-item>
+      <el-form-item label="类型">
+        <el-select v-model="form.schema.type" placeholder="请选择类型">
+          <el-option label="integer" value="integer"></el-option>
+          <el-option label="number" value="number"></el-option>
+          <el-option label="string" value="string"></el-option>
+          <el-option label="object" value="object"></el-option>
+          <el-option label="array" value="array"></el-option>
+          <el-option label="boolean" value="boolean"></el-option>
+          <el-option label="null" value="null"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="格式" v-if="formats">
+        <el-select v-model="form.schema.format" placeholder="请选择格式">
+          <el-option
+            v-for="format in formats"
+            :key="format.value"
+            :label="format.label"
+            :value="format.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="标题">
+        <el-input v-model="form.schema.title"></el-input>
+      </el-form-item>
+      <el-form-item label="描述">
+        <el-input type="textarea" v-model="form.schema.description"></el-input>
+      </el-form-item>
+      <el-form-item label="必填">
+        <el-switch v-model="form.schema.required"></el-switch>
+      </el-form-item>
+      <el-form-item label="设置范围">
+        <el-switch v-model="form.hasEnum" @change="onChangeHasEnum"></el-switch>
+      </el-form-item>
+      <el-form-item label="选择范围" v-if="form.hasEnum">
+        <tms-flex v-for="(v, i) in form.schema.enum" :key="i">
+          <el-input
+            size="mini"
+            v-model="v.value"
+            @input="onSetValue(v.value, i)"
+            :disabled="v.disabled"
+          ></el-input>
+          <el-input size="mini" v-model="v.label" @input="onSetLabel(v.label, i)"></el-input>
+          <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
         </tms-flex>
-      </el-tab-pane>
-      <el-tab-pane label="预览" name="preview">
-        <div style="flex:1">{{jsonString}}</div>
-      </el-tab-pane>
-    </el-tabs>
-  </div>
+        <el-button size="mini" type="primary" @click="onAddOption">新增选项</el-button>
+      </el-form-item>
+      <el-form-item label="默认值">
+        <el-select
+          v-if="form.hasEnum"
+          v-model="form.schema.default"
+          placeholder="请选择默认值"
+          :multiple="form.schema.type === 'array'"
+        >
+          <el-option value v-if="form.schema.type === 'string'"></el-option>
+          <el-option
+            v-for="format in form.schema.enum"
+            :key="format.value"
+            :label="format.label"
+            :value="format.value"
+          ></el-option>
+        </el-select>
+        <el-input v-else v-model="form.schema.default"></el-input>
+      </el-form-item>
+      <el-form-item label="至少选" v-if="form.schema.type === 'array'&&form.hasEnum">
+        <el-input-number v-model="form.schema.minItems"></el-input-number>
+      </el-form-item>
+      <el-form-item label="最多选" v-if="form.schema.type === 'array'&&form.hasEnum">
+        <el-input-number v-model="form.schema.maxItems"></el-input-number>
+      </el-form-item>
+      <component :is="compFormatAttrs" v-bind.sync="form.schema.formatAttrs"></component>
+      <slot name="extKeywords" :schema="form.schema"></slot>
+      <el-form-item>
+        <el-button size="mini" @click="onRemoveNode">删除</el-button>
+        <el-button
+          size="mini"
+          @click="onAppendNode"
+          v-if="form.schema.type === 'object' || form.schema.type === 'array'"
+        >添加属性</el-button>
+      </el-form-item>
+    </el-form>
+    <div style="flex:1">{{jsonString}}</div>
+  </tms-flex>
 </template>
     
     
