@@ -42,8 +42,8 @@
         <el-button size="mini" type="primary" @click="onAddOption">新增选项</el-button>
       </el-form-item>
       <el-form-item label="默认值">
-        <el-select v-if="form.hasEnum" v-model="form.schema.default" placeholder="请选择默认值">
-          <el-option value=""></el-option>
+        <el-select v-if="form.hasEnum" v-model="form.schema.default" placeholder="请选择默认值" :multiple="form.schema.type === 'array'">
+          <el-option value="" v-if="form.schema.type === 'string'"></el-option>
           <el-option v-for="format in form.schema.enum" :key="format.value" :label="format.label" :value="format.value"></el-option>
         </el-select>
         <el-input v-else v-model="form.schema.default"></el-input>
