@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form-item label="文件类型">
-      <el-input v-model="fileAccept" placeholder="标准格式，如'image/png,image/jpeg'"></el-input>
+      <el-input v-model="fileAccept" placeholder="标准格式，如'.png,.jpeg'"></el-input>
     </el-form-item>
     <el-form-item label="文件最大">
       <el-input v-model="fileSize" placeholder="请输入数字，默认以MB为单位"></el-input>

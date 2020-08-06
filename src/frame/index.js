@@ -87,9 +87,9 @@ export default function(Vue) {
       let slots = this.$slots
       let props = this.$props
       let headerStyle = { backgroundColor: props.headerColor }
-      if (!slots.header) headerStyle.minHeight = props.headerMinHeight
+      headerStyle.minHeight = props.headerMinHeight
       let footerStyle = { backgroundColor: props.footerColor }
-      if (!slots.footer) footerStyle.minHeight = props.footerMinHeight
+      footerStyle.minHeight = props.footerMinHeight
       let responsiveDisplay = this.responsiveDisplay
 
       return (
