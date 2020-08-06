@@ -167,8 +167,8 @@ TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
 			return errorFile(file, fileList)	
     } 	
     const index = file.raw.name.lastIndexOf('.')
-    const suffix = file.raw.name.substr(index)
-    const isAccept = field.accept ? field.acceptreplace(/\s*/g,"").split(',').includes(suffix) : true
+    const suffix = file.raw.name.substr(index+1)
+    const isAccept = field.accept ? field.accept.replace(/\s*/g,"").split(',').includes(suffix) : true
     if (!isAccept) {
 			vm.error = `文件上传失败,只能上传${field.accept}格式的文件`	
 			return errorFile(file, fileList)	

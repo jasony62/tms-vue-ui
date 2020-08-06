@@ -57,7 +57,7 @@ const Schema = {
         },
         format: 'file',
         formatAttrs: {
-          accept: '.png,.jpg,.jpeg,.xlsx',
+          accept: 'png,jpg,jpeg,xlsx',
           size: '20MB',
           limit: 2
         }
