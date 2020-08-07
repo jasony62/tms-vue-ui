@@ -17,7 +17,7 @@ const Schema = {
         "label": "线上品牌赞助",
         "value": "a"
       }, {
-        "label": "线下场地免费",
+        "label": "线下场地赞助",
         "value": "b"
       }]
     },
@@ -28,17 +28,35 @@ const Schema = {
       maxItems: 3,
       enum: [{
         "label": "美食/餐厅线上活动",
-        "value": "a"
+        "value": "a",
+        "group": "v1"
       }, {
         "label": "地推活动",
-        "value": "b"
+        "value": "b",
+        "group": "v1"
       }, {
         "label": "线下主题活动",
         "value": "c"
       }, {
         "label": "单纯品牌曝光",
         "value": "d"
+      }],
+      "enumGroups": [{
+        "id": "v1",
+        "label": "分组1",
+        "assocEnum": {
+          "property": "resouce",
+          "value": "1"
+        }
       }]
+    },
+    online: {
+      title: '线上赞助费',
+      type: 'string'
+    },
+    offline: {
+      title: '线下赞助费',
+      type: 'string'
     },
     files: {
       type: 'array',
@@ -63,6 +81,20 @@ const Schema = {
         }
       }
     },
+  },
+  dependencies: {
+    "online": {
+      "rules": {
+        "resource": "1"
+      },
+      "operator": "and"
+    },
+    "offline": {
+      "rules": {
+        "resource": "2"
+      },
+      "operator": "and"
+    }
   }
 }
 
