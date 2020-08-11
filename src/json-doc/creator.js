@@ -234,12 +234,11 @@ let mapCreators = new Map()
  * @param {*} vm
  * @param {*} createElement
  */
-export default function(vm, createElement) {
+export default function (vm, createElement) {
   let creator = mapCreators.get(vm)
   if (!creator) {
     creator = new Creator(vm, createElement)
     mapCreators.set(vm, creator)
   }
-
   return creator.render()
 }
