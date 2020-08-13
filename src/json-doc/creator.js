@@ -78,6 +78,52 @@ class Creator {
     if (!fieldNodes[sNestPath]) fieldNodes[sNestPath] = {}
     return fieldNodes[sNestPath]
   }
+  getFieldVisible(oVisible, oDoc) {
+    var bVisible, oRuleVal
+    if (oVisible.operator === 'or') {
+      bVisible = false
+      for (const [key, value] of Object.entries(oVisible.rules)) {
+        oRuleVal = oDoc[key]
+        if (oRuleVal) {
+          if (oRuleVal === value || oRuleVal[value]) {
+            bVisible = true
+            break
+          }
+        }
+      }
+    } else if (oVisible.operator === 'and') {
+      bVisible = true
+      for (const [key, value] of Object.entries(oVisible.rules)) {
+        oRuleVal = oDoc[key]
+        if (!oRuleVal || (oRuleVal !== value && !oRuleVal[value])) {
+          bVisible = false
+          break
+        }
+      }
+    }
+    return bVisible
+  }
+  /**
+   * 控制关联题目的可见性
+   *
+   * @param {*} deps 属性间的依赖关系
+   * @param {*} fields 所有的属性
+   * @param {*} oDoc 表单的model对象
+   * 
+   */
+  fnToggleAssocSchemas(deps, fields, oDoc) {
+    Object.entries(deps).forEach(([oKey, visibility]) => {
+      const field = fields[oKey]
+      if (visibility.rules) {
+        const bVisible = this.getFieldVisible(visibility, oDoc)
+        field.visible = bVisible
+        if (false === bVisible) {
+          oDoc[oKey] = undefined
+        }
+      }
+    })
+  }
+
   /**
    * 按嵌套关系，创建每个嵌套下的字段节点
    * 执行的结果保留在fieldNodes中，根表单放在root中，其他子表单放在自表单名命名（name）的对象中
@@ -181,6 +227,11 @@ class Creator {
     const fieldNodes = {
       root: {},
     }
+
+    if (JSON.stringify(vm.schema.dependencies) !== '{}') {
+      this.fnToggleAssocSchemas(vm.schema.dependencies, vm.fields, vm.editDoc)
+    }
+
     // 创建单独的字段节点保留在fieldNodes中
     this.createFieldNodes(fieldNodes, vm.fields)
 

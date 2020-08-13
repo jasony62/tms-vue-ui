@@ -3,14 +3,12 @@ const Schema = {
   title: 'json-doc表单组件',
   description: 'json-doc表单组件',
   type: 'object',
-  required: ['online'],
   properties: {
     name: {
       title: '活动名称',
       type: 'string',
       default: '10',
-      readonly: true,
-      visible: false
+      readonly: true
     },
     resource: {
       title: '特殊资源',
@@ -97,15 +95,15 @@ const Schema = {
   dependencies: {
     online: {
       rules: {
-        resource: '1',
+        resource: 'a'
       },
       operator: 'and',
     },
     offline: {
       rules: {
-        resource: '2',
+        resource: 'b'
       },
-      operator: 'and',
+      operator: 'or',
     },
   },
 }

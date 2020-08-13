@@ -44,6 +44,7 @@ Vue.use(Form)
   .use(InputNumber)
   .use(Button)
   .use(Upload)
+import './index.css'
 
 TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
   // vm is the JsonDoc VM
