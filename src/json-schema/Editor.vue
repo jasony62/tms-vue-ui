@@ -116,6 +116,24 @@
                   </div>
                 </tms-flex>
               </el-tab-pane>
+              <el-tab-pane label="选项依赖" name="enumDependencies">
+                <tms-flex v-for="item in form.schema.enumGroups" :key="item.id">
+                  <span>{{item.label}}</span>
+                  <span>{{item.assocEnum.property}}</span>
+                  <span>{{item.assocEnum.value}}</span>
+                </tms-flex>
+                <div v-for="(v, i) in form.schema.enum" :key="i">
+                  <div v-for="g in form.schema.enumGroups" :key="g.id">
+                    <tms-flex v-if="g.id === v.group">
+                      <span>{{v.label}}</span>
+                      <span>{{g.label}}</span>
+                    </tms-flex>
+                  </div>
+                </div>
+                <div>
+                  <el-button size="mini" type="default" :disabled="!form.schema.enum" @click="onEditEnumDependency">编辑选项依赖</el-button>
+                </div>
+              </el-tab-pane>
             </el-tabs>
           </div>
           <!-- 结束：扩展定义 -->
@@ -245,6 +263,7 @@ const Type2Format = {
 
 import File from './formats/File'
 import { showAsDialog as fnShowDependencyDlg } from './DependencyDlg'
+import { showAsEnumDialog as fnShowEnumDependencyDlg } from './EnumDependencyDIg'
 
 const Format2Comp = {
   file: File,
@@ -310,12 +329,16 @@ export default {
   },
   methods: {
     onChangeHasEnum(bHasEnum) {
-      if (bHasEnum)
+      if (bHasEnum) {
         this.$set(this.form.schema, 'enum', [
           { label: '选项1', value: 'a' },
           { label: '选项2', value: 'b' },
         ])
-      else this.$delete(this.form.schema, 'enum')
+        this.$set(this.form.schema, 'enumGroups', [])
+      } else {
+        this.$delete(this.form.schema, 'enum')
+        this.$delete(this.form.schema, 'enumGroups')
+      }
     },
     onAddOption() {
       this.form.schema.enum.push({
@@ -361,6 +384,10 @@ export default {
       // 添加依赖关系定义
       if (!schema.dependencies || typeof schema.dependencies !== 'object')
         this.$set(schema, 'dependencies', {})
+      // 添加选项依赖关系定义
+      if (!schema.enumGroups && schema.enum) {
+        this.$set(schema, 'enumGroups', [])
+      }
       this.form.key = key
       this.form.schema = schema
       this.form.node = node
@@ -453,6 +480,17 @@ export default {
     onDelDependency(propName) {
       this.$delete(this.form.schema.dependencies, propName)
     },
+    /* 编辑选项依赖规则 */
+    onEditEnumDependency() {
+      let allProperties = this.form.node.data.parent.children
+      fnShowEnumDependencyDlg(this.form.schema, this.form.key, allProperties).then((result) => {
+        if (result) {
+          let { enumGroups } = result
+          this.$set(this.form.schema, 'enumGroups', enumGroups)
+          this.$set(this.form.schema, 'enum', result.enum)
+        }
+      })
+    }
   },
   mounted() {
     const root = SchemaWrap.build('root', this.schema)
