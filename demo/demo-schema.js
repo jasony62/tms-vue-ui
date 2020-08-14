@@ -24,11 +24,43 @@ const Schema = {
         },
       ],
     },
+    methods: {
+      title: '活动形式',
+      type: 'string',
+      enum: [
+        {
+          label: '线上',
+          value: 'a',
+          group: 'v1'
+        },
+        {
+          label: '线下',
+          value: 'b',
+          group: 'v2'
+        },
+      ],
+      enumGroups: [
+        {
+          id: 'v1',
+          label: '分组1',
+          assocEnum: {
+            property: 'resource',
+            value: 'a',
+          },
+        },
+        {
+          id: 'v2',
+          label: '分组2',
+          assocEnum: {
+            property: 'resource',
+            value: 'b',
+          },
+        }
+      ]
+    },
     type: {
       title: '活动性质',
       type: 'array',
-      minItems: 2,
-      maxItems: 3,
       enum: [
         {
           label: '美食/餐厅线上活动',
@@ -42,11 +74,13 @@ const Schema = {
         },
         {
           label: '线下主题活动',
-          value: 'c',
+          value: 'a',
+          group: 'v2',
         },
         {
           label: '单纯品牌曝光',
-          value: 'd',
+          value: 'b',
+          group: 'v2',
         },
       ],
       enumGroups: [
@@ -54,10 +88,18 @@ const Schema = {
           id: 'v1',
           label: '分组1',
           assocEnum: {
-            property: 'resouce',
-            value: '1',
+            property: 'resource',
+            value: 'a',
           },
         },
+        {
+          id: 'v2',
+          label: '分组2',
+          assocEnum: {
+            property: 'resource',
+            value: 'b',
+          },
+        }
       ],
     },
     online: {

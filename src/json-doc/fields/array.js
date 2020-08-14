@@ -2,7 +2,11 @@ import { Field, ARRAY_KEYWORDS } from './field'
 
 export function parseItems(items) {
   return items.map(item => {
-    return { value: item.value, label: item.label }
+    let obj = { value: item.value, label: item.label }
+    if (item.group) {
+      obj.group = item.group
+    }
+    return obj
   })
 }
 

@@ -107,7 +107,7 @@ class Creator {
    * 控制关联题目的可见性
    *
    * @param {*} deps 属性间的依赖关系
-   * @param {*} fields 所有的属性
+   * @param {*} fields 所有parse的属性
    * @param {*} oDoc 表单的model对象
    * 
    */
@@ -124,6 +124,44 @@ class Creator {
     })
   }
 
+  fnToggleAssocOptions(fields, oDoc) {
+    Object.entries(fields).forEach(([oKey, oValue]) => {
+      let schema = oValue.schema
+      if (schema.enum && schema.enum.length && schema.enumGroups && schema.enumGroups.length) {
+        oValue.itemVisible = {}
+        schema.enumGroups.forEach(enumGroup => {
+          if (enumGroup.assocEnum && enumGroup.assocEnum.property && enumGroup.assocEnum.value) {
+            if (oDoc[enumGroup.assocEnum.property] !== enumGroup.assocEnum.value) {
+              schema.enum.forEach(oOption => {
+                if (oOption.group && oOption.group === enumGroup.id) {
+                  let id = oOption.group + oOption.value
+                  oValue.itemVisible[id] = false
+
+                  if (schema.type === 'string' && schema.enum) {
+                    if (oDoc[oKey] === oOption.value) {
+                      oDoc[oKey] = ''
+                    }
+                  } else {
+                    if (oDoc[oKey] && oDoc[oKey].includes(oOption.value) && id === false) {
+                      let index = oDoc[oKey].indexOf(oOption.value)
+                      oDoc[oKey].splice(index)
+                    }
+                  }
+                }
+              })
+            } else {
+              schema.enum.forEach(oOption => {
+                if (oOption.group && oOption.group === enumGroup.id) {
+                  let id = oOption.group + oOption.value
+                  oValue.itemVisible[id] = true
+                }
+              })
+            }
+          }
+        })
+      }
+    })
+  }
   /**
    * 按嵌套关系，创建每个嵌套下的字段节点
    * 执行的结果保留在fieldNodes中，根表单放在root中，其他子表单放在自表单名命名（name）的对象中
@@ -228,9 +266,11 @@ class Creator {
       root: {},
     }
 
+    // 解析属性间依赖关系
     if (JSON.stringify(vm.schema.dependencies) !== '{}') {
       this.fnToggleAssocSchemas(vm.schema.dependencies, vm.fields, vm.editDoc)
     }
+    this.fnToggleAssocOptions(vm.fields, vm.editDoc)
 
     // 创建单独的字段节点保留在fieldNodes中
     this.createFieldNodes(fieldNodes, vm.fields)

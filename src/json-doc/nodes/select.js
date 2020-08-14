@@ -16,7 +16,16 @@ export class Select extends Input {
     field.items.forEach(option => {
       const optionField = { type: field.itemType, name: field.name, ...option }
       const optionNode = new Input(this.vm, createElement, optionField)
-      optionNode.options = attrOrProps => attrOrProps
+      optionNode.options = attrOrProps => {
+        if (field.itemVisible) {
+          let optionVG = option.group + option.value
+          if (field.itemVisible[optionVG] === false) {
+            let classObj = { class: { 'hide': true } }
+            Object.assign(attrOrProps, classObj)
+          }
+        }
+        return attrOrProps
+      }
       children.push(optionNode.createElem([option.label]))
     })
     return children
