@@ -25,6 +25,9 @@ export class FieldArray extends Field {
             if (!this.type) {
               this.type = 'select'
             }
+            if (this.schema.enumGroups && this.schema.enumGroups.length) {
+              this.itemGroups = this.schema.enumGroups
+            }
             this.itemType = 'option'
             this.items = parseItems(this.schema[keyword])
             break

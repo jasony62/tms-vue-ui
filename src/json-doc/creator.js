@@ -125,19 +125,18 @@ class Creator {
   }
 
   fnToggleAssocOptions(fields, oDoc) {
-    Object.entries(fields).forEach(([oKey, oValue]) => {
-      let schema = oValue.schema
-      if (schema.enum && schema.enum.length && schema.enumGroups && schema.enumGroups.length) {
-        oValue.itemVisible = {}
-        schema.enumGroups.forEach(enumGroup => {
-          if (enumGroup.assocEnum && enumGroup.assocEnum.property && enumGroup.assocEnum.value) {
-            if (oDoc[enumGroup.assocEnum.property] !== enumGroup.assocEnum.value) {
-              schema.enum.forEach(oOption => {
-                if (oOption.group && oOption.group === enumGroup.id) {
+    Object.entries(fields).forEach(([oKey, oSchema]) => {
+      if (oSchema.items && oSchema.items.length && oSchema.itemGroups && oSchema.itemGroups.length) {
+        oSchema.itemVisible = {}
+        oSchema.itemGroups.forEach(itemGroup => {
+          if (itemGroup.assocEnum && itemGroup.assocEnum.property && itemGroup.assocEnum.value) {
+            if (oDoc[itemGroup.assocEnum.property] !== itemGroup.assocEnum.value) {
+              oSchema.items.forEach(oOption => {
+                if (oOption.group && oOption.group === itemGroup.id) {
                   let id = oOption.group + oOption.value
-                  oValue.itemVisible[id] = false
+                  oSchema.itemVisible[id] = false
 
-                  if (schema.type === 'string' && schema.enum) {
+                  if (oSchema.schema.type === 'string' && oSchema.items) {
                     if (oDoc[oKey] === oOption.value) {
                       oDoc[oKey] = ''
                     }
@@ -150,10 +149,10 @@ class Creator {
                 }
               })
             } else {
-              schema.enum.forEach(oOption => {
-                if (oOption.group && oOption.group === enumGroup.id) {
+              oSchema.items.forEach(oOption => {
+                if (oOption.group && oOption.group === itemGroup.id) {
                   let id = oOption.group + oOption.value
-                  oValue.itemVisible[id] = true
+                  oSchema.itemVisible[id] = true
                 }
               })
             }
