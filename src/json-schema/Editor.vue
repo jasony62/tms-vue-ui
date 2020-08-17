@@ -117,10 +117,10 @@
                 </tms-flex>
               </el-tab-pane>
               <el-tab-pane label="选项依赖" name="enumDependencies">
-                <tms-flex v-for="item in form.schema.enumGroups" :key="item.id">
-                  <span>{{item.label}}</span>
-                  <span>{{item.assocEnum.property}}</span>
-                  <span>{{item.assocEnum.value}}</span>
+                <tms-flex v-for="g in form.schema.enumGroups" :key="g.id">
+                  <span>{{g.label}}</span>
+                  <span>{{g.assocEnum.property}}</span>
+                  <span>{{g.assocEnum.value}}</span>
                 </tms-flex>
                 <div v-for="(v, i) in form.schema.enum" :key="i">
                   <div v-for="g in form.schema.enumGroups" :key="g.id">
