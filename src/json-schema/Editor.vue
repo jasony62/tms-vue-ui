@@ -86,7 +86,7 @@
           </el-form>
           <!-- 开始：扩展定义 -->
           <div>
-            <el-tabs tab-position="left" v-model="activeL1Pane" style="height: 200px;">
+            <el-tabs tab-position="left" v-model="activeL1Pane">
               <el-tab-pane label="属性依赖" name="dependencies">
                 <tms-flex direction="column">
                   <tms-flex

@@ -118,7 +118,7 @@ class Creator {
         const bVisible = this.getFieldVisible(visibility, oDoc)
         field.visible = bVisible
         if (false === bVisible) {
-          oDoc[oKey] = undefined
+          oDoc[oKey] = oDoc[oKey] ? oDoc[oKey] : undefined
         }
       }
     })
@@ -138,7 +138,7 @@ class Creator {
 
                   if (oSchema.schema.type === 'string' && oSchema.items) {
                     if (oDoc[oKey] === oOption.value) {
-                      oDoc[oKey] = ''
+                      oDoc[oKey] = oDoc[oKey] ? oDoc[oKey] : ''
                     }
                   } else {
                     if (oDoc[oKey] && oDoc[oKey].includes(oOption.value) && id === false) {

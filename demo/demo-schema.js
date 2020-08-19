@@ -105,6 +105,7 @@ const Schema = {
     online: {
       title: '线上赞助费',
       type: 'string',
+      default: '100'
     },
     offline: {
       title: '线下赞助费',
