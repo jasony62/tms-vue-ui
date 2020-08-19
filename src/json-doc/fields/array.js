@@ -2,7 +2,11 @@ import { Field, ARRAY_KEYWORDS } from './field'
 
 export function parseItems(items) {
   return items.map(item => {
-    return { value: item.value, label: item.label }
+    let obj = { value: item.value, label: item.label }
+    if (item.group) {
+      obj.group = item.group
+    }
+    return obj
   })
 }
 
@@ -20,6 +24,9 @@ export class FieldArray extends Field {
           case 'enum':
             if (!this.type) {
               this.type = 'select'
+            }
+            if (this.schema.enumGroups && this.schema.enumGroups.length) {
+              this.itemGroups = this.schema.enumGroups
             }
             this.itemType = 'option'
             this.items = parseItems(this.schema[keyword])

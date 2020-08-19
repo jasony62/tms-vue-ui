@@ -12,6 +12,11 @@ export class LabelNode extends Node {
     const { createElement, field } = this
     const attrOrProps = this.attrOrProps(field, field)
 
+    if (field.visible === false) {
+      let classObj = { class: { 'hide': true } }
+      Object.assign(attrOrProps, classObj)
+    }
+
     const element = createElement(this.rawArgs.tag, attrOrProps, children)
 
     return element

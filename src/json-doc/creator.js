@@ -78,6 +78,89 @@ class Creator {
     if (!fieldNodes[sNestPath]) fieldNodes[sNestPath] = {}
     return fieldNodes[sNestPath]
   }
+  getFieldVisible(oVisible, oDoc) {
+    var bVisible, oRuleVal
+    if (oVisible.operator === 'or') {
+      bVisible = false
+      for (const [key, value] of Object.entries(oVisible.rules)) {
+        oRuleVal = oDoc[key]
+        if (oRuleVal) {
+          if (oRuleVal === value || oRuleVal[value]) {
+            bVisible = true
+            break
+          }
+        }
+      }
+    } else if (oVisible.operator === 'and') {
+      bVisible = true
+      for (const [key, value] of Object.entries(oVisible.rules)) {
+        oRuleVal = oDoc[key]
+        if (!oRuleVal || (oRuleVal !== value && !oRuleVal[value])) {
+          bVisible = false
+          break
+        }
+      }
+    }
+    return bVisible
+  }
+  /**
+   * 控制关联题目的可见性
+   *
+   * @param {*} deps 属性间的依赖关系
+   * @param {*} fields 所有parse的属性
+   * @param {*} oDoc 表单的model对象
+   * 
+   */
+  fnToggleAssocSchemas(deps, fields, oDoc) {
+    Object.entries(deps).forEach(([oKey, visibility]) => {
+      const field = fields[oKey]
+      if (visibility.rules) {
+        const bVisible = this.getFieldVisible(visibility, oDoc)
+        field.visible = bVisible
+        if (false === bVisible) {
+          oDoc[oKey] = undefined
+        }
+      }
+    })
+  }
+
+  fnToggleAssocOptions(fields, oDoc) {
+    Object.entries(fields).forEach(([oKey, oSchema]) => {
+      if (oSchema.items && oSchema.items.length && oSchema.itemGroups && oSchema.itemGroups.length) {
+        oSchema.itemVisible = {}
+        oSchema.itemGroups.forEach(itemGroup => {
+          if (itemGroup.assocEnum && itemGroup.assocEnum.property && itemGroup.assocEnum.value) {
+            if (oDoc[itemGroup.assocEnum.property] !== itemGroup.assocEnum.value) {
+              oSchema.items.forEach(oOption => {
+                if (oOption.group && oOption.group === itemGroup.id) {
+                  let id = oOption.group + oOption.value
+                  oSchema.itemVisible[id] = false
+
+                  if (oSchema.schema.type === 'string' && oSchema.items) {
+                    if (oDoc[oKey] === oOption.value) {
+                      oDoc[oKey] = ''
+                    }
+                  } else {
+                    if (oDoc[oKey] && oDoc[oKey].includes(oOption.value) && id === false) {
+                      let index = oDoc[oKey].indexOf(oOption.value)
+                      oDoc[oKey].splice(index)
+                    }
+                  }
+                }
+              })
+            } else {
+              oSchema.items.forEach(oOption => {
+                if (oOption.group && oOption.group === itemGroup.id) {
+                  let id = oOption.group + oOption.value
+                  oSchema.itemVisible[id] = true
+                }
+              })
+            }
+          }
+        })
+      }
+    })
+  }
   /**
    * 按嵌套关系，创建每个嵌套下的字段节点
    * 执行的结果保留在fieldNodes中，根表单放在root中，其他子表单放在自表单名命名（name）的对象中
@@ -181,6 +264,13 @@ class Creator {
     const fieldNodes = {
       root: {},
     }
+
+    // 解析属性间依赖关系
+    if (JSON.stringify(vm.schema.dependencies) !== '{}') {
+      this.fnToggleAssocSchemas(vm.schema.dependencies, vm.fields, vm.editDoc)
+    }
+    this.fnToggleAssocOptions(vm.fields, vm.editDoc)
+
     // 创建单独的字段节点保留在fieldNodes中
     this.createFieldNodes(fieldNodes, vm.fields)
 
@@ -234,12 +324,11 @@ let mapCreators = new Map()
  * @param {*} vm
  * @param {*} createElement
  */
-export default function(vm, createElement) {
+export default function (vm, createElement) {
   let creator = mapCreators.get(vm)
   if (!creator) {
     creator = new Creator(vm, createElement)
     mapCreators.set(vm, creator)
   }
-
   return creator.render()
 }
