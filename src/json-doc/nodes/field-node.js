@@ -16,8 +16,8 @@ function getRawCreateArgs(field) {
   const args = field.component
     ? customComponent
     : field.hasOwnProperty('items') && field.type !== 'select'
-    ? components[`${field.type}group`] || defaultGroup
-    : components[field.type] || defaultInput
+      ? components[`${field.type}group`] || defaultGroup
+      : components[field.type] || defaultInput
 
   return args
 }

@@ -14,6 +14,12 @@ export class Select extends Input {
       children.push(itemNode.createElem())
     }
     field.items.forEach(option => {
+      if (field.itemVisible) {
+        let optionVG = option.group + option.value
+        if (field.itemVisible[optionVG] === false) {
+          return false
+        }
+      }
       const optionField = { type: field.itemType, name: field.name, ...option }
       const optionNode = new Input(this.vm, createElement, optionField)
       optionNode.options = attrOrProps => attrOrProps
