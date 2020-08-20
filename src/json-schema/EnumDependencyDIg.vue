@@ -29,7 +29,7 @@
                   <el-input v-model="item.label"></el-input>
                 </el-form-item>
                 <el-form-item label="显示条件">
-                  <el-select v-model="item.assocEnum.property" placeholder="请选择" @change="onSelectProperty">
+                  <el-select v-model="item.assocEnum.property" filterable placeholder="请选择" @change="onSelectProperty">
                     <el-option
                       v-for="item in enumShowKeys"
                       :key="item.key"
