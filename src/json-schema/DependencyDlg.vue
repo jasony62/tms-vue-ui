@@ -2,14 +2,14 @@
   <el-dialog title="设置属性依赖关系" :visible="visible" :before-close="onCancel" width="50%">
     <el-form label-position="left" label-width="80px">
       <el-form-item label="依赖属性">
-        <el-select v-model="property" placeholder="请选择">
+        <el-select v-model="property" filterable placeholder="请选择">
           <el-option v-for="(prop,key) in properties" :key="key" :label="key" :value="key"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="依赖规则">
         <el-form :inline="true" v-for="rule in rules" :key="rule.property" size="medium">
           <el-form-item label="属性">
-            <el-select v-model="rule.property" placeholder="请选择">
+            <el-select v-model="rule.property" filterable placeholder="请选择">
               <el-option v-for="(prop,key) in properties" :key="key" :label="key" :value="key"></el-option>
             </el-select>
           </el-form-item>
