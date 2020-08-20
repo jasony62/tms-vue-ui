@@ -117,9 +117,6 @@ class Creator {
       if (visibility.rules) {
         const bVisible = this.getFieldVisible(visibility, oDoc)
         field.visible = bVisible
-        if (false === bVisible) {
-          oDoc[oKey] = field.schema.hasOwnProperty('default') ? field.schema.default : undefined
-        }
       }
     })
   }
