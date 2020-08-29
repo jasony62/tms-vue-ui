@@ -213,7 +213,9 @@ SchemaWrap.build = function (key, schema, parent) {
       if (typeof schema.properties === 'object') {
         wrap.children = Object.entries(schema.properties).map(([k, s]) => {
           if (schema.required && schema.required.includes(k)) {
-            s.required = true
+            Vue.set(s, 'required', true)
+          } else {
+            Vue.set(s, 'required', false)
           }
           return SchemaWrap.build(k, s, wrap)
         })

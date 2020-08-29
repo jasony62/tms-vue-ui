@@ -138,7 +138,8 @@ const Schema = {
   dependencies: {
     online: {
       rules: {
-        resource: 'a'
+        resource: 'a',
+        type: 'a'
       },
       operator: 'and',
     },

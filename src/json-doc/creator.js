@@ -85,7 +85,8 @@ class Creator {
       for (const [key, value] of Object.entries(oVisible.rules)) {
         oRuleVal = oDoc[key]
         if (oRuleVal) {
-          if (oRuleVal === value || oRuleVal[value]) {
+          // 多选默认是包含
+          if (oRuleVal === value || oRuleVal.includes(value)) {
             bVisible = true
             break
           }
@@ -95,7 +96,7 @@ class Creator {
       bVisible = true
       for (const [key, value] of Object.entries(oVisible.rules)) {
         oRuleVal = oDoc[key]
-        if (!oRuleVal || (oRuleVal !== value && !oRuleVal[value])) {
+        if (!oRuleVal || (oRuleVal !== value && !oRuleVal.includes(value))) {
           bVisible = false
           break
         }
@@ -263,7 +264,7 @@ class Creator {
     }
 
     // 解析属性间依赖关系
-    if (JSON.stringify(vm.schema.dependencies) !== '{}') {
+    if (vm.schema.dependencies && JSON.stringify(vm.schema.dependencies) !== '{}') {
       this.fnToggleAssocSchemas(vm.schema.dependencies, vm.fields, vm.editDoc)
     }
     this.fnToggleAssocOptions(vm.fields, vm.editDoc)

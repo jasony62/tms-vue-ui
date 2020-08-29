@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="设置选项依赖关系" :visible="visible" :before-close="onCancel" width="50%">
+  <el-dialog title="设置选项依赖关系" :close-on-click-modal="false" :visible="visible" :before-close="onCancel" width="50%">
     <el-tabs v-model="activeL0Pane" type="card">
       <el-tab-pane label="分组" name="group">
         <div style="margin-bottom: 20px;">

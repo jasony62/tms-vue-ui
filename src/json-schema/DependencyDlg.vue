@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="设置属性依赖关系" :visible="visible" :before-close="onCancel" width="50%">
+  <el-dialog title="设置属性依赖关系" :close-on-click-modal="false" :visible="visible" :before-close="onCancel" width="50%">
     <el-form label-position="left" label-width="80px">
       <el-form-item label="依赖属性">
         <el-select v-model="property" filterable placeholder="请选择">
