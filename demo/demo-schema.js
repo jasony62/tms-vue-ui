@@ -165,14 +165,14 @@ const Schema = {
   eventDenpendencies: {
     city: {
       rule: {
-        params: ['resource'],
+        properties: ['resource'],
         type: 'v2',
         url: '/order/mongo/url1'
       }
     },
     provience: {
       rule: {
-        params: ['resource'],
+        properties: ['resource'],
         type: 'v1',
         url: '/order/mongo/url2'
       }

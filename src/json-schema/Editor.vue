@@ -144,9 +144,9 @@
                     <tms-flex>
                       <span>{{p}}</span>
                       <tms-flex direction="column">
-                        <span>{{config.url}}</span>
-                        <tms-flex><span v-for="(value, key) in config.properties" :key="key">{{value}}</span></tms-flex>
-                        <span>{{config.type}}</span>
+                        <span>{{config.rule.url}}</span>
+                        <tms-flex><span v-for="(value, key) in config.rule.properties" :key="key">{{value}}</span></tms-flex>
+                        <span>{{config.rule.type}}</span>
                       </tms-flex>
                     </tms-flex>
                     <div>
@@ -528,7 +528,7 @@ export default {
       fnShowEventDependencyDlg(this.form.schema).then((result) => {
         if (result) {
           let { property, rule } = result      
-          this.$set(eventDependencies, property, {rule: rule})        
+          this.$set(eventDependencies, property, {'rule': rule})        
         }
       })
     },
@@ -542,7 +542,7 @@ export default {
       ).then((result) => {
         if (result) {
           let { property, rule} = result
-          this.$set(eventDependencies, property, {rule: rule})
+          this.$set(eventDependencies, property, {'rule': rule})
         }
       })
     },

@@ -58,7 +58,9 @@ const DlgComponent = {
       this.properties = schema.properties
       this.property = property
       if (rule && typeof rule === 'object')
-        this.$set(this.rule, rule)
+        for (let property in rule) {
+          this.$set(this.rule, property, rule[property])
+        }
       this.$mount()
       document.body.appendChild(this.$el)
       return new Promise((resolve) => {
