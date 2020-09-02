@@ -134,6 +134,18 @@ const Schema = {
         },
       },
     },
+    areacode: {
+      title: '区号',
+      type: 'string',
+    },
+    provience: {
+      title: '省份',
+      type: 'string'
+    },
+    city: {
+      title: '本地网',
+      type: 'string',
+    },
   },
   dependencies: {
     online: {
@@ -150,6 +162,22 @@ const Schema = {
       operator: 'or',
     },
   },
+  eventDenpendencies: {
+    city: {
+      rule: {
+        params: ['resource'],
+        type: 'v2',
+        url: '/order/mongo/url1'
+      }
+    },
+    provience: {
+      rule: {
+        params: ['resource'],
+        type: 'v1',
+        url: '/order/mongo/url2'
+      }
+    }
+  }
 }
 
 export default Schema
