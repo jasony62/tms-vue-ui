@@ -1,6 +1,6 @@
 import { Node, prepareFieldNode, components, FormNode, LabelNode } from './nodes'
-import { getObj } from './utils'
 let _uid = 0
+let timer = null
 /**
  * 创建编辑器（一套schema的节点应该只创建一次，否则会多次render）
  */
@@ -176,58 +176,41 @@ class Creator {
    */
   fnToggleSchemas(onAxios, deps, fields, oDoc) {
     const { vm } = this
+    clearTimeout(timer)
     Object.entries(deps).forEach(([oKey, oConfig]) => {
       const oRule = oConfig.rule
       let isHasVal = oRule.params.every(property => !oDoc[property])
       if (isHasVal) {
         return false
       }
-
-      let param = {}
-      if (oRule.params.length) {
-        let postData = {}
-        oRule.params.forEach(item => {
-          postData[item] = {
-            'feature': 'start',
-            'keyword': oDoc[item]
-          }
-        })
-        if (oRule.wraps.length) {
-          if (oRule.wraps.length > 1) {
-            Object.assign(param, getObj({}, oRule.wraps, postData))
-          } else {
-            param[oRule.wraps] = postData
-          }
-        } else {
-          Object.assign(param, postData)
+      let postData = {}
+      oRule.params.forEach(item => {
+        postData[item] = {
+          'feature': 'start',
+          'keyword': oDoc[item]
         }
-      }
-
-      onAxios().post(oRule.url, param).then(rst => {
-        const result = getObj(rst.data, oRule.results)
-        if (oRule.type === 'v1') {
-          oDoc[oKey] = result instanceof Array ? result[0][oKey] : result[oKey]
-        } else if (oRule.type === 'v2') {
-          let arr = []
-          if (result instanceof Array) {
-            result.forEach(doc => {
-              let item = {
-                'label': doc[oKey],
-                'value': doc[oKey]
-              }
-              arr.push(item)
-            })
-          } else {
-            let item = {
-              'label': result[oKey],
-              'value': result[oKey]
+      })
+      timer = setTimeout(() => {
+        onAxios().post(oRule.url, { 'filter': postData }).then(rst => {
+          const result = rst.data.result
+          if (oRule.type === 'v1') {
+            oDoc[oKey] = result[oKey]
+          } else if (oRule.type === 'v2') {
+            let arr = []
+            if (result.docs) {
+              result.docs.forEach(doc => {
+                let item = {
+                  'label': doc[oKey],
+                  'value': doc[oKey]
+                }
+                arr.push(item)
+              })
+              Object.assign(fields[oKey].items, arr)
             }
-            arr.push(item)
           }
-          Object.assign(fields[oKey].items, arr)
-        }
-      }).catch(err => {
-        vm.setErrorMessage(err)
+        }).catch(() => {
+          vm.setErrorMessage('数据解析错误')
+        })
       })
     })
   }

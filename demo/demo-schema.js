@@ -168,8 +168,6 @@ const Schema = {
       rule: {
         url: 'http://localhost:8082/order/api/mongo/document/list?db=testSync&cl=areacode&page=1&size=100',
         params: ['areaCode'],
-        wraps: ["filter"],
-        results: ["result", "docs"],
         type: 'v1'
       }
     },
@@ -177,8 +175,6 @@ const Schema = {
       rule: {
         url: 'http://localhost:8082/order/api/mongo/document/list?db=testSync&cl=areacode&page=1&size=100',
         params: ['areaCode'],
-        wraps: ["filter"],
-        results: ["result", "docs"],
         type: 'v2'
       }
     }
