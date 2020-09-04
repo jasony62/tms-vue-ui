@@ -9,12 +9,22 @@
       <el-form-item label="地址">
         <el-input v-model="rule.url"></el-input>
       </el-form-item>
+      <el-form-item label="发送格式">
+        <el-tag v-for="wrap in rule.wraps" :key="wrap" closable :disable-transitions="false" @close="removeTag(rule.wraps, wrap)">{{wrap}}</el-tag>
+        <el-input v-if="wrapInputVisible" class="input-new-tag" v-model="wrapInputValue" ref="wrapSaveInput" size="small" @keyup.enter.native="confirmTag('wrap',rule.wraps)" @blur="confirmTag('wrap',rule.wraps)"></el-input>
+        <el-button v-else class="button-new-tag" size="small" @click="addTag('wrap')">添加</el-button>
+      </el-form-item>
       <el-form-item label="参数">
-        <el-select v-model="rule.properties" multiple filterable placeholder="请选择">
+        <el-select v-model="rule.params" multiple filterable placeholder="请选择">
           <el-option v-for="(prop,key) in properties" :key="key" :label="key" :value="key"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="结果">
+      <el-form-item label="接收格式">
+        <el-tag v-for="result in rule.results" :key="result" closable :disable-transitions="false" @close="removeTag(rule.results, result)">{{result}}</el-tag>
+        <el-input v-if="resultInputVisible" class="input-new-tag" v-model="resultInputValue" ref="resultSaveInput" size="small" @keyup.enter.native="confirmTag('result',rule.results)" @blur="confirmTag('result',rule.results)"></el-input>
+        <el-button v-else class="button-new-tag" size="small" @click="addTag('result')">添加</el-button>
+      </el-form-item>
+      <el-form-item label="返回值">
         <el-select v-model="rule.type" clearable placeholder="请选择">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
@@ -39,11 +49,23 @@ const DlgComponent = {
     return {
       visible: true,
       property: 'file',
-      rule: {},
-      options: [{
-        value: 'v1',
-        label: '作为可选项'
-      }]
+      wrapInputVisible: false,
+      wrapInputValue: '',
+      resultInputVisible: false,
+      resultInputValue: '',
+      rule: {
+        wraps: [],
+        results: []
+      },
+      options: [
+        {
+          value: 'v1',
+          label: '作为填入值'
+        },{
+          value: 'v2',
+          label: '作为可选项'
+        }
+      ]
     }
   },
   methods: {
@@ -52,6 +74,23 @@ const DlgComponent = {
     },
     onClose() {
       this.$emit('close')
+    },
+    removeTag(tags, tag) {
+      tags.splice(tags.indexOf(tag), 1);
+    },
+    addTag(type) {
+      this[type + 'InputVisible'] = true;
+      this.$nextTick(() => {
+        this.$refs[type + 'SaveInput'].$refs.input.focus();
+      });
+    },
+    confirmTag(type, tags) {
+      let inputValue = this[type + 'InputValue'];
+      if (inputValue) {
+        tags.push(inputValue);
+      }
+      this[type + 'InputVisible'] = false;
+      this[type + 'InputValue'] = '';
     },
     showAsEventDialog(schema, property, config) {     
       let { rule } = config || {}

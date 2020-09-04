@@ -1,4 +1,5 @@
 import { Node, prepareFieldNode, components, FormNode, LabelNode } from './nodes'
+import { getObj } from './utils'
 let _uid = 0
 /**
  * 创建编辑器（一套schema的节点应该只创建一次，否则会多次render）
@@ -121,7 +122,13 @@ class Creator {
       }
     })
   }
-
+  /**
+   * 控制关联选项的可见性
+   *
+   * @param {*} fields 所有parse的属性
+   * @param {*} oDoc 表单的model对象
+   * 
+   */
   fnToggleAssocOptions(fields, oDoc) {
     Object.entries(fields).forEach(([oKey, oSchema]) => {
       if (oSchema.items && oSchema.items.length && oSchema.itemGroups && oSchema.itemGroups.length) {
@@ -157,6 +164,71 @@ class Creator {
           }
         })
       }
+    })
+  }
+  /**
+   * 控制题目配置
+   * @param {*} onAxios 实例
+   * @param {*} deps 属性间的依赖关系
+   * @param {*} fields 所有parse的属性
+   * @param {*} oDoc 表单的model对象
+   * 
+   */
+  fnToggleSchemas(onAxios, deps, fields, oDoc) {
+    const { vm } = this
+    Object.entries(deps).forEach(([oKey, oConfig]) => {
+      const oRule = oConfig.rule
+      let isHasVal = oRule.params.every(property => !oDoc[property])
+      if (isHasVal) {
+        return false
+      }
+
+      let param = {}
+      if (oRule.params.length) {
+        let postData = {}
+        oRule.params.forEach(item => {
+          postData[item] = {
+            'feature': 'start',
+            'keyword': oDoc[item]
+          }
+        })
+        if (oRule.wraps.length) {
+          if (oRule.wraps.length > 1) {
+            Object.assign(param, getObj({}, oRule.wraps, postData))
+          } else {
+            param[oRule.wraps] = postData
+          }
+        } else {
+          Object.assign(param, postData)
+        }
+      }
+
+      onAxios().post(oRule.url, param).then(rst => {
+        const result = getObj(rst.data, oRule.results)
+        if (oRule.type === 'v1') {
+          oDoc[oKey] = result instanceof Array ? result[0][oKey] : result[oKey]
+        } else if (oRule.type === 'v2') {
+          let arr = []
+          if (result instanceof Array) {
+            result.forEach(doc => {
+              let item = {
+                'label': doc[oKey],
+                'value': doc[oKey]
+              }
+              arr.push(item)
+            })
+          } else {
+            let item = {
+              'label': result[oKey],
+              'value': result[oKey]
+            }
+            arr.push(item)
+          }
+          Object.assign(fields[oKey].items, arr)
+        }
+      }).catch(err => {
+        vm.setErrorMessage(err)
+      })
     })
   }
   /**
@@ -263,11 +335,20 @@ class Creator {
       root: {},
     }
 
-    // 解析属性间依赖关系
+    // 解析依赖关系
     if (vm.schema.dependencies && JSON.stringify(vm.schema.dependencies) !== '{}') {
       this.fnToggleAssocSchemas(vm.schema.dependencies, vm.fields, vm.editDoc)
     }
+
     this.fnToggleAssocOptions(vm.fields, vm.editDoc)
+
+    if (vm.schema.eventDependencies && JSON.stringify(vm.schema.eventDependencies) !== '{}') {
+      if (!vm.onAxios) {
+        vm.setErrorMessage('配置信息不完整')
+        return false
+      }
+      this.fnToggleSchemas(vm.onAxios, vm.schema.eventDependencies, vm.fields, vm.editDoc)
+    }
 
     // 创建单独的字段节点保留在fieldNodes中
     this.createFieldNodes(fieldNodes, vm.fields)

@@ -65,3 +65,39 @@ export function setVal(vm, data, n, v) {
   ret[n] = v
   return v
 }
+
+export function getObj(obj, childArr, defaultVal) {
+  if (childArr.length) {
+    try {
+      return getItem(obj, childArr, 0)
+    } catch (e) {
+      if (defaultVal !== undefined) {
+        return setItem(obj, childArr, defaultVal);
+      } else {
+        return 'undefined'
+      }
+    }
+  }
+}
+
+export function getItem(obj, arr, index) {
+  if (arr.length - 1 !== index) {
+    const tempObj = obj[arr[index]];
+    return getItem(tempObj, arr, index + 1);
+  }
+  return obj[arr[index]];
+}
+
+export function setItem(obj, arr, dv) {
+  arr.reduce((cur, key, index) => {
+    if (!cur[key]) {
+      cur[key] = {};
+    }
+    if (index === arr.length - 1) {
+      cur[key] = dv;
+    }
+    return cur[key];
+  }, obj);
+  return obj
+}
+

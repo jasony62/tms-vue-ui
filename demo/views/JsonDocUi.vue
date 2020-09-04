@@ -1,6 +1,6 @@
 <template>
   <div id="myJsonDoc">
-    <tms-el-json-doc :is-submit="isSubmit" :schema="schema" :doc="model" :on-file-submit="handleFileSubmit" v-on:submit="jsonDocSubmit"></tms-el-json-doc>
+    <tms-el-json-doc :is-submit="isSubmit" :schema="schema" :doc="model" :on-file-submit="handleFileSubmit" v-on:submit="jsonDocSubmit" :on-axios="handleAxios"></tms-el-json-doc>
   </div>
 </template>
 
@@ -8,12 +8,15 @@
 import Vue from 'vue'
 import schema from '../demo-schema'
 import { ObjectInput, JsonDoc, ElJsonDoc } from '../../src'
+import { TmsAxiosPlugin } from 'tms-vue'
 
 Vue.component('tms-object-input', ObjectInput)
 JsonDoc.setComponent('array', 'tms-object-input')
 JsonDoc.setComponent('object', 'tms-object-input')
 
 Vue.component('tms-el-json-doc', ElJsonDoc)
+
+Vue.use(TmsAxiosPlugin)
 export default {
   name: 'HelloTmsUI',
   data() {
@@ -22,7 +25,7 @@ export default {
       schema,
       model: {}
     }
-	},
+  },
   methods: {			
     jsonDocSubmit(newSlimModel, newModel) {
       this.isSubmit = true
@@ -38,7 +41,10 @@ export default {
 				return {'name': file.name, 'url': location.href}
 			})
 			return Promise.resolve(result)
-		}
+    },
+    handleAxios() {    
+      return Vue.TmsAxios()
+    }
   }
 }
 </script>

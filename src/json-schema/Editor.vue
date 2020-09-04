@@ -145,7 +145,9 @@
                       <span>{{p}}</span>
                       <tms-flex direction="column">
                         <span>{{config.rule.url}}</span>
-                        <tms-flex><span v-for="(value, key) in config.rule.properties" :key="key">{{value}}</span></tms-flex>
+                        <tms-flex><span v-for="(value, key) in config.rule.wraps" :key="key">{{value}}</span></tms-flex>
+                        <tms-flex><span v-for="(value, key) in config.rule.params" :key="key">{{value}}</span></tms-flex>
+                        <tms-flex><span v-for="(value, key) in config.rule.results" :key="key">{{value}}</span></tms-flex>
                         <span>{{config.rule.type}}</span>
                       </tms-flex>
                     </tms-flex>
@@ -189,6 +191,7 @@ import {
   Radio,
   RadioGroup,
   Dialog,
+  Tag,
 } from 'element-ui'
 Vue.use(Tabs)
   .use(TabPane)
@@ -204,6 +207,7 @@ Vue.use(Tabs)
   .use(Radio)
   .use(RadioGroup)
   .use(Dialog)
+  .use(Tag)
 
 /**
  *
@@ -292,6 +296,7 @@ import File from './formats/File'
 import { showAsDialog as fnShowDependencyDlg } from './DependencyDlg'
 import { showAsEnumDialog as fnShowEnumDependencyDlg } from './EnumDependencyDIg'
 import { showAsEventDialog as fnShowEventDependencyDlg } from './EventDependencyDIg'
+import './index.css'
 
 const Format2Comp = {
   file: File,
