@@ -139,6 +139,33 @@
                   >编辑选项依赖</el-button>
                 </div>
               </el-tab-pane>
+              <el-tab-pane label="事件依赖" name="eventDependencies">
+                <tms-flex direction="column">
+                  <tms-flex
+                    v-for="(config,p) in form.schema.eventDependencies"
+                    :key="p"
+                    direction="column"
+                  >
+                    <tms-flex>
+                      <span>{{p}}</span>
+                      <tms-flex direction="column">
+                        <span>{{config.rule.url}}</span>
+                        <tms-flex>
+                          <span v-for="(value, key) in config.rule.params" :key="key">{{value}}</span>
+                        </tms-flex>
+                        <span>{{config.rule.type}}</span>
+                      </tms-flex>
+                    </tms-flex>
+                    <div>
+                      <el-button size="mini" @click="onSetEventDependency(p)">修改</el-button>
+                      <el-button size="mini" @click="onDelEventDependency(p)">删除</el-button>
+                    </div>
+                  </tms-flex>
+                  <div>
+                    <el-button size="mini" type="default" @click="onAddEventDependency">添加</el-button>
+                  </div>
+                </tms-flex>
+              </el-tab-pane>
             </el-tabs>
           </div>
           <!-- 结束：扩展定义 -->
@@ -218,7 +245,9 @@ SchemaWrap.build = function (key, schema, parent) {
       if (typeof schema.properties === 'object') {
         wrap.children = Object.entries(schema.properties).map(([k, s]) => {
           if (schema.required && schema.required.includes(k)) {
-            s.required = true
+            Vue.set(s, 'required', true)
+          } else {
+            Vue.set(s, 'required', false)
           }
           return SchemaWrap.build(k, s, wrap)
         })
@@ -269,6 +298,7 @@ const Type2Format = {
 import File from './formats/File'
 import { showAsDialog as fnShowDependencyDlg } from './DependencyDlg'
 import { showAsEnumDialog as fnShowEnumDependencyDlg } from './EnumDependencyDIg'
+import { showAsEventDialog as fnShowEventDependencyDlg } from './EventDependencyDIg'
 
 const Format2Comp = {
   file: File,
@@ -393,6 +423,12 @@ export default {
       if (!schema.enumGroups && schema.enum) {
         this.$set(schema, 'enumGroups', [])
       }
+      // 添加事件依赖关系定义
+      if (
+        !schema.eventDependencies ||
+        typeof schema.eventDependencies !== 'object'
+      )
+        this.$set(schema, 'eventDependencies', {})
       this.form.key = key
       this.form.schema = schema
       this.form.node = node

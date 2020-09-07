@@ -100,6 +100,29 @@ const Schema = {
         },
       },
     },
+    areaCode: {
+      title: '区号',
+      type: 'string',
+      enum: [
+        {
+          label: '010',
+          value: '010',
+        },
+        {
+          label: '029',
+          value: '029',
+        },
+      ],
+    },
+    provience: {
+      title: '省份',
+      type: 'string',
+    },
+    city: {
+      title: '本地网',
+      type: 'string',
+      enum: [],
+    },
   },
 }
 

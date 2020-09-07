@@ -85,7 +85,8 @@ class Creator {
       for (const [key, value] of Object.entries(oVisible.rules)) {
         oRuleVal = oDoc[key]
         if (oRuleVal) {
-          if (oRuleVal === value || oRuleVal[value]) {
+          // 多选默认是包含
+          if (oRuleVal === value || oRuleVal.includes(value)) {
             bVisible = true
             break
           }
@@ -95,7 +96,7 @@ class Creator {
       bVisible = true
       for (const [key, value] of Object.entries(oVisible.rules)) {
         oRuleVal = oDoc[key]
-        if (!oRuleVal || (oRuleVal !== value && !oRuleVal[value])) {
+        if (!oRuleVal || (oRuleVal !== value && !oRuleVal.includes(value))) {
           bVisible = false
           break
         }
@@ -120,7 +121,13 @@ class Creator {
       }
     })
   }
-
+  /**
+   * 控制关联选项的可见性
+   *
+   * @param {*} fields 所有parse的属性
+   * @param {*} oDoc 表单的model对象
+   * 
+   */
   fnToggleAssocOptions(fields, oDoc) {
     Object.entries(fields).forEach(([oKey, oSchema]) => {
       if (oSchema.items && oSchema.items.length && oSchema.itemGroups && oSchema.itemGroups.length) {
@@ -262,11 +269,19 @@ class Creator {
       root: {},
     }
 
-    // 解析属性间依赖关系
-    if (JSON.stringify(vm.schema.dependencies) !== '{}') {
+    // 解析依赖关系
+    if (vm.schema.dependencies && JSON.stringify(vm.schema.dependencies) !== '{}') {
       this.fnToggleAssocSchemas(vm.schema.dependencies, vm.fields, vm.editDoc)
     }
+
     this.fnToggleAssocOptions(vm.fields, vm.editDoc)
+
+    if (vm.schema.eventDependencies && JSON.stringify(vm.schema.eventDependencies) !== '{}') {
+      if (!vm.onAxios) {
+        vm.setErrorMessage('配置信息不完整')
+        return false
+      }
+    }
 
     // 创建单独的字段节点保留在fieldNodes中
     this.createFieldNodes(fieldNodes, vm.fields)
