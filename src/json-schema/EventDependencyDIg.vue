@@ -11,7 +11,7 @@
       </el-form-item>
       <el-form-item label="参数">
         <el-select v-model="rule.params" multiple filterable placeholder="请选择">
-          <el-option v-for="(prop,key) in properties" :key="key" :label="key" :value="key"></el-option>
+          <el-option v-for="(prop,key) in signleProperties" :key="key" :label="key" :value="key"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="返回值">
@@ -49,6 +49,17 @@ const DlgComponent = {
           label: '作为可选项'
         }
       ]
+    }
+  },
+  computed: {
+    signleProperties() {
+      let result = {}
+      for(let [key, value] of Object.entries(this.properties)) {
+        if (value.type==='string' && value.hasOwnProperty('enum')) {
+          result[key] = value
+        }
+      }
+      return result
     }
   },
   methods: {

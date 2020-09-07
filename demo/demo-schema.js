@@ -136,7 +136,14 @@ const Schema = {
     },
     areaCode: {
       title: '区号',
-      type: 'string'
+      type: 'string',
+      enum: [{
+        label: '010',
+        value: '010'
+      }, {
+        label: '029',
+        value: '029'
+      }]
     },
     provience: {
       title: '省份',
@@ -166,14 +173,14 @@ const Schema = {
   eventDependencies: {
     provience: {
       rule: {
-        url: 'http://localhost:8082/order/api/mongo/document/list?db=testSync&cl=areacode&page=1&size=100',
+        url: 'http://localhost:8081/order/api/mongo/document/list?db=testSync&cl=areacode&page=1&size=100',
         params: ['areaCode'],
         type: 'v1'
       }
     },
     city: {
       rule: {
-        url: 'http://localhost:8082/order/api/mongo/document/list?db=testSync&cl=areacode&page=1&size=100',
+        url: 'http://localhost:8081/order/api/mongo/document/list?db=testSync&cl=areacode&page=1&size=100',
         params: ['areaCode'],
         type: 'v2'
       }

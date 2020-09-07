@@ -1,6 +1,5 @@
 import { Node, prepareFieldNode, components, FormNode, LabelNode } from './nodes'
 let _uid = 0
-let timer = null
 /**
  * 创建编辑器（一套schema的节点应该只创建一次，否则会多次render）
  */
@@ -167,54 +166,6 @@ class Creator {
     })
   }
   /**
-   * 控制题目配置
-   * @param {*} onAxios 实例
-   * @param {*} deps 属性间的依赖关系
-   * @param {*} fields 所有parse的属性
-   * @param {*} oDoc 表单的model对象
-   * 
-   */
-  fnToggleSchemas(onAxios, deps, fields, oDoc) {
-    const { vm } = this
-    clearTimeout(timer)
-    Object.entries(deps).forEach(([oKey, oConfig]) => {
-      const oRule = oConfig.rule
-      let isHasVal = oRule.params.every(property => !oDoc[property])
-      if (isHasVal) {
-        return false
-      }
-      let postData = {}
-      oRule.params.forEach(item => {
-        postData[item] = {
-          'feature': 'start',
-          'keyword': oDoc[item]
-        }
-      })
-      timer = setTimeout(() => {
-        onAxios().post(oRule.url, { 'filter': postData }).then(rst => {
-          const result = rst.data.result
-          if (oRule.type === 'v1') {
-            oDoc[oKey] = result[oKey]
-          } else if (oRule.type === 'v2') {
-            let arr = []
-            if (result.docs) {
-              result.docs.forEach(doc => {
-                let item = {
-                  'label': doc[oKey],
-                  'value': doc[oKey]
-                }
-                arr.push(item)
-              })
-              Object.assign(fields[oKey].items, arr)
-            }
-          }
-        }).catch(() => {
-          vm.setErrorMessage('数据解析错误')
-        })
-      })
-    })
-  }
-  /**
    * 按嵌套关系，创建每个嵌套下的字段节点
    * 执行的结果保留在fieldNodes中，根表单放在root中，其他子表单放在自表单名命名（name）的对象中
    *
@@ -330,7 +281,6 @@ class Creator {
         vm.setErrorMessage('配置信息不完整')
         return false
       }
-      this.fnToggleSchemas(vm.onAxios, vm.schema.eventDependencies, vm.fields, vm.editDoc)
     }
 
     // 创建单独的字段节点保留在fieldNodes中
