@@ -134,9 +134,16 @@ const Schema = {
         },
       },
     },
-    areacode: {
+    areaCode: {
       title: '区号',
       type: 'string',
+      enum: [{
+        label: '010',
+        value: '010'
+      }, {
+        label: '029',
+        value: '029'
+      }]
     },
     provience: {
       title: '省份',
@@ -145,7 +152,8 @@ const Schema = {
     city: {
       title: '本地网',
       type: 'string',
-    },
+      enum: []
+    }
   },
   dependencies: {
     online: {
@@ -162,19 +170,19 @@ const Schema = {
       operator: 'or',
     },
   },
-  eventDenpendencies: {
-    city: {
-      rule: {
-        properties: ['resource'],
-        type: 'v2',
-        url: '/order/mongo/url1'
-      }
-    },
+  eventDependencies: {
     provience: {
       rule: {
-        properties: ['resource'],
-        type: 'v1',
-        url: '/order/mongo/url2'
+        url: 'http://localhost:8081/order/api/mongo/document/list?db=testSync&cl=areacode&page=1&size=100',
+        params: ['areaCode'],
+        type: 'v1'
+      }
+    },
+    city: {
+      rule: {
+        url: 'http://localhost:8081/order/api/mongo/document/list?db=testSync&cl=areacode&page=1&size=100',
+        params: ['areaCode'],
+        type: 'v2'
       }
     }
   }

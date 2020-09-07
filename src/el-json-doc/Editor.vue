@@ -1,5 +1,5 @@
 <template>
-  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false">
+  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false" :on-axios="onAxios">
     <el-button type="primary" :loading="isSubmit" @click="submit">提交</el-button>
     <el-button type="reset" @click="reset">重置</el-button>
   </tms-json-doc>
@@ -199,7 +199,8 @@ export default {
     doc: { type: Object },
     requireButtons: { type: Boolean, default: () => true },
     oneWay: { type: Boolean, default: () => true },
-    onFileSubmit: { type: Function }
+    onFileSubmit: { type: Function },
+    onAxios: { type: Function },
   },
   data() {
     return {

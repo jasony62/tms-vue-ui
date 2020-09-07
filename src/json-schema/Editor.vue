@@ -145,7 +145,7 @@
                       <span>{{p}}</span>
                       <tms-flex direction="column">
                         <span>{{config.rule.url}}</span>
-                        <tms-flex><span v-for="(value, key) in config.rule.properties" :key="key">{{value}}</span></tms-flex>
+                        <tms-flex><span v-for="(value, key) in config.rule.params" :key="key">{{value}}</span></tms-flex>
                         <span>{{config.rule.type}}</span>
                       </tms-flex>
                     </tms-flex>

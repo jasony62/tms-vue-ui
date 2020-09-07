@@ -47,6 +47,16 @@ export class Parser {
           }
         }
       }
+      if (schema.eventDependencies && JSON.stringify(schema.eventDependencies) !== '{}') {
+        for (const key in schema.eventDependencies) {
+          const config = schema.eventDependencies[key]
+          config.rule.params.forEach(param => {
+            // 如果有就用没有就船舰
+            schema.properties[param].assocs = schema.properties[param].assocs || new Array()
+            schema.properties[param].assocs.push(key)
+          })
+        }
+      }
       // 解析子属性
       for (const key in schema.properties) {
         // 设置子属性的名称
