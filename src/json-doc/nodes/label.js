@@ -12,6 +12,8 @@ export class LabelNode extends Node {
     const { createElement, field } = this
     const attrOrProps = this.attrOrProps(field, field)
 
+    Object.assign(attrOrProps, { attrs: { 'schema-name': `${field.name}` } })
+
     if (field.visible === false) {
       let classObj = { class: { 'hide': true } }
       Object.assign(attrOrProps, classObj)

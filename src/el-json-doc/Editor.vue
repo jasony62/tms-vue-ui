@@ -116,7 +116,9 @@ TmsJsonDoc.setComponent('checkboxgroup', 'el-checkbox-group')
 TmsJsonDoc.setComponent('radio', 'el-radio', ({ field }) => ({
   label: field.value
 }))
-TmsJsonDoc.setComponent('select', 'el-select')
+TmsJsonDoc.setComponent('select', 'el-select', () => ({
+  filterable: true
+}))
 TmsJsonDoc.setComponent('switch', 'el-switch')
 TmsJsonDoc.setComponent('color', 'el-color-picker')
 TmsJsonDoc.setComponent('rate', 'el-rate')
