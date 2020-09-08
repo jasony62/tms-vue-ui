@@ -26,7 +26,7 @@ export class Parser {
     }
   }
 
-  parse(schema = this.rootSchema, fields = this.fields, schemaPath, editDoc = this.editDoc) {
+  async parse(schema = this.rootSchema, fields = this.fields, schemaPath, editDoc = this.editDoc) {
     if (!schema || schema.visible === false) return
 
     const pathname = schemaPath ? schemaPath.join('.') : schema.name // 指定的名字或路径名
@@ -48,13 +48,55 @@ export class Parser {
         }
       }
       if (schema.eventDependencies && JSON.stringify(schema.eventDependencies) !== '{}') {
+        let items = new Set();
         for (const key in schema.eventDependencies) {
+          items.add(key)
           const config = schema.eventDependencies[key]
           config.rule.params.forEach(param => {
-            // 如果有就用没有就船舰
+            items.add(param)
             schema.properties[param].assocs = schema.properties[param].assocs || new Array()
             schema.properties[param].assocs.push(key)
           })
+        }
+
+        const isFlag = Array.from(items).every(item => editDoc[item])
+
+        if (!isFlag) {
+          for (const key in schema.properties) {
+            const currentProperty = schema.properties[key]
+            if (currentProperty.assocs) {
+              for (let i = 0; i < currentProperty.assocs.length; i++) {
+                let oDep, oRule;
+                oDep = currentProperty.assocs[i]
+                oRule = schema.eventDependencies[oDep].rule
+                let postData = {}
+                oRule.params.forEach(param => {
+                  postData[param] = {
+                    'feature': 'start',
+                    'keyword': editDoc[param]
+                  }
+                })
+                this.vm.onAxios().post(oRule.url, { 'filter': postData }).then(rst => {
+                  const data = rst.data.result.docs || rst.data.result
+                  if (oRule.type === 'v1') {
+                    editDoc[oDep] = data[0][oDep] || data[oDep]
+                  } else if (oRule.type === 'v2') {
+                    let arr = []
+                    data.forEach(item => {
+                      let value = item[oDep]
+                      arr.push({ 'label': value, 'value': value })
+                    })
+                    fields[oDep].items = arr
+                    if (data.length === 1) {
+                      editDoc[oDep] = arr[0].value
+                    }
+                  }
+                }).catch(() => {
+                  this.vm.setErrorMessage('数据解析错误')
+                })
+              }
+            }
+          }
         }
       }
       // 解析子属性

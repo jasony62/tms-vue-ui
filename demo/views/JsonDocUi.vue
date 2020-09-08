@@ -23,7 +23,7 @@ export default {
     return {
       isSubmit: false,
       schema,
-      model: {}
+      model: { areaCode: '010' }
     }
   },
   methods: {			

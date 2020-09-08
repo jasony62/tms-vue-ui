@@ -8,7 +8,7 @@ const Schema = {
       title: '活动名称',
       type: 'string',
       default: '10',
-      readonly: true,
+      readonly: true
     },
     resource: {
       title: '特殊资源',
@@ -19,10 +19,44 @@ const Schema = {
           value: 'a',
         },
         {
-          label: '线下场地免费',
+          label: '线下场地赞助',
           value: 'b',
         },
       ],
+    },
+    methods: {
+      title: '活动形式',
+      type: 'string',
+      enum: [
+        {
+          label: '线上',
+          value: 'a',
+          group: 'v1'
+        },
+        {
+          label: '线下',
+          value: 'b',
+          group: 'v2'
+        },
+      ],
+      enumGroups: [
+        {
+          id: 'v1',
+          label: '分组1',
+          assocEnum: {
+            property: 'resource',
+            value: 'a',
+          },
+        },
+        {
+          id: 'v2',
+          label: '分组2',
+          assocEnum: {
+            property: 'resource',
+            value: 'b',
+          },
+        }
+      ]
     },
     type: {
       title: '活动性质',
@@ -65,13 +99,13 @@ const Schema = {
             property: 'resource',
             value: 'b',
           },
-        },
+        }
       ],
     },
     online: {
       title: '线上赞助费',
       type: 'string',
-      default: '100',
+      default: '100'
     },
     offline: {
       title: '线下赞助费',
@@ -94,7 +128,7 @@ const Schema = {
         },
         format: 'file',
         formatAttrs: {
-          accept: 'png,jpg,jpeg,xlsx',
+          accept: 'image/png,image/jpeg',
           size: '20MB',
           limit: 2,
         },
@@ -103,27 +137,55 @@ const Schema = {
     areaCode: {
       title: '区号',
       type: 'string',
-      enum: [
-        {
-          label: '010',
-          value: '010',
-        },
-        {
-          label: '029',
-          value: '029',
-        },
-      ],
+      enum: [{
+        label: '010',
+        value: '010'
+      }, {
+        label: '029',
+        value: '029'
+      }]
     },
     provience: {
       title: '省份',
-      type: 'string',
+      type: 'string'
     },
     city: {
       title: '本地网',
       type: 'string',
-      enum: [],
+      enum: []
+    }
+  },
+  dependencies: {
+    online: {
+      rules: {
+        resource: 'a',
+        type: 'a'
+      },
+      operator: 'and',
+    },
+    offline: {
+      rules: {
+        resource: 'b'
+      },
+      operator: 'or',
     },
   },
+  eventDependencies: {
+    provience: {
+      rule: {
+        url: 'http://localhost:8080/order/api/admin/document/list?db=testSync&cl=areacode&page=1&size=100',
+        params: ['areaCode'],
+        type: 'v1'
+      }
+    },
+    city: {
+      rule: {
+        url: 'http://localhost:8080/order/api/admin/document/list?db=testSync&cl=areacode&page=1&size=100',
+        params: ['areaCode'],
+        type: 'v2'
+      }
+    }
+  }
 }
 
 export default Schema
