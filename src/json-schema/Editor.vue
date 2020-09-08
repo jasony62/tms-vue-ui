@@ -131,12 +131,7 @@
                   </div>
                 </div>
                 <div>
-                  <el-button
-                    size="mini"
-                    type="default"
-                    :disabled="!form.schema.enum"
-                    @click="onEditEnumDependency"
-                  >编辑选项依赖</el-button>
+                  <el-button size="mini" type="default" :disabled="!form.schema.enum" @click="onEditEnumDependency">编辑选项依赖</el-button>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="事件依赖" name="eventDependencies">
@@ -150,9 +145,7 @@
                       <span>{{p}}</span>
                       <tms-flex direction="column">
                         <span>{{config.rule.url}}</span>
-                        <tms-flex>
-                          <span v-for="(value, key) in config.rule.params" :key="key">{{value}}</span>
-                        </tms-flex>
+                        <tms-flex><span v-for="(value, key) in config.rule.params" :key="key">{{value}}</span></tms-flex>
                         <span>{{config.rule.type}}</span>
                       </tms-flex>
                     </tms-flex>
@@ -244,11 +237,6 @@ SchemaWrap.build = function (key, schema, parent) {
     case 'object':
       if (typeof schema.properties === 'object') {
         wrap.children = Object.entries(schema.properties).map(([k, s]) => {
-          if (schema.required && schema.required.includes(k)) {
-            Vue.set(s, 'required', true)
-          } else {
-            Vue.set(s, 'required', false)
-          }
           return SchemaWrap.build(k, s, wrap)
         })
       }
@@ -415,7 +403,7 @@ export default {
     },
     onNodeClick(schemaWrap, node) {
       const { key, schema } = schemaWrap
-      schema.required = !!schema.required
+      this.$set(schema, 'required', !!schema.required)
       // 添加依赖关系定义
       if (!schema.dependencies || typeof schema.dependencies !== 'object')
         this.$set(schema, 'dependencies', {})
@@ -424,10 +412,7 @@ export default {
         this.$set(schema, 'enumGroups', [])
       }
       // 添加事件依赖关系定义
-      if (
-        !schema.eventDependencies ||
-        typeof schema.eventDependencies !== 'object'
-      )
+      if (!schema.eventDependencies || typeof schema.eventDependencies !== 'object')
         this.$set(schema, 'eventDependencies', {})
       this.form.key = key
       this.form.schema = schema
@@ -524,17 +509,41 @@ export default {
     /* 编辑选项依赖规则 */
     onEditEnumDependency() {
       let allProperties = this.form.node.data.parent.children
-      fnShowEnumDependencyDlg(
-        this.form.schema,
-        this.form.key,
-        allProperties
-      ).then((result) => {
+      fnShowEnumDependencyDlg(this.form.schema, this.form.key, allProperties).then((result) => {
         if (result) {
           let { enumGroups } = result
           this.$set(this.form.schema, 'enumGroups', enumGroups)
           this.$set(this.form.schema, 'enum', result.enum)
         }
       })
+    },
+    /* 添加事件依赖规则 */
+    onAddEventDependency() {
+      let eventDependencies = this.form.schema.eventDependencies
+      fnShowEventDependencyDlg(this.form.schema).then((result) => {
+        if (result) {
+          let { property, rule } = result      
+          this.$set(eventDependencies, property, {'rule': rule})        
+        }
+      })
+    },
+    /* 修改事件依赖规则 */
+    onSetEventDependency(propName) {
+      let eventDependencies = this.form.schema.eventDependencies;    
+      fnShowEventDependencyDlg(
+        this.form.schema,
+        propName,
+        eventDependencies[propName]
+      ).then((result) => {
+        if (result) {
+          let { property, rule} = result
+          this.$set(eventDependencies, property, {'rule': rule})
+        }
+      })
+    },
+    /* 删除事件依赖规则 */
+    onDelEventDependency(propName) {
+      this.$delete(this.form.schema.eventDependencies, propName)
     },
   },
   mounted() {
