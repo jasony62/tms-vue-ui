@@ -274,6 +274,7 @@ const Type2Format = {
     { value: 'name', label: '姓名' },
     { value: 'email', label: '邮箱' },
     { value: 'mobile', label: '手机' },
+    { value: 'dateTime', label: '日期时间' }
   ],
   object: [
     { value: 'file', label: '文件' },

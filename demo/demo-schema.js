@@ -10,6 +10,11 @@ const Schema = {
       default: '10',
       readonly: true
     },
+    createTime: {
+      title: '创建时间',
+      type: 'string',
+      format: 'dateTime'
+    },
     resource: {
       title: '特殊资源',
       type: 'string',
