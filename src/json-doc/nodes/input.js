@@ -45,6 +45,7 @@ export class Input extends FieldNode {
               let oDep, oRule;
               oDep = this.field.assocs[i]
               oRule = schema.eventDependencies[oDep].rule
+              editDoc[oDep] = ""
               let postData = {}
               oRule.params.forEach(param => {
                 postData[param] = {
@@ -58,11 +59,14 @@ export class Input extends FieldNode {
                   editDoc[oDep] = data[0][oDep] || data[oDep]
                 } else if (oRule.type === 'v2') {
                   let arr = []
-                  data.forEach(data => {
-                    let value = data[oDep]
+                  data.forEach(item => {
+                    let value = item[oDep]
                     arr.push({ 'label': value, 'value': value })
                   })
                   fields[oDep].items = arr
+                  if (data.length === 1) {
+                    editDoc[oDep] = arr[0].value
+                  }
                 }
               }).catch(() => {
                 setErrorMessage('数据解析错误')

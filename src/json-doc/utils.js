@@ -66,3 +66,19 @@ export function setVal(vm, data, n, v) {
   return v
 }
 
+export function formatVal(val) {
+  return Number(val) < 10 ? '0' + val : '' + val
+}
+
+export function getNowTime() {
+  const nowtime = new Date()
+  const year = nowtime.getFullYear()
+  const month = formatVal(nowtime.getMonth() + 1)
+  const date = formatVal(nowtime.getDate())
+  const hour = formatVal(nowtime.getHours())
+  const minute = formatVal(nowtime.getMinutes())
+  const seconds = formatVal(nowtime.getSeconds())
+
+  return `${year}-${month}-${date} ${hour}:${minute}:${seconds}`
+}
+

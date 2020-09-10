@@ -19,6 +19,9 @@ export class FieldText extends Field {
           this.type = 'text'
           this.pattern = this.schema.pattern
           break
+        case 'dateTime':
+          this.type = 'dateTime'
+          break
       }
     }
 
