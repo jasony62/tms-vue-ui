@@ -150,11 +150,11 @@ const Schema = {
         value: '029'
       }]
     },
-    provience: {
+    entprise_province: {
       title: '省份',
       type: 'string'
     },
-    city: {
+    managerNetWork: {
       title: '本地网',
       type: 'string',
       enum: []
@@ -176,14 +176,14 @@ const Schema = {
     },
   },
   eventDependencies: {
-    provience: {
+    entprise_province: {
       rule: {
         url: 'http://localhost:8080/order/api/admin/document/list?db=testSync&cl=areacode&page=1&size=100',
         params: ['areaCode'],
         type: 'v1'
       }
     },
-    city: {
+    managerNetWork: {
       rule: {
         url: 'http://localhost:8080/order/api/admin/document/list?db=testSync&cl=areacode&page=1&size=100',
         params: ['areaCode'],

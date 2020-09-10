@@ -107,7 +107,7 @@ TmsJsonDoc.setComponent('label', 'el-form-item', ({ field }) => ({
 }))
 
 TmsJsonDoc.setComponent('email', 'el-input')
-TmsJsonDoc.setComponent('dateTime', 'el-date-picker', ({ field }) => ({
+TmsJsonDoc.setComponent('dateTime', 'el-date-picker', () => ({
   type: 'datetime',
   valueFormat: "yyyy-MM-dd HH:mm:ss"
 }))

@@ -23,7 +23,7 @@ export default {
     return {
       isSubmit: false,
       schema,
-      model: { createTime: '2020-09-09 16:89:39' }
+      model: {}
     }
   },
   methods: {			
