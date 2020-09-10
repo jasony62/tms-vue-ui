@@ -25,7 +25,8 @@ import {
   CheckboxGroup,
   InputNumber,
   Button,
-  Upload
+  Upload,
+  DatePicker
 } from 'element-ui'
 Vue.use(Form)
   .use(FormItem)
@@ -44,6 +45,7 @@ Vue.use(Form)
   .use(InputNumber)
   .use(Button)
   .use(Upload)
+  .use(DatePicker)
 import './index.css'
 
 TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
@@ -105,6 +107,10 @@ TmsJsonDoc.setComponent('label', 'el-form-item', ({ field }) => ({
 }))
 
 TmsJsonDoc.setComponent('email', 'el-input')
+TmsJsonDoc.setComponent('dateTime', 'el-date-picker', () => ({
+  type: 'datetime',
+  valueFormat: "yyyy-MM-dd HH:mm:ss"
+}))
 TmsJsonDoc.setComponent('url', 'el-input')
 TmsJsonDoc.setComponent('number', 'el-input-number')
 TmsJsonDoc.setComponent('text', 'el-input')

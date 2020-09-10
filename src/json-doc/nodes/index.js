@@ -5,6 +5,7 @@ import { Select } from './select'
 import { Textarea } from './textarea'
 import { Checkboxgroup } from './checkboxgroup'
 import { FileNode } from './file'
+import { DateTime } from './dateTime'
 import { ObjectNode } from './object'
 import { LabelNode } from './label'
 import { FormNode } from './form'
@@ -52,6 +53,8 @@ function prepareFieldNode(vm, createElement, field) {
       return new ObjectNode(vm, createElement, field)
     case 'file':
       return new FileNode(vm, createElement, field)
+    case 'dateTime':
+      return new DateTime(vm, createElement, field)
     default:
       return new Input(vm, createElement, field)
   }
