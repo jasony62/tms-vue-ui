@@ -72,10 +72,7 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
         field.schemaType === 'array' && field.type === 'radio'
           ? 'string'
           : field.schemaType
-      let required = field.required
-      if (field.hasOwnProperty('visible') && !field.visible && field.required) {
-        required = false
-      }
+      const required = field.required
       const message = field.title
       const trigger = ['radio', 'checkbox', 'select', 'radiogroup', 'checkboxgroup'].includes(field.type)
         ? 'change'
