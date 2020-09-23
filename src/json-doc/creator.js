@@ -32,6 +32,16 @@ class Creator {
         labelNodes.push(createElement('br'))
         labelNodes.push(createElement('small', field.description))
       }
+      if (field.type === 'file' && field.attachment) {
+        field.attachment.forEach((attach) => {
+          let element = createElement(components.a.tag, {
+            props: {
+              href: attach.url
+            }
+          }, attach.name)
+          labelNodes.push(element)
+        })
+      }
       return labelNode.createElem(labelNodes)
     } else {
       const descNodes = []
@@ -117,7 +127,9 @@ class Creator {
       const field = fields[oKey]
       if (visibility.rules) {
         const bVisible = this.getFieldVisible(visibility, oDoc)
+        const value = oDoc[oKey] ? oDoc[oKey] : field.schema.default ? field.schema.default : ''
         field.visible = bVisible
+        oDoc[oKey] = bVisible ? value : ""
       }
     })
   }

@@ -142,6 +142,13 @@ export default {
       },
     }
   },
+  methods: {
+    uploadFile() {
+      setTimeout(() => {
+        this.fileList.push({name: '1.jpg', url:'https://www.baidu.com/'})
+      }, 9000)
+    },
+  }
 }
 </script>
 <style>

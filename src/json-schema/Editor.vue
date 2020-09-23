@@ -73,6 +73,11 @@
             <el-form-item label="最多选" v-if="form.schema.type === 'array'&&form.hasEnum">
               <el-input-number v-model="form.schema.maxItems"></el-input-number>
             </el-form-item>
+            <el-form-item label="最多选" v-if="form.schema.type === 'array'&&form.items">
+              <el-upload action="#" multiple :file-list="form.schema.attachment" :http-request="uploadFile" :on-remove="onRemoveFile">
+                <el-button>上传文件</el-button>
+              </el-upload>
+            </el-form-item>
             <component :is="compFormatAttrs" v-bind.sync="form.schema.formatAttrs"></component>
             <slot name="extKeywords" :schema="form.schema"></slot>
             <el-form-item>
@@ -545,6 +550,13 @@ export default {
     /* 删除事件依赖规则 */
     onDelEventDependency(propName) {
       this.$delete(this.form.schema.eventDependencies, propName)
+    },
+    onRemoveFile(file) {
+      let files = this.form.schema.attachment
+      this.form.schema.attachment.splice(
+        files.indexOf(files.find(ele => ele.name === file.name))
+        , 1
+      )
     },
   },
   mounted() {

@@ -26,7 +26,8 @@ import {
   InputNumber,
   Button,
   Upload,
-  DatePicker
+  DatePicker,
+  Link
 } from 'element-ui'
 Vue.use(Form)
   .use(FormItem)
@@ -46,6 +47,7 @@ Vue.use(Form)
   .use(Button)
   .use(Upload)
   .use(DatePicker)
+  .use(Link)
 import './index.css'
 
 TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
@@ -70,17 +72,27 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
         field.schemaType === 'array' && field.type === 'radio'
           ? 'string'
           : field.schemaType
-      const required = field.required
+      let required = field.required
+      if (field.hasOwnProperty('visible') && !field.visible && field.required) {
+        required = false
+      }
       const message = field.title
       const trigger = ['radio', 'checkbox', 'select', 'radiogroup', 'checkboxgroup'].includes(field.type)
         ? 'change'
         : 'blur'
-        
-      if (field.schemaType === 'array' && (field.schema.minItems !== undefined || field.maxItems !== undefined)) {
+      if (field.schemaType === 'array') {
         const len = model[key].length
         const max = field.schema.maxItems
         const min = field.schema.minItems || 0
-        const message = len < min ? `选项不得少于${min}项` : len > max ? `选项不得超过${max}项` : ''
+        let message
+        if (field.required) {
+          if (field.schema.minItems !== undefined) {
+            message = len < min ? `选项不得少于${min}项` : ''
+          }
+        }
+        if (field.schema.maxItems !== undefined) {
+          message = len > max ? `选项不得超过${max}项` : ''
+        }
         rules[field.name].push({ min, max, type, required, message, trigger })
       } else {
         rules[field.name].push({ type, required, message, trigger })
@@ -111,6 +123,7 @@ TmsJsonDoc.setComponent('dateTime', 'el-date-picker', () => ({
   type: 'datetime',
   valueFormat: "yyyy-MM-dd HH:mm:ss"
 }))
+TmsJsonDoc.setComponent('a', 'el-link')
 TmsJsonDoc.setComponent('url', 'el-input')
 TmsJsonDoc.setComponent('number', 'el-input-number')
 TmsJsonDoc.setComponent('text', 'el-input')

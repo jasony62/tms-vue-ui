@@ -38,6 +38,7 @@ const components = {
     },
   },
   jsondoc: { tag: 'tms-json-doc', option },
+  a: { tag: 'a', option }
 }
 
 function prepareFieldNode(vm, createElement, field) {

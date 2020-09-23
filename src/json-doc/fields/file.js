@@ -6,6 +6,7 @@ export class FieldFile extends Field {
     this.type = 'file'
     this.value = Array.isArray(value) ? value : Array.isArray(this.value) ? this.value : []
     this.multiple = false
+    this.attachment = schema.attachment
     if (this.schema.items && this.schema.items.formatAttrs) {
       Object.entries(this.schema.items.formatAttrs).forEach(([key, value]) => {
         this[key] = value
