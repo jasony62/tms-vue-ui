@@ -73,6 +73,11 @@
             <el-form-item label="最多选" v-if="form.schema.type === 'array'&&form.hasEnum">
               <el-input-number v-model="form.schema.maxItems"></el-input-number>
             </el-form-item>
+            <el-form-item label="上传模板" v-if="form.schema.type==='array'&& form.schema.items">
+              <el-upload action="#" multiple :file-list="form.schema.attachment" :http-request="onUploadFile" :on-remove="onRemoveFile">
+                <el-button>上传文件</el-button>
+              </el-upload>
+            </el-form-item>
             <component :is="compFormatAttrs" v-bind.sync="form.schema.formatAttrs"></component>
             <slot name="extKeywords" :schema="form.schema"></slot>
             <el-form-item>
@@ -189,6 +194,7 @@ import {
   Radio,
   RadioGroup,
   Dialog,
+  Upload
 } from 'element-ui'
 Vue.use(Tabs)
   .use(TabPane)
@@ -204,6 +210,7 @@ Vue.use(Tabs)
   .use(Radio)
   .use(RadioGroup)
   .use(Dialog)
+  .use(Upload)
 
 /**
  *
@@ -295,7 +302,7 @@ const Format2Comp = {
 
 export default {
   name: 'tms-json-schema',
-  props: { schema: Object, extendSchema: Function },
+  props: { schema: Object, extendSchema: Function, onUpload: Function },
   data() {
     return {
       activeL0Pane: 'properties',
@@ -352,6 +359,21 @@ export default {
     },
   },
   methods: {
+    onRemoveFile(file) {
+      let files = this.form.schema.attachment
+      files.splice(
+        files.indexOf(files.find(ele => ele.name === file.name))
+        , 1
+      )
+    },
+    onUploadFile({file}) {
+      if (!this.form.schema.attachment) {
+        this.$set(this.form.schema, 'attachment', [])
+      }
+      this.onUpload(file).then(result => {
+        this.form.schema.attachment.push(result)        
+      })
+    },
     onChangeHasEnum(bHasEnum) {
       if (bHasEnum) {
         this.$set(this.form.schema, 'enum', [
@@ -545,7 +567,7 @@ export default {
     /* 删除事件依赖规则 */
     onDelEventDependency(propName) {
       this.$delete(this.form.schema.eventDependencies, propName)
-    },
+    }
   },
   mounted() {
     const root = SchemaWrap.build('root', this.schema)

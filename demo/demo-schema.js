@@ -115,6 +115,7 @@ const Schema = {
     offline: {
       title: '线下赞助费',
       type: 'string',
+      required: true
     },
     files: {
       type: 'array',
@@ -133,11 +134,21 @@ const Schema = {
         },
         format: 'file',
         formatAttrs: {
-          accept: 'image/png,image/jpeg',
+          accept: 'png,jpeg',
           size: '20MB',
           limit: 2,
         },
       },
+      attachment: [
+        {
+          name: '1.jpg',
+          url: 'http://www.baidu.com'
+        },
+        {
+          name: '2.jpg',
+          url: 'http://www.baidu.com'
+        }
+      ]
     },
     areaCode: {
       title: '区号',
@@ -175,22 +186,22 @@ const Schema = {
       operator: 'or',
     },
   },
-  eventDependencies: {
-    entprise_province: {
-      rule: {
-        url: 'http://localhost:8080/order/api/admin/document/list?db=testSync&cl=areacode&page=1&size=100',
-        params: ['areaCode'],
-        type: 'v1'
-      }
-    },
-    managerNetWork: {
-      rule: {
-        url: 'http://localhost:8080/order/api/admin/document/list?db=testSync&cl=areacode&page=1&size=100',
-        params: ['areaCode'],
-        type: 'v2'
-      }
-    }
-  }
+  // eventDependencies: {
+  //   entprise_province: {
+  //     rule: {
+  //       url: 'http://localhost:8080/order/api/admin/document/list?db=testSync&cl=areacode&page=1&size=100',
+  //       params: ['areaCode'],
+  //       type: 'v1'
+  //     }
+  //   },
+  //   managerNetWork: {
+  //     rule: {
+  //       url: 'http://localhost:8080/order/api/admin/document/list?db=testSync&cl=areacode&page=1&size=100',
+  //       params: ['areaCode'],
+  //       type: 'v2'
+  //     }
+  //   }
+  // }
 }
 
 export default Schema

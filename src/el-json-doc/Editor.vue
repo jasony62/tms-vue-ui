@@ -1,5 +1,5 @@
 <template>
-  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false" :on-axios="onAxios">
+  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false" :on-axios="onAxios" :on-file-download="onFileDownload">
     <el-button type="primary" :loading="isSubmit" @click="submit">提交</el-button>
     <el-button type="reset" @click="reset">重置</el-button>
   </tms-json-doc>
@@ -26,7 +26,8 @@ import {
   InputNumber,
   Button,
   Upload,
-  DatePicker
+  DatePicker,
+  Link
 } from 'element-ui'
 Vue.use(Form)
   .use(FormItem)
@@ -46,6 +47,7 @@ Vue.use(Form)
   .use(Button)
   .use(Upload)
   .use(DatePicker)
+  .use(Link)
 import './index.css'
 
 TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
@@ -75,12 +77,19 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
       const trigger = ['radio', 'checkbox', 'select', 'radiogroup', 'checkboxgroup'].includes(field.type)
         ? 'change'
         : 'blur'
-        
-      if (field.schemaType === 'array' && (field.schema.minItems !== undefined || field.maxItems !== undefined)) {
+      if (field.schemaType === 'array') {
         const len = model[key].length
         const max = field.schema.maxItems
         const min = field.schema.minItems || 0
-        const message = len < min ? `选项不得少于${min}项` : len > max ? `选项不得超过${max}项` : ''
+        let message
+        if (field.required) {
+          if (field.schema.minItems !== undefined) {
+            message = len < min ? `选项不得少于${min}项` : ''
+          }
+        }
+        if (field.schema.maxItems !== undefined) {
+          message = len > max ? `选项不得超过${max}项` : ''
+        }
         rules[field.name].push({ min, max, type, required, message, trigger })
       } else {
         rules[field.name].push({ type, required, message, trigger })
@@ -111,6 +120,7 @@ TmsJsonDoc.setComponent('dateTime', 'el-date-picker', () => ({
   type: 'datetime',
   valueFormat: "yyyy-MM-dd HH:mm:ss"
 }))
+TmsJsonDoc.setComponent('a', 'el-link')
 TmsJsonDoc.setComponent('url', 'el-input')
 TmsJsonDoc.setComponent('number', 'el-input-number')
 TmsJsonDoc.setComponent('text', 'el-input')
@@ -209,6 +219,7 @@ export default {
     oneWay: { type: Boolean, default: () => true },
     onFileSubmit: { type: Function },
     onAxios: { type: Function },
+    onFileDownload: { type: Function }
   },
   data() {
     return {

@@ -32,6 +32,36 @@ class Creator {
         labelNodes.push(createElement('br'))
         labelNodes.push(createElement('small', field.description))
       }
+      if (field.type === 'file' && field.attachment && field.attachment.length) {
+        labelNodes.push(createElement(components.a.tag, {
+          props: { underline: false },
+          attrs: { disabled: true }
+        }, '参考模板：'))
+        field.attachment.forEach(attach => {
+          let element = createElement(components.a.tag, {
+            attrs: {
+              url: attach.url,
+              name: attach.name
+            },
+            props: {
+              underline: false
+            },
+            style: {
+              marginRight: '10px'
+            },
+            on: {
+              click: event => {
+                if (event.target.nodeType !== 1) return
+                let ele = event.target.nodeName.toLowerCase() !== 'a' ? event.target.parentNode : event.target
+                let url = ele.getAttribute('url')
+                let name = ele.getAttribute('name')
+                this.vm.onFileDownload(name, url)
+              }
+            }
+          }, attach.name)
+          labelNodes.push(element)
+        })
+      }
       return labelNode.createElem(labelNodes)
     } else {
       const descNodes = []
@@ -118,6 +148,16 @@ class Creator {
       if (visibility.rules) {
         const bVisible = this.getFieldVisible(visibility, oDoc)
         field.visible = bVisible
+        // 隐藏的属性不赋默认值
+        const value = oDoc[oKey] ? oDoc[oKey] : field.schema.default ? field.schema.default : ''
+        oDoc[oKey] = bVisible ? value : ""
+        // 隐藏且必填的属性应重置
+        if (!bVisible && field.required) {
+          field.required = false
+        }
+        if (bVisible) {
+          field.required = field.schema.required || false
+        }
       }
     })
   }

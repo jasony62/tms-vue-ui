@@ -14,11 +14,11 @@ export class FileNode extends FieldNode {
     const { createElement } = this
 
     children.push(createElement(components.button.tag, {
-			props: {
-				type: 'primary',
-				size: 'small'
-			}
-		},'上传文件'))
+      props: {
+        type: 'primary',
+        size: 'small'
+      }
+    }, '上传文件'))
 
     return children
   }

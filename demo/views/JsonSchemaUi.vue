@@ -2,7 +2,7 @@
   <div class="json-schema-ui">
     <h3>编辑JSONSchema</h3>
     <div id="myJsonSchema">
-      <tms-json-schema ref="myJsonSchema" :schema="jsonSchema" :extendSchema="extendSchema">
+      <tms-json-schema ref="myJsonSchema" :schema="jsonSchema" :extendSchema="extendSchema" :on-upload="onUploadFile">
         <template v-slot:extKeywords="props">
           <el-form-item label="不可修改">
             <el-switch v-model="props.schema.readonly"></el-switch>
@@ -30,6 +30,7 @@ export default {
         required: ['familyName', 'givenName'],
         properties: {
           file: {
+            readonly: true,
             type: 'array',
             title: '上传图片和文件',
             items: {
@@ -138,10 +139,16 @@ export default {
         },
       },
       extendSchema: (vm, schema) => {
-        vm.$set(schema, 'readonly', false)
+        vm.$set(schema, 'readonly', schema.readonly || false)
       },
     }
   },
+  methods: {
+    onUploadFile(file) {
+      let result = {'name': file.name, 'url': location.href}
+			return Promise.resolve(result)
+    },
+  }
 }
 </script>
 <style>
