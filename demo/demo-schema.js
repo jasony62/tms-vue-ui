@@ -134,7 +134,7 @@ const Schema = {
         },
         format: 'file',
         formatAttrs: {
-          accept: 'image/png,image/jpeg',
+          accept: 'png,jpeg',
           size: '20MB',
           limit: 2,
         },
@@ -142,6 +142,10 @@ const Schema = {
       attachment: [
         {
           name: '1.jpg',
+          url: 'http://www.baidu.com'
+        },
+        {
+          name: '2.jpg',
           url: 'http://www.baidu.com'
         }
       ]

@@ -32,11 +32,31 @@ class Creator {
         labelNodes.push(createElement('br'))
         labelNodes.push(createElement('small', field.description))
       }
-      if (field.type === 'file' && field.attachment) {
-        field.attachment.forEach((attach) => {
+      if (field.type === 'file' && field.attachment && field.attachment.length) {
+        labelNodes.push(createElement(components.a.tag, {
+          props: { underline: false },
+          attrs: { disabled: true }
+        }, '参考模板：'))
+        field.attachment.forEach(attach => {
           let element = createElement(components.a.tag, {
+            attrs: {
+              url: attach.url,
+              name: attach.name
+            },
             props: {
-              href: attach.url
+              underline: false
+            },
+            style: {
+              marginRight: '10px'
+            },
+            on: {
+              click: event => {
+                if (event.target.nodeType !== 1) return
+                let ele = event.target.nodeName.toLowerCase() !== 'a' ? event.target.parentNode : event.target
+                let url = ele.getAttribute('url')
+                let name = ele.getAttribute('name')
+                this.vm.onFileDownload(name, url)
+              }
             }
           }, attach.name)
           labelNodes.push(element)

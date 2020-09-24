@@ -1,6 +1,14 @@
 <template>
   <div id="myJsonDoc">
-    <tms-el-json-doc :is-submit="isSubmit" :schema="schema" :doc="model" :on-file-submit="handleFileSubmit" v-on:submit="jsonDocSubmit" :on-axios="handleAxios"></tms-el-json-doc>
+    <tms-el-json-doc 
+      :is-submit="isSubmit" 
+      :schema="schema" 
+      :doc="model" 
+      :on-file-submit="handleFileSubmit" 
+      v-on:submit="jsonDocSubmit" 
+      :on-axios="handleAxios"
+      :on-file-download="handleDownload"
+    ></tms-el-json-doc>
   </div>
 </template>
 
@@ -44,7 +52,10 @@ export default {
     },
     handleAxios() {    
       return Vue.TmsAxios()
-    }
+    },
+    handleDownload(name, url) {
+      console.log(name, url)
+    },
   }
 }
 </script>

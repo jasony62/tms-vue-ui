@@ -44,7 +44,8 @@ export default {
      * 传入数据不能被修改
      */
     oneWay: { type: Boolean, default: () => true },
-    onAxios: { type: Function }
+    onAxios: { type: Function },
+    onFileDownload: { type: Function }
   },
   data() {
     const editDoc = this.oneWay === false ? this.value : deepClone(this.value)
