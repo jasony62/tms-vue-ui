@@ -148,9 +148,17 @@ class Creator {
       if (visibility.rules) {
         const bVisible = this.getFieldVisible(visibility, oDoc)
         field.visible = bVisible
-        // 隐藏的属性不赋默认值
+        // 隐藏的属性不赋任何值
         const value = oDoc[oKey] ? oDoc[oKey] : field.schema.default ? field.schema.default : ''
-        oDoc[oKey] = bVisible ? value : ""
+        if (bVisible) {
+          oDoc[oKey] = value
+        } else {
+          if (field.schemaType === 'array') {
+            if (oDoc[oKey].length) oDoc[oKey].splice(0, oDoc[oKey].length)
+          } else {
+            oDoc[oKey] = ''
+          }
+        }
         // 隐藏且必填的属性应重置
         if (!bVisible && field.required) {
           field.required = false
