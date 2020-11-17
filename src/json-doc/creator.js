@@ -20,8 +20,8 @@ class Creator {
             'span',
             {
               attrs: {
-                'data-required-field': field.required ? 'true' : 'false',
-              },
+                'data-required-field': field.required ? 'true' : 'false'
+              }
             },
             field.label
           )
@@ -33,32 +33,42 @@ class Creator {
         labelNodes.push(createElement('small', field.description))
       }
       if (field.type === 'file' && field.attachment && field.attachment.length) {
-        labelNodes.push(createElement(components.a.tag, {
-          props: { underline: false },
-          attrs: { disabled: true }
-        }, '参考模板：'))
+        labelNodes.push(
+          createElement(
+            components.a.tag,
+            {
+              props: { underline: false },
+              attrs: { disabled: true }
+            },
+            '参考模板：'
+          )
+        )
         field.attachment.forEach(attach => {
-          let element = createElement(components.a.tag, {
-            attrs: {
-              url: attach.url,
-              name: attach.name
-            },
-            props: {
-              underline: false
-            },
-            style: {
-              marginRight: '10px'
-            },
-            on: {
-              click: event => {
-                if (event.target.nodeType !== 1) return
-                let ele = event.target.nodeName.toLowerCase() !== 'a' ? event.target.parentNode : event.target
-                let url = ele.getAttribute('url')
-                let name = ele.getAttribute('name')
-                this.vm.onFileDownload(name, url)
+          let element = createElement(
+            components.a.tag,
+            {
+              attrs: {
+                url: attach.url,
+                name: attach.name
+              },
+              props: {
+                underline: false
+              },
+              style: {
+                marginRight: '10px'
+              },
+              on: {
+                click: event => {
+                  if (event.target.nodeType !== 1) return
+                  let ele = event.target.nodeName.toLowerCase() !== 'a' ? event.target.parentNode : event.target
+                  let url = ele.getAttribute('url')
+                  let name = ele.getAttribute('name')
+                  this.vm.onFileDownload(name, url)
+                }
               }
-            }
-          }, attach.name)
+            },
+            attach.name
+          )
           labelNodes.push(element)
         })
       }
@@ -80,7 +90,7 @@ class Creator {
       return createElement(
         'div',
         {
-          class: this.fieldWrapClass,
+          class: this.fieldWrapClass
         },
         labelAndDescNodes
       )
@@ -140,7 +150,7 @@ class Creator {
    * @param {*} deps 属性间的依赖关系
    * @param {*} fields 所有parse的属性
    * @param {*} oDoc 表单的model对象
-   * 
+   *
    */
   fnToggleAssocSchemas(deps, fields, oDoc) {
     Object.entries(deps).forEach(([oKey, visibility]) => {
@@ -149,7 +159,12 @@ class Creator {
         const bVisible = this.getFieldVisible(visibility, oDoc)
         field.visible = bVisible
         // 隐藏的属性不赋任何值
-        const value = oDoc[oKey] ? oDoc[oKey] : field.schema.default ? field.schema.default : ''
+        let value
+        if (field.schemaType === 'array') {
+          value = oDoc[oKey].length ? oDoc[oKey] : field.schema.default ? [...field.schema.default] : []
+        } else {
+          value = oDoc[oKey] ? oDoc[oKey] : field.schema.default ? field.schema.default : ''
+        }
         if (bVisible) {
           oDoc[oKey] = value
         } else {
@@ -174,7 +189,7 @@ class Creator {
    *
    * @param {*} fields 所有parse的属性
    * @param {*} oDoc 表单的model对象
-   * 
+   *
    */
   fnToggleAssocOptions(fields, oDoc) {
     Object.entries(fields).forEach(([oKey, oSchema]) => {
@@ -227,7 +242,7 @@ class Creator {
     // 引用fieldNodes中的嵌套节点（root或嵌套节点），记录当前嵌套节点包含的节点
     let nestFieldNodes = this.getNestFieldNodes(fieldNodes, nestPath)
 
-    Object.keys(fields).forEach((key) => {
+    Object.keys(fields).forEach(key => {
       if (key.indexOf('$') === 0) return
 
       const field = fields[key]
@@ -255,7 +270,7 @@ class Creator {
         createElement(
           'div',
           {
-            class: 'nest-title',
+            class: 'nest-title'
           },
           nestField.$title
         )
@@ -264,7 +279,7 @@ class Creator {
     /**
      * 嵌套节点下的字段节点
      */
-    Object.keys(nestField).forEach((key) => {
+    Object.keys(nestField).forEach(key => {
       if (key.indexOf('$') === 0) return
 
       const subField = nestField[key]
@@ -277,7 +292,7 @@ class Creator {
           createElement(
             'div',
             {
-              class: 'nest',
+              class: 'nest'
             },
             nestFieldNodes
           )
@@ -314,7 +329,7 @@ class Creator {
   createForm() {
     const { vm, createElement } = this
     const fieldNodes = {
-      root: {},
+      root: {}
     }
 
     // 解析依赖关系
@@ -384,7 +399,7 @@ let mapCreators = new Map()
  * @param {*} vm
  * @param {*} createElement
  */
-export default function (vm, createElement) {
+export default function(vm, createElement) {
   let creator = mapCreators.get(vm)
   if (!creator) {
     creator = new Creator(vm, createElement)
