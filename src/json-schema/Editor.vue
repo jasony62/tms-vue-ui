@@ -3,17 +3,7 @@
     <el-tabs v-model="activeL0Pane" type="card">
       <el-tab-pane label="属性" name="properties">
         <tms-flex>
-          <el-tree
-            :data="data"
-            :props="defaultProps"
-            default-expand-all
-            :expand-on-click-node="false"
-            @node-click="onNodeClick"
-            draggable
-            :allow-drag="allowDrag"
-            :allow-drop="allowDrop"
-            @node-drop="onDragNode"
-          ></el-tree>
+          <el-tree :data="data" :props="defaultProps" default-expand-all :expand-on-click-node="false" @node-click="onNodeClick" draggable :allow-drag="allowDrag" :allow-drop="allowDrop" @node-drop="onDragNode"></el-tree>
           <el-form label-width="80px" :model="form" :disabled="!form.node">
             <el-form-item label="键值">
               <el-input v-model="form.key" @change="onChangeKey"></el-input>
@@ -31,12 +21,7 @@
             </el-form-item>
             <el-form-item label="格式" v-if="formats">
               <el-select v-model="form.schema.format" placeholder="请选择格式">
-                <el-option
-                  v-for="format in formats"
-                  :key="format.value"
-                  :label="format.label"
-                  :value="format.value"
-                ></el-option>
+                <el-option v-for="format in formats" :key="format.value" :label="format.label" :value="format.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="标题">
@@ -47,6 +32,9 @@
             </el-form-item>
             <el-form-item label="必填">
               <el-switch v-model="form.schema.required"></el-switch>
+            </el-form-item>
+            <el-form-item label="可否分组">
+              <el-switch v-model="form.schema.groupable"></el-switch>
             </el-form-item>
             <el-form-item label="默认值">
               <el-checkbox-group v-model="form.schema.default" v-if="form.schema.type === 'array'">
@@ -59,12 +47,7 @@
             </el-form-item>
             <el-form-item label="选择范围" v-if="form.hasEnum">
               <tms-flex v-for="(v, i) in form.schema.enum" :key="i">
-                <el-input
-                  size="mini"
-                  v-model="v.value"
-                  @input="onSetValue(v.value, i)"
-                  :disabled="v.disabled"
-                ></el-input>
+                <el-input size="mini" v-model="v.value" @input="onSetValue(v.value, i)" :disabled="v.disabled"></el-input>
                 <el-input size="mini" v-model="v.label" @input="onSetLabel(v.label, i)"></el-input>
                 <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
               </tms-flex>
@@ -77,13 +60,7 @@
               <el-input-number v-model="form.schema.maxItems"></el-input-number>
             </el-form-item>
             <el-form-item label="上传模板" v-if="form.schema.type === 'array' && form.schema.items">
-              <el-upload
-                action="#"
-                multiple
-                :file-list="form.schema.attachment"
-                :http-request="onUploadFile"
-                :on-remove="onRemoveFile"
-              >
+              <el-upload action="#" multiple :file-list="form.schema.attachment" :http-request="onUploadFile" :on-remove="onRemoveFile">
                 <el-button>上传文件</el-button>
               </el-upload>
             </el-form-item>
@@ -91,12 +68,7 @@
             <slot name="extKeywords" :schema="form.schema"></slot>
             <el-form-item>
               <el-button size="mini" @click="onRemoveNode">删除</el-button>
-              <el-button
-                size="mini"
-                @click="onAppendNode"
-                v-if="form.schema.type === 'object' || form.schema.type === 'array'"
-                >添加属性</el-button
-              >
+              <el-button size="mini" @click="onAppendNode" v-if="form.schema.type === 'object' || form.schema.type === 'array'">添加属性</el-button>
             </el-form-item>
           </el-form>
           <!-- 开始：扩展定义 -->
@@ -142,9 +114,7 @@
                   </div>
                 </div>
                 <div>
-                  <el-button size="mini" type="default" :disabled="!form.schema.enum" @click="onEditEnumDependency"
-                    >编辑选项依赖</el-button
-                  >
+                  <el-button size="mini" type="default" :disabled="!form.schema.enum" @click="onEditEnumDependency">编辑选项依赖</el-button>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="事件依赖" name="eventDependencies">
@@ -154,9 +124,7 @@
                       <span>{{ p }}</span>
                       <tms-flex direction="column">
                         <span>{{ config.rule.url }}</span>
-                        <tms-flex
-                          ><span v-for="(value, key) in config.rule.params" :key="key">{{ value }}</span></tms-flex
-                        >
+                        <tms-flex><span v-for="(value, key) in config.rule.params" :key="key">{{ value }}</span></tms-flex>
                         <span>{{ config.rule.type }}</span>
                       </tms-flex>
                     </tms-flex>
@@ -279,6 +247,7 @@ class FormData {
       type: 'string',
       description: '',
       required: false,
+      groupable: false,
       properties: {}
     }
     this.node = null
@@ -337,7 +306,9 @@ export default {
     },
     formats() {
       const type = this.form.schema.type
-      return Type2Format[type] ? [{ value: undefined, label: '无' }].concat(Type2Format[type]) : null
+      return Type2Format[type]
+        ? [{ value: undefined, label: '无' }].concat(Type2Format[type])
+        : null
     }
   },
   watch: {
@@ -350,9 +321,16 @@ export default {
     },
     'form.schema.format': {
       handler: function(val) {
-        if (Format2Comp[val] && typeof Format2Comp[val].defaultFormatAttrs === 'function') {
+        if (
+          Format2Comp[val] &&
+          typeof Format2Comp[val].defaultFormatAttrs === 'function'
+        ) {
           if (!this.form.schema.formatAttrs)
-            this.$set(this.form.schema, 'formatAttrs', Format2Comp[val].defaultFormatAttrs())
+            this.$set(
+              this.form.schema,
+              'formatAttrs',
+              Format2Comp[val].defaultFormatAttrs()
+            )
         }
       },
       immediate: true
@@ -435,14 +413,19 @@ export default {
     onNodeClick(schemaWrap, node) {
       const { key, schema } = schemaWrap
       this.$set(schema, 'required', !!schema.required)
+      this.$set(schema, 'groupable', !!schema.groupable)
       // 添加依赖关系定义
-      if (!schema.dependencies || typeof schema.dependencies !== 'object') this.$set(schema, 'dependencies', {})
+      if (!schema.dependencies || typeof schema.dependencies !== 'object')
+        this.$set(schema, 'dependencies', {})
       // 添加选项依赖关系定义
       if (!schema.enumGroups && schema.enum) {
         this.$set(schema, 'enumGroups', [])
       }
       // 添加事件依赖关系定义
-      if (!schema.eventDependencies || typeof schema.eventDependencies !== 'object')
+      if (
+        !schema.eventDependencies ||
+        typeof schema.eventDependencies !== 'object'
+      )
         this.$set(schema, 'eventDependencies', {})
       this.form.key = key
       this.form.schema = schema
@@ -456,7 +439,11 @@ export default {
         const newKey = this.form.key
         if (schemaWrap.parent && schemaWrap.parent.schema.properties) {
           this.$delete(schemaWrap.parent.schema.properties, schemaWrap.key)
-          this.$set(schemaWrap.parent.schema.properties, newKey, schemaWrap.schema)
+          this.$set(
+            schemaWrap.parent.schema.properties,
+            newKey,
+            schemaWrap.schema
+          )
         }
         schemaWrap.label = schemaWrap.key = newKey
       }
@@ -469,7 +456,10 @@ export default {
         this.$set(data, 'children', [])
       }
       if (schema.type === 'object') {
-        if (typeof schema.properties !== 'object' || Array.isArray(schema.properties)) {
+        if (
+          typeof schema.properties !== 'object' ||
+          Array.isArray(schema.properties)
+        ) {
           this.$set(schema, 'properties', {})
         }
         newChild = new SchemaWrap('newKey', {
@@ -510,7 +500,11 @@ export default {
     /* 修改属性依赖规则 */
     onSetDependency(propName) {
       let dependencies = this.form.schema.dependencies
-      fnShowDependencyDlg(this.form.schema, propName, dependencies[propName]).then(result => {
+      fnShowDependencyDlg(
+        this.form.schema,
+        propName,
+        dependencies[propName]
+      ).then(result => {
         if (result) {
           let { property, rules, operator } = result
           let newRules = rules.reduce((a, rule) => {
@@ -528,7 +522,11 @@ export default {
     /* 编辑选项依赖规则 */
     onEditEnumDependency() {
       let allProperties = this.form.node.data.parent.children
-      fnShowEnumDependencyDlg(this.form.schema, this.form.key, allProperties).then(result => {
+      fnShowEnumDependencyDlg(
+        this.form.schema,
+        this.form.key,
+        allProperties
+      ).then(result => {
         if (result) {
           let { enumGroups } = result
           this.$set(this.form.schema, 'enumGroups', enumGroups)
@@ -549,7 +547,11 @@ export default {
     /* 修改事件依赖规则 */
     onSetEventDependency(propName) {
       let eventDependencies = this.form.schema.eventDependencies
-      fnShowEventDependencyDlg(this.form.schema, propName, eventDependencies[propName]).then(result => {
+      fnShowEventDependencyDlg(
+        this.form.schema,
+        propName,
+        eventDependencies[propName]
+      ).then(result => {
         if (result) {
           let { property, rule } = result
           this.$set(eventDependencies, property, { rule: rule })
