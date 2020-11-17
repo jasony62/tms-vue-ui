@@ -48,6 +48,9 @@
             <el-form-item label="必填">
               <el-switch v-model="form.schema.required"></el-switch>
             </el-form-item>
+						<el-form-item label="可否分组">
+							<el-switch v-model="form.schema.groupable"></el-switch>
+						</el-form-item>
             <el-form-item label="默认值">
               <el-input v-model="form.schema.default"></el-input>
             </el-form-item>
@@ -270,6 +273,7 @@ class FormData {
       type: 'string',
       description: '',
       required: false,
+			groupable: false,
       properties: {},
     }
     this.node = null
@@ -427,6 +431,7 @@ export default {
     onNodeClick(schemaWrap, node) {
       const { key, schema } = schemaWrap
       this.$set(schema, 'required', !!schema.required)
+			this.$set(schema, 'groupable', !!schema.groupable)
       // 添加依赖关系定义
       if (!schema.dependencies || typeof schema.dependencies !== 'object')
         this.$set(schema, 'dependencies', {})
