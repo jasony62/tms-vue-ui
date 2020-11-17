@@ -7,31 +7,33 @@ const Schema = {
     name: {
       title: '活动名称',
       type: 'string',
-      default: '10',
-      readonly: true
+      required: true
     },
     createTime: {
       title: '创建时间',
       type: 'string',
-      format: 'dateTime'
+      format: 'dateTime',
+      required: true
     },
     resource: {
       title: '特殊资源',
       type: 'string',
+      required: true,
       enum: [
         {
           label: '线上品牌赞助',
-          value: 'a',
+          value: 'a'
         },
         {
           label: '线下场地赞助',
-          value: 'b',
-        },
-      ],
+          value: 'b'
+        }
+      ]
     },
     methods: {
       title: '活动形式',
       type: 'string',
+      required: true,
       enum: [
         {
           label: '线上',
@@ -42,7 +44,7 @@ const Schema = {
           label: '线下',
           value: 'b',
           group: 'v2'
-        },
+        }
       ],
       enumGroups: [
         {
@@ -50,43 +52,44 @@ const Schema = {
           label: '分组1',
           assocEnum: {
             property: 'resource',
-            value: 'a',
-          },
+            value: 'a'
+          }
         },
         {
           id: 'v2',
           label: '分组2',
           assocEnum: {
             property: 'resource',
-            value: 'b',
-          },
+            value: 'b'
+          }
         }
       ]
     },
     type: {
       title: '活动性质',
       type: 'array',
+      required: true,
       enum: [
         {
           label: '美食/餐厅线上活动',
           value: 'a',
-          group: 'v1',
+          group: 'v1'
         },
         {
           label: '地推活动',
           value: 'b',
-          group: 'v1',
+          group: 'v1'
         },
         {
           label: '线下主题活动',
           value: 'a',
-          group: 'v2',
+          group: 'v2'
         },
         {
           label: '单纯品牌曝光',
           value: 'b',
-          group: 'v2',
-        },
+          group: 'v2'
+        }
       ],
       enumGroups: [
         {
@@ -94,23 +97,24 @@ const Schema = {
           label: '分组1',
           assocEnum: {
             property: 'resource',
-            value: 'a',
-          },
+            value: 'a'
+          }
         },
         {
           id: 'v2',
           label: '分组2',
           assocEnum: {
             property: 'resource',
-            value: 'b',
-          },
+            value: 'b'
+          }
         }
-      ],
+      ]
     },
     online: {
       title: '线上赞助费',
       type: 'string',
-      default: '100'
+      default: '100',
+      required: true
     },
     offline: {
       title: '线下赞助费',
@@ -125,19 +129,19 @@ const Schema = {
         properties: {
           name: {
             title: '名字',
-            type: 'string',
+            type: 'string'
           },
           url: {
             title: '地址',
-            type: 'string',
-          },
+            type: 'string'
+          }
         },
         format: 'file',
         formatAttrs: {
           accept: 'png,jpeg',
           size: '20MB',
-          limit: 2,
-        },
+          limit: 2
+        }
       },
       attachment: [
         {
@@ -153,13 +157,16 @@ const Schema = {
     areaCode: {
       title: '区号',
       type: 'string',
-      enum: [{
-        label: '010',
-        value: '010'
-      }, {
-        label: '029',
-        value: '029'
-      }]
+      enum: [
+        {
+          label: '010',
+          value: '010'
+        },
+        {
+          label: '029',
+          value: '029'
+        }
+      ]
     },
     entprise_province: {
       title: '省份',
@@ -177,15 +184,15 @@ const Schema = {
         resource: 'a',
         type: 'a'
       },
-      operator: 'and',
+      operator: 'and'
     },
     offline: {
       rules: {
         resource: 'b'
       },
-      operator: 'or',
-    },
-  },
+      operator: 'or'
+    }
+  }
   // eventDependencies: {
   //   entprise_province: {
   //     rule: {

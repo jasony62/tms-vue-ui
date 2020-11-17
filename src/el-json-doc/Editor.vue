@@ -1,5 +1,13 @@
 <template>
-  <tms-json-doc ref="TmsJsonDoc" :schema="schema" v-model="editingDoc" :require-buttons="requireButtons" :one-way="false" :on-axios="onAxios" :on-file-download="onFileDownload">
+  <tms-json-doc
+    ref="TmsJsonDoc"
+    :schema="schema"
+    v-model="editingDoc"
+    :require-buttons="requireButtons"
+    :one-way="false"
+    :on-axios="onAxios"
+    :on-file-download="onFileDownload"
+  >
     <el-button type="primary" :loading="isSubmit" @click="submit">提交</el-button>
     <el-button type="reset" @click="reset">重置</el-button>
   </tms-json-doc>
@@ -56,7 +64,7 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
   const labelWidth = '120px'
   const model = vm.editing(false)
   const rules = {}
-  
+
   function parseField(fields) {
     Object.keys(fields).forEach(key => {
       if (key.indexOf('$') === 0 && key !== '$sub') return
@@ -68,12 +76,9 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
 
       // http://element.eleme.io/#/en-US/component/form#validation
       rules[field.name] = []
-      const type =
-        field.schemaType === 'array' && field.type === 'radio'
-          ? 'string'
-          : field.schemaType
+      const type = field.schemaType === 'array' && field.type === 'radio' ? 'string' : field.schemaType
       const required = field.required
-      const message = field.title
+      let message = `${field.label}必填`
       const trigger = ['radio', 'checkbox', 'select', 'radiogroup', 'checkboxgroup'].includes(field.type)
         ? 'change'
         : 'blur'
@@ -81,7 +86,6 @@ TmsJsonDoc.setComponent('form', 'el-form', ({ vm }) => {
         const len = model[key].length
         const max = field.schema.maxItems
         const min = field.schema.minItems || 0
-        let message
         if (field.required) {
           if (field.schema.minItems !== undefined) {
             message = len < min ? `选项不得少于${min}项` : ''
@@ -118,7 +122,7 @@ TmsJsonDoc.setComponent('label', 'el-form-item', ({ field }) => ({
 TmsJsonDoc.setComponent('email', 'el-input')
 TmsJsonDoc.setComponent('dateTime', 'el-date-picker', () => ({
   type: 'datetime',
-  valueFormat: "yyyy-MM-dd HH:mm:ss"
+  valueFormat: 'yyyy-MM-dd HH:mm:ss'
 }))
 TmsJsonDoc.setComponent('a', 'el-link')
 TmsJsonDoc.setComponent('url', 'el-input')
@@ -160,48 +164,53 @@ TmsJsonDoc.setComponent('error', 'el-alert', ({ vm }) => ({
   title: vm.error
 }))
 
-TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({	
-  action: '',	
-  autoUpload: false,	
-	fileList: field.value,	
-	accept: field.accept ? field.accept : "",	
-	limit: field.limit,	
-	onExceed: () => {	
-		const message = `文件总数不能超过 ${field.limit} 个`	
-		vm.error = message	
-	},	
+TmsJsonDoc.setComponent('file', 'el-upload', ({ vm, field }) => ({
+  action: '',
+  autoUpload: false,
+  fileList: field.value,
+  accept: field.accept ? field.accept : '',
+  limit: field.limit,
+  onExceed: () => {
+    const message = `文件总数不能超过 ${field.limit} 个`
+    vm.error = message
+  },
   onChange: (file, fileList) => {
-		function errorFile(file, files) {	
-			files.forEach((item, index) => {	
-				if (item.name===file.name && item.status==='ready') {	
-					files.splice(index, 1)	
-				}	
-			})	
-			return false	
-		}	
-		let isExist = null	
-		isExist = vm.editDoc[field.name].filter(item => item.name===file.name)	
-		if (isExist.length) {	
-			vm.error = `文件已被选取,请重命名该文件再上传`	
-			return errorFile(file, fileList)	
-    } 	
+    function errorFile(file, files) {
+      files.forEach((item, index) => {
+        if (item.name === file.name && item.status === 'ready') {
+          files.splice(index, 1)
+        }
+      })
+      return false
+    }
+    let isExist = null
+    isExist = vm.editDoc[field.name].filter(item => item.name === file.name)
+    if (isExist.length) {
+      vm.error = `文件已被选取,请重命名该文件再上传`
+      return errorFile(file, fileList)
+    }
     const index = file.raw.name.lastIndexOf('.')
-    const suffix = file.raw.name.substr(index+1)
-    const isAccept = field.accept ? field.accept.replace(/\s*/g,"").split(',').includes(suffix) : true
+    const suffix = file.raw.name.substr(index + 1)
+    const isAccept = field.accept
+      ? field.accept
+          .replace(/\s*/g, '')
+          .split(',')
+          .includes(suffix)
+      : true
     if (!isAccept) {
-			vm.error = `文件上传失败,只能上传${field.accept}格式的文件`	
-			return errorFile(file, fileList)	
-		}	
-		const isLtSize = parseInt(field.size) * 1024 * 1024 < file.raw.size	
-		if (isLtSize) {	
-			vm.error = `文件上传失败,大小不能超过${field.size}M`	
-			return errorFile(file, fileList)	
-		}	
-    vm.editDoc[field.name].push(file.raw)	
-  },	
-  onRemove: (file) => {	
-    vm.editDoc[field.name].splice(vm.editDoc[field.name].indexOf(file), 1)	
-  }	
+      vm.error = `文件上传失败,只能上传${field.accept}格式的文件`
+      return errorFile(file, fileList)
+    }
+    const isLtSize = parseInt(field.size) * 1024 * 1024 < file.raw.size
+    if (isLtSize) {
+      vm.error = `文件上传失败,大小不能超过${field.size}M`
+      return errorFile(file, fileList)
+    }
+    vm.editDoc[field.name].push(file.raw)
+  },
+  onRemove: file => {
+    vm.editDoc[field.name].splice(vm.editDoc[field.name].indexOf(file), 1)
+  }
 }))
 
 TmsJsonDoc.setComponent('button', 'el-button')
@@ -226,48 +235,48 @@ export default {
       editingDoc: {}
     }
   },
-  computed: {	
-		fileSchemas() {	
-			return Object.keys(this.schema.properties).filter(key => {	
-				const value = this.schema.properties[key]	
-				if (value.type==='array'&& value.items && value.items.format==='file') return key	
-			})	
-		}	
-	},
+  computed: {
+    fileSchemas() {
+      return Object.keys(this.schema.properties).filter(key => {
+        const value = this.schema.properties[key]
+        if (value.type === 'array' && value.items && value.items.format === 'file') return key
+      })
+    }
+  },
   created() {
     if (this.oneWay === false) this.editingDoc = this.doc
     else this.editingDoc = this.doc ? this.doc : {}
   },
   methods: {
-    doFile() {	
-      const tmsJsonDoc = this.$refs.TmsJsonDoc	
-      let promises = this.fileSchemas.map(schema => {	
-        const values = this.editingDoc[schema]	
-        return this.onFileSubmit(schema, values)	
-          .then(doc => { 	
-            Object.assign(this.editingDoc, doc) 	
-            return Promise.resolve()	
-          })	
-          .catch(err => Promise.reject(err))	
-      })	
-      Promise.all(promises)	
-        .then(() => this.doSubmit())	
-        .catch(err => tmsJsonDoc.setErrorMessage('文件上传出错' + err))  	
-    },	
-    doSubmit() {	
-      const tmsJsonDoc = this.$refs.TmsJsonDoc	
-      tmsJsonDoc.form().validate(valid => {	
-        if (valid) {	
-          this.$emit('submit',	JsonSchema.slim(this.schema, this.editingDoc),	this.editingDoc)	
-          tmsJsonDoc.clearErrorMessage()	
-        } else {	
-          tmsJsonDoc.setErrorMessage('请填写必填字段')	
-          return false	
-        }	
-      })	
+    doFile() {
+      const tmsJsonDoc = this.$refs.TmsJsonDoc
+      let promises = this.fileSchemas.map(schema => {
+        const values = this.editingDoc[schema]
+        return this.onFileSubmit(schema, values)
+          .then(doc => {
+            Object.assign(this.editingDoc, doc)
+            return Promise.resolve()
+          })
+          .catch(err => Promise.reject(err))
+      })
+      Promise.all(promises)
+        .then(() => this.doSubmit())
+        .catch(err => tmsJsonDoc.setErrorMessage('文件上传出错' + err))
+    },
+    doSubmit() {
+      const tmsJsonDoc = this.$refs.TmsJsonDoc
+      tmsJsonDoc.form().validate(valid => {
+        if (valid) {
+          this.$emit('submit', JsonSchema.slim(this.schema, this.editingDoc), this.editingDoc)
+          tmsJsonDoc.clearErrorMessage()
+        } else {
+          tmsJsonDoc.setErrorMessage('请填写必填字段')
+          return false
+        }
+      })
     },
     submit() {
-      this.fileSchemas.length ? this.doFile() :	this.doSubmit()
+      this.fileSchemas.length ? this.doFile() : this.doSubmit()
     },
     reset() {
       this.$refs.TmsJsonDoc.reset()
