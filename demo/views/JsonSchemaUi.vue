@@ -24,8 +24,7 @@ export default {
       jsonSchema: {
         $id: 'https://example.com/card.schema.json',
         $schema: 'http://json-schema.org/draft-07/schema#',
-        description:
-          'A representation of a person, company, organization, or place',
+        description: 'A representation of a person, company, organization, or place',
         type: 'object',
         required: ['familyName', 'givenName'],
         properties: {
@@ -37,117 +36,119 @@ export default {
               type: 'object',
               properties: {
                 name: { title: '名字', type: 'string' },
-                url: { title: '地址', type: 'string' },
+                url: { title: '地址', type: 'string' }
               },
               format: 'file',
               formatAttrs: {
                 accept: 'image/png,image/jpeg',
                 size: '20MB',
-                limit: 2,
-              },
-            },
+                limit: 2
+              }
+            }
           },
           fn: {
             description: 'Formatted Name',
             type: 'string',
-            enum: [],
+            enum: []
           },
           familyName: {
-            type: 'string',
+            type: 'string'
           },
           givenName: {
-            type: 'string',
+            type: 'string'
           },
           additionalName: {
             type: 'array',
-            items: {
-              type: 'string',
-            },
+            default: ['a', 'b'],
+            enum: [
+              { label: '选项1', value: 'a' },
+              { label: '选项2', value: 'b' }
+            ]
           },
           honorificPrefix: {
             type: 'array',
             items: {
-              type: 'string',
-            },
+              type: 'string'
+            }
           },
           honorificSuffix: {
             type: 'array',
             items: {
-              type: 'string',
-            },
+              type: 'string'
+            }
           },
           nickname: {
-            type: 'string',
+            type: 'string'
           },
           url: {
-            type: 'string',
+            type: 'string'
           },
           email: {
             type: 'object',
             properties: {
               type: {
-                type: 'string',
+                type: 'string'
               },
               value: {
-                type: 'string',
-              },
-            },
+                type: 'string'
+              }
+            }
           },
           tel: {
             type: 'object',
             properties: {
               type: {
-                type: 'string',
+                type: 'string'
               },
               value: {
-                type: 'string',
-              },
-            },
+                type: 'string'
+              }
+            }
           },
           tz: {
-            type: 'string',
+            type: 'string'
           },
           photo: {
-            type: 'string',
+            type: 'string'
           },
           logo: {
-            type: 'string',
+            type: 'string'
           },
           sound: {
-            type: 'string',
+            type: 'string'
           },
           bday: {
-            type: 'string',
+            type: 'string'
           },
           title: {
-            type: 'string',
+            type: 'string'
           },
           role: {
-            type: 'string',
+            type: 'string'
           },
           org: {
             type: 'object',
             properties: {
               organizationName: {
-                type: 'string',
+                type: 'string'
               },
               organizationUnit: {
-                type: 'string',
-              },
-            },
-          },
-        },
+                type: 'string'
+              }
+            }
+          }
+        }
       },
       extendSchema: (vm, schema) => {
         vm.$set(schema, 'readonly', schema.readonly || false)
-      },
+      }
     }
   },
   methods: {
     onUploadFile(file) {
-      let result = {'name': file.name, 'url': location.href}
-			return Promise.resolve(result)
-    },
+      let result = { name: file.name, url: location.href }
+      return Promise.resolve(result)
+    }
   }
 }
 </script>
