@@ -161,7 +161,7 @@ class Creator {
         // 隐藏的属性不赋任何值
         let value
         if (field.schemaType === 'array') {
-          value = oDoc[oKey].length ? oDoc[oKey] : field.schema.default ? [...field.schema.default] : []
+          value = oDoc[oKey].length ? oDoc[oKey] : field.schema.default ? field.schema.default : []
         } else {
           value = oDoc[oKey] ? oDoc[oKey] : field.schema.default ? field.schema.default : ''
         }
