@@ -84,7 +84,7 @@ export class JsonSchema {
     if (Array.isArray(obj)) {
       if (obj.length) obj.forEach((val, index) => JsonSchema.flattenObject(val, [...propPath, `[${index}]`], flatted))
       else flatted.set(propPath.join('.'), obj)
-    } else if (typeof obj === 'object') {
+    } else if (typeof obj === 'object' && obj !== null) {
       if (Object.keys(obj).length)
         Object.entries(obj).forEach(([prop, val]) => JsonSchema.flattenObject(val, [...propPath, prop], flatted))
       else flatted.set(propPath.join('.'), obj)
@@ -111,7 +111,7 @@ export class JsonSchema {
       if (flatSchema.has(searched)) return flatSchema.get(searched)
 
       // 正则匹配
-      const matched = [...flatSchema.keys()].filter((key) => {
+      const matched = [...flatSchema.keys()].filter(key => {
         const key2 = key.match('\\.#') ? `${key.split('\\.#')[0]}\\.` : `${key}$`
         const re = new RegExp(`^${key2}`)
         return re.test(searched)
@@ -133,7 +133,7 @@ export class JsonSchema {
 
       return null
     }
-    const flatSchema = JsonSchema.travel(schema, (prop) => ({ type: prop.type, value: prop.value }))
+    const flatSchema = JsonSchema.travel(schema, prop => ({ type: prop.type, value: prop.value }))
 
     const flatDoc = JsonSchema.flattenObject(doc)
 
