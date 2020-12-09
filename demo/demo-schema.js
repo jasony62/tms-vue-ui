@@ -139,8 +139,8 @@ const Schema = {
         format: 'file',
         formatAttrs: {
           accept: 'png,jpeg',
-          size: '20MB',
-          limit: 2
+          size: '0.048',
+          limit: 1
         }
       },
       attachment: [
