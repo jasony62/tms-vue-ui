@@ -179,18 +179,12 @@ const Schema = {
     }
   },
   dependencies: {
-    online: {
-      rules: {
-        resource: 'a',
-        type: 'a'
+    "name": {
+      "dependencyRules": {
+        "1": { "rules": [{ "property": "resource", "value": "a" }, { "property": "methods", "value": "b" }], "operator": "and" },
+        "2": { "rules": [{ "property": "areaCode", "value": "010" }], "operator": "and" }
       },
-      operator: 'and'
-    },
-    offline: {
-      rules: {
-        resource: 'b'
-      },
-      operator: 'or'
+      "operator": "or"
     }
   }
   // eventDependencies: {

@@ -80,9 +80,12 @@
                     <tms-flex>
                       <span>{{ p }}</span>
                       <tms-flex direction="column">
-                        <tms-flex v-for="(value, property) in config.rules" :key="property">
-                          <span>{{ property }}</span>
-                          <span>{{ value }}</span>
+                        <tms-flex v-for="(group, index) in config.dependencyRules" :key="index">
+                          <div v-for="(rule, index) in group.rules" :key="index">
+                          <span>{{ rule.property }}</span>&nbsp;
+                          <span>{{ rule.value }}</span>
+                          </div>
+                          <span>{{ group.operator }}</span>
                         </tms-flex>
                         <div>
                           <span>{{ config.operator }}</span>
@@ -488,12 +491,8 @@ export default {
       let dependencies = this.form.schema.dependencies
       fnShowDependencyDlg(this.form.schema).then(result => {
         if (result) {
-          let { property, rules, operator } = result
-          let newRules = rules.reduce((a, rule) => {
-            a[rule.property] = rule.value
-            return a
-          }, {})
-          this.$set(dependencies, property, { rules: newRules, operator })
+          let { property, dependencyRules, operator } = result
+          this.$set(dependencies, property, { dependencyRules: dependencyRules, operator })
         }
       })
     },
@@ -506,12 +505,8 @@ export default {
         dependencies[propName]
       ).then(result => {
         if (result) {
-          let { property, rules, operator } = result
-          let newRules = rules.reduce((a, rule) => {
-            a[rule.property] = rule.value
-            return a
-          }, {})
-          this.$set(dependencies, property, { rules: newRules, operator })
+          let { property, dependencyRules, operator } = result
+          this.$set(dependencies, property, { dependencyRules: dependencyRules, operator })
         }
       })
     },
