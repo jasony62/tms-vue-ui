@@ -1,4 +1,4 @@
-import { Node, prepareFieldNode, components, FormNode, LabelNode } from './nodes'
+import { FormNode, LabelNode, Node, components, prepareFieldNode } from './nodes'
 let _uid = 0
 /**
  * 创建编辑器（一套schema的节点应该只创建一次，否则会多次render）
@@ -119,28 +119,32 @@ class Creator {
     return fieldNodes[sNestPath]
   }
   getFieldVisible(oVisible, oDoc) {
-    var bVisible, oRuleVal
-    if (oVisible.operator === 'or') {
-      bVisible = false
-      for (const [key, value] of Object.entries(oVisible.rules)) {
-        oRuleVal = oDoc[key]
-        if (oRuleVal) {
-          // 多选默认是包含
-          if (oRuleVal === value || oRuleVal.includes(value)) {
-            bVisible = true
-            break
+    var bVisible, oRuleVal, visbleObj
+    visbleObj = {}
+    bVisible = false
+    for (const [key, obj] of Object.entries(oVisible['dependencyRules'])) {
+      if (obj.operator === 'or') {
+        visbleObj[key] = false
+        obj.rules.forEach(item => {
+          oRuleVal = oDoc[item['property']]
+          if (oRuleVal === item['value'] || oRuleVal.includes(item['value'])) {
+            visbleObj[key] = true
           }
-        }
+        })
+      } else if (obj.operator === 'and') {
+        visbleObj[key] = true
+        obj.rules.forEach(item => {
+          oRuleVal = oDoc[item['property']]
+          if (!oRuleVal || (!(oRuleVal === item['value']) && !(oRuleVal.includes(item['value'])))) {
+            visbleObj[key] = false
+          }
+        })
       }
+    }
+    if (oVisible.operator === 'or') {
+      bVisible = JSON.stringify(visbleObj).includes('true') ? true : false
     } else if (oVisible.operator === 'and') {
-      bVisible = true
-      for (const [key, value] of Object.entries(oVisible.rules)) {
-        oRuleVal = oDoc[key]
-        if (!oRuleVal || (oRuleVal !== value && !oRuleVal.includes(value))) {
-          bVisible = false
-          break
-        }
-      }
+      bVisible = JSON.stringify(visbleObj).includes('false') ? false : true
     }
     return bVisible
   }
@@ -155,7 +159,7 @@ class Creator {
   fnToggleAssocSchemas(deps, fields, oDoc) {
     Object.entries(deps).forEach(([oKey, visibility]) => {
       const field = fields[oKey]
-      if (visibility.rules) {
+      if (visibility.dependencyRules) {
         const bVisible = this.getFieldVisible(visibility, oDoc)
         field.visible = bVisible
         // 隐藏的属性不赋任何值

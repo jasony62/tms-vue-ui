@@ -137,6 +137,15 @@ export default {
               }
             }
           }
+        },
+        dependencies: {
+          "name": {
+            "dependencyRules": {
+              "1": { "rules": [{ "property": "resource", "value": "a" }, { "property": "methods", "value": "b" }], "operator": "and" },
+              "2": { "rules": [{ "property": "areaCode", "value": "010" }], "operator": "and" }
+            },
+            "operator": "or"
+          }
         }
       },
       extendSchema: (vm, schema) => {
