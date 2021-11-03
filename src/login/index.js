@@ -10,21 +10,22 @@ Vue.use(Button)
 let idCounter = 0
 
 class Login {
-  constructor(schema, fnCaptcha, fnToken) {
+  constructor(schema, fnCaptcha, fnToken, loginTip) {
     this.schema = schema
     this.fnCaptcha = fnCaptcha
     this.fnToken = fnToken
+    this.loginTip = loginTip
     this.captchaId = `captcha-${++idCounter}`
   }
   get component() {
-    const { schema, fnCaptcha, fnToken, captchaId } = this
+    const { schema, fnCaptcha, fnToken, captchaId, loginTip } = this
     return {
-			props: { onSuccess: { type: Function }, onFail: { type: Function } },
-			data() {
-				return {
-					loginData: {}
-				}
-			},
+      props: { onSuccess: { type: Function }, onFail: { type: Function } },
+      data() {
+        return {
+          loginData: {}
+        }
+      },
       methods: {
         refresh() {
           if (typeof fnCaptcha === 'function') {
@@ -82,7 +83,7 @@ class Login {
         Vue.nextTick(() => this.refresh())
       },
       render() {
-				let loginData = this.loginData
+        let loginData = this.loginData
         let textEle = item => (
           <van-cell-group class="tms-login__input">
             <van-field
@@ -111,6 +112,9 @@ class Login {
               <van-button size="large" type="info" onClick={this.login}>
                 登录
               </van-button>
+              <div class='tms-login__text'>
+                {loginTip && loginTip.text}
+              </div>
             </div>
           </div>
         )
@@ -133,9 +137,9 @@ class Login {
    * @param {*} options
    */
   static install(Vue, options) {
-    let { schema, fnGetCaptcha, fnGetToken } = options
+    let { schema, fnGetCaptcha, fnGetToken, loginTip } = options
 
-    const login = new Login(schema, fnGetCaptcha, fnGetToken)
+    const login = new Login(schema, fnGetCaptcha, fnGetToken, loginTip)
 
     Vue.component('tms-login', login.component)
   }
