@@ -112,9 +112,9 @@ class Login {
               <van-button size="large" type="info" onClick={this.login}>
                 登录
               </van-button>
-              <div class='tms-login__text'>
-                {loginTip && loginTip.text}
-              </div>
+            </div>
+            <div class='tms-login__text'>
+              {loginTip && loginTip.text}
             </div>
           </div>
         )
