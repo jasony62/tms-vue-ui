@@ -26,6 +26,7 @@
                 <el-option label="object" value="object"></el-option>
                 <el-option label="array" value="array"></el-option>
                 <el-option label="boolean" value="boolean"></el-option>
+                <el-option label="json" value="json"></el-option>
                 <el-option label="null" value="null"></el-option>
               </el-select>
             </el-form-item>
@@ -43,16 +44,35 @@
               <el-input v-model="form.schema.title"></el-input>
             </el-form-item>
             <el-form-item label="描述">
-              <el-input type="textarea" v-model="form.schema.description"></el-input>
+              <el-input
+                type="textarea"
+                v-model="form.schema.description"
+              ></el-input>
             </el-form-item>
             <el-form-item label="必填">
               <el-switch v-model="form.schema.required"></el-switch>
             </el-form-item>
+            <el-form-item label="可否分组">
+              <el-switch v-model="form.schema.groupable"></el-switch>
+            </el-form-item>
             <el-form-item label="默认值">
-              <el-input v-model="form.schema.default"></el-input>
+              <el-checkbox-group
+                v-model="form.schema.default"
+                v-if="form.schema.type === 'array'"
+              >
+                <el-checkbox
+                  v-for="(v, i) in form.schema.enum"
+                  :key="i"
+                  :label="v.value"
+                ></el-checkbox>
+              </el-checkbox-group>
+              <el-input v-model="form.schema.default" v-else></el-input>
             </el-form-item>
             <el-form-item label="设置范围">
-              <el-switch v-model="form.hasEnum" @change="onChangeHasEnum"></el-switch>
+              <el-switch
+                v-model="form.hasEnum"
+                @change="onChangeHasEnum"
+              ></el-switch>
             </el-form-item>
             <el-form-item label="选择范围" v-if="form.hasEnum">
               <tms-flex v-for="(v, i) in form.schema.enum" :key="i">
@@ -62,26 +82,60 @@
                   @input="onSetValue(v.value, i)"
                   :disabled="v.disabled"
                 ></el-input>
-                <el-input size="mini" v-model="v.label" @input="onSetLabel(v.label, i)"></el-input>
-                <el-button size="mini" type="text" @click="onDelOption(v, i)">删除</el-button>
+                <el-input
+                  size="mini"
+                  v-model="v.label"
+                  @input="onSetLabel(v.label, i)"
+                ></el-input>
+                <el-button size="mini" type="text" @click="onDelOption(v, i)"
+                  >删除</el-button
+                >
               </tms-flex>
-              <el-button size="mini" type="primary" @click="onAddOption">新增选项</el-button>
+              <el-button size="mini" type="primary" @click="onAddOption"
+                >新增选项</el-button
+              >
             </el-form-item>
-            <el-form-item label="至少选" v-if="form.schema.type === 'array'&&form.hasEnum">
+            <el-form-item
+              label="至少选"
+              v-if="form.schema.type === 'array' && form.hasEnum"
+            >
               <el-input-number v-model="form.schema.minItems"></el-input-number>
             </el-form-item>
-            <el-form-item label="最多选" v-if="form.schema.type === 'array'&&form.hasEnum">
+            <el-form-item
+              label="最多选"
+              v-if="form.schema.type === 'array' && form.hasEnum"
+            >
               <el-input-number v-model="form.schema.maxItems"></el-input-number>
             </el-form-item>
-            <component :is="compFormatAttrs" v-bind.sync="form.schema.formatAttrs"></component>
+            <el-form-item
+              label="上传模板"
+              v-if="form.schema.type === 'array' && form.schema.items"
+            >
+              <el-upload
+                action="#"
+                multiple
+                :file-list="form.schema.attachment"
+                :http-request="onUploadFile"
+                :on-remove="onRemoveFile"
+              >
+                <el-button>上传文件</el-button>
+              </el-upload>
+            </el-form-item>
+            <component
+              :is="compFormatAttrs"
+              v-bind.sync="form.schema.formatAttrs"
+            ></component>
             <slot name="extKeywords" :schema="form.schema"></slot>
             <el-form-item>
               <el-button size="mini" @click="onRemoveNode">删除</el-button>
               <el-button
                 size="mini"
                 @click="onAppendNode"
-                v-if="form.schema.type === 'object' || form.schema.type === 'array'"
-              >添加属性</el-button>
+                v-if="
+                  form.schema.type === 'object' || form.schema.type === 'array'
+                "
+                >添加属性</el-button
+              >
             </el-form-item>
           </el-form>
           <!-- 开始：扩展定义 -->
@@ -90,72 +144,112 @@
               <el-tab-pane label="属性依赖" name="dependencies">
                 <tms-flex direction="column">
                   <tms-flex
-                    v-for="(config,p) in form.schema.dependencies"
+                    v-for="(config, p) in form.schema.dependencies"
                     :key="p"
                     direction="column"
                   >
                     <tms-flex>
-                      <span>{{p}}</span>
+                      <span>{{ p }}</span>
                       <tms-flex direction="column">
-                        <tms-flex v-for="(value,property) in config.rules" :key="property">
-                          <span>{{property}}</span>
-                          <span>{{value}}</span>
+                        <tms-flex
+                          v-for="(group, index) in config.dependencyRules"
+                          :key="index"
+                        >
+                          <div
+                            v-for="(rule, index) in group.rules"
+                            :key="index"
+                          >
+                            <span>{{ rule.property }}</span
+                            >&nbsp;
+                            <span>{{ rule.value }}</span>
+                          </div>
+                          <span>{{ group.operator }}</span>
                         </tms-flex>
                         <div>
-                          <span>{{config.operator}}</span>
+                          <span>{{ config.operator }}</span>
                         </div>
                       </tms-flex>
                     </tms-flex>
                     <div>
-                      <el-button size="mini" @click="onSetDependency(p)">修改</el-button>
-                      <el-button size="mini" @click="onDelDependency(p)">删除</el-button>
+                      <el-button size="mini" @click="onSetDependency(p)"
+                        >修改</el-button
+                      >
+                      <el-button size="mini" @click="onDelDependency(p)"
+                        >删除</el-button
+                      >
                     </div>
                   </tms-flex>
                   <div>
-                    <el-button size="mini" type="default" @click="onAddDependency">添加</el-button>
+                    <el-button
+                      size="mini"
+                      type="default"
+                      @click="onAddDependency"
+                      >添加</el-button
+                    >
                   </div>
                 </tms-flex>
               </el-tab-pane>
               <el-tab-pane label="选项依赖" name="enumDependencies">
                 <tms-flex v-for="g in form.schema.enumGroups" :key="g.id">
-                  <span>{{g.label}}</span>
-                  <span>{{g.assocEnum.property}}</span>
-                  <span>{{g.assocEnum.value}}</span>
+                  <span>{{ g.label }}</span>
+                  <span>{{ g.assocEnum.property }}</span>
+                  <span>{{ g.assocEnum.value }}</span>
                 </tms-flex>
                 <div v-for="(v, i) in form.schema.enum" :key="i">
                   <div v-for="g in form.schema.enumGroups" :key="g.id">
                     <tms-flex v-if="g.id === v.group">
-                      <span>{{v.label}}</span>
-                      <span>{{g.label}}</span>
+                      <span>{{ v.label }}</span>
+                      <span>{{ g.label }}</span>
                     </tms-flex>
                   </div>
                 </div>
                 <div>
-                  <el-button size="mini" type="default" :disabled="!form.schema.enum" @click="onEditEnumDependency">编辑选项依赖</el-button>
+                  <el-button
+                    size="mini"
+                    type="default"
+                    :disabled="!form.schema.enum"
+                    @click="onEditEnumDependency"
+                    >编辑选项依赖</el-button
+                  >
                 </div>
               </el-tab-pane>
               <el-tab-pane label="事件依赖" name="eventDependencies">
                 <tms-flex direction="column">
                   <tms-flex
-                    v-for="(config,p) in form.schema.eventDependencies"
+                    v-for="(config, p) in form.schema.eventDependencies"
                     :key="p"
                     direction="column"
                   >
                     <tms-flex>
-                      <span>{{p}}</span>
+                      <span>{{ p }}</span>
                       <tms-flex direction="column">
-                        <span>{{config.rule.url}}</span>
-                        <tms-flex><span v-for="(value, key) in config.rule.params" :key="key">{{value}}</span></tms-flex>
-                        <span>{{config.rule.type}}</span>
+                        <span>{{ config.rule.url }}</span>
+                        <tms-flex
+                          ><span
+                            v-for="(value, key) in config.rule.params"
+                            :key="key"
+                            >{{ value }}</span
+                          ></tms-flex
+                        >
+                        <span>{{ config.rule.type }}</span>
                       </tms-flex>
                     </tms-flex>
                     <div>
-                      <el-button size="mini" @click="onSetEventDependency(p)">修改</el-button>
-                      <el-button size="mini" @click="onDelEventDependency(p)">删除</el-button>
+                      <el-button size="mini" @click="onSetEventDependency(p)"
+                        >修改</el-button
+                      >
+                      <el-button size="mini" @click="onDelEventDependency(p)"
+                        >删除</el-button
+                      >
                     </div>
                   </tms-flex>
                   <div>
-                    <el-button size="mini" type="default" @click="onAddEventDependency">添加</el-button>
+                    <el-button
+                      size="mini"
+                      type="default"
+                      @click="onAddEventDependency"
+                      >添加</el-button
+                    >
                   </div>
                 </tms-flex>
               </el-tab-pane>
@@ -165,13 +259,12 @@
         </tms-flex>
       </el-tab-pane>
       <el-tab-pane label="预览" name="preview">
-        <div style="flex:1">{{jsonString}}</div>
+        <div style="flex: 1">{{ jsonString }}</div>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
-    
-    
+
 <script>
 import Vue from 'vue'
 import {
@@ -189,6 +282,9 @@ import {
   Radio,
   RadioGroup,
   Dialog,
+  Upload,
+  Checkbox,
+  CheckboxGroup,
 } from 'element-ui'
 Vue.use(Tabs)
   .use(TabPane)
@@ -204,6 +300,9 @@ Vue.use(Tabs)
   .use(Radio)
   .use(RadioGroup)
   .use(Dialog)
+  .use(Upload)
+  .use(Checkbox)
+  .use(CheckboxGroup)
 
 /**
  *
@@ -263,6 +362,7 @@ class FormData {
       type: 'string',
       description: '',
       required: false,
+      groupable: false,
       properties: {},
     }
     this.node = null
@@ -274,7 +374,7 @@ const Type2Format = {
     { value: 'name', label: '姓名' },
     { value: 'email', label: '邮箱' },
     { value: 'mobile', label: '手机' },
-    { value: 'dateTime', label: '日期时间' }
+    { value: 'dateTime', label: '日期时间' },
   ],
   object: [
     { value: 'file', label: '文件' },
@@ -295,7 +395,7 @@ const Format2Comp = {
 
 export default {
   name: 'tms-json-schema',
-  props: { schema: Object, extendSchema: Function },
+  props: { schema: Object, extendSchema: Function, onUpload: Function },
   data() {
     return {
       activeL0Pane: 'properties',
@@ -350,8 +450,34 @@ export default {
       },
       immediate: true,
     },
+    'form.schema.type': {
+      handler: function () {
+        if (this.form.schema.default) {
+          return this.form.schema.default
+        }
+        this.form.schema.type === 'array'
+          ? this.$set(this.form.schema, 'default', [])
+          : this.$set(this.form.schema, 'default', '')
+      },
+      immediate: true,
+    },
   },
   methods: {
+    onRemoveFile(file) {
+      let files = this.form.schema.attachment
+      files.splice(
+        files.indexOf(files.find((ele) => ele.name === file.name)),
+        1
+      )
+    },
+    onUploadFile({ file }) {
+      if (!this.form.schema.attachment) {
+        this.$set(this.form.schema, 'attachment', [])
+      }
+      this.onUpload(file).then((result) => {
+        this.form.schema.attachment.push(result)
+      })
+    },
     onChangeHasEnum(bHasEnum) {
       if (bHasEnum) {
         this.$set(this.form.schema, 'enum', [
@@ -405,6 +531,7 @@ export default {
     onNodeClick(schemaWrap, node) {
       const { key, schema } = schemaWrap
       this.$set(schema, 'required', !!schema.required)
+      this.$set(schema, 'groupable', !!schema.groupable)
       // 添加依赖关系定义
       if (!schema.dependencies || typeof schema.dependencies !== 'object')
         this.$set(schema, 'dependencies', {})
@@ -413,7 +540,10 @@ export default {
         this.$set(schema, 'enumGroups', [])
       }
       // 添加事件依赖关系定义
-      if (!schema.eventDependencies || typeof schema.eventDependencies !== 'object')
+      if (
+        !schema.eventDependencies ||
+        typeof schema.eventDependencies !== 'object'
+      )
         this.$set(schema, 'eventDependencies', {})
       this.form.key = key
       this.form.schema = schema
@@ -476,12 +606,11 @@ export default {
       let dependencies = this.form.schema.dependencies
       fnShowDependencyDlg(this.form.schema).then((result) => {
         if (result) {
-          let { property, rules, operator } = result
-          let newRules = rules.reduce((a, rule) => {
-            a[rule.property] = rule.value
-            return a
-          }, {})
-          this.$set(dependencies, property, { rules: newRules, operator })
+          let { property, dependencyRules, operator } = result
+          this.$set(dependencies, property, {
+            dependencyRules: dependencyRules,
+            operator,
+          })
         }
       })
     },
@@ -494,12 +623,11 @@ export default {
         dependencies[propName]
       ).then((result) => {
         if (result) {
-          let { property, rules, operator } = result
-          let newRules = rules.reduce((a, rule) => {
-            a[rule.property] = rule.value
-            return a
-          }, {})
-          this.$set(dependencies, property, { rules: newRules, operator })
+          let { property, dependencyRules, operator } = result
+          this.$set(dependencies, property, {
+            dependencyRules: dependencyRules,
+            operator,
+          })
         }
       })
     },
@@ -510,7 +638,11 @@ export default {
     /* 编辑选项依赖规则 */
     onEditEnumDependency() {
       let allProperties = this.form.node.data.parent.children
-      fnShowEnumDependencyDlg(this.form.schema, this.form.key, allProperties).then((result) => {
+      fnShowEnumDependencyDlg(
+        this.form.schema,
+        this.form.key,
+        allProperties
+      ).then((result) => {
         if (result) {
           let { enumGroups } = result
           this.$set(this.form.schema, 'enumGroups', enumGroups)
@@ -523,22 +655,22 @@ export default {
       let eventDependencies = this.form.schema.eventDependencies
       fnShowEventDependencyDlg(this.form.schema).then((result) => {
         if (result) {
-          let { property, rule } = result      
-          this.$set(eventDependencies, property, {'rule': rule})        
+          let { property, rule } = result
+          this.$set(eventDependencies, property, { rule: rule })
         }
       })
     },
     /* 修改事件依赖规则 */
     onSetEventDependency(propName) {
-      let eventDependencies = this.form.schema.eventDependencies;    
+      let eventDependencies = this.form.schema.eventDependencies
       fnShowEventDependencyDlg(
         this.form.schema,
         propName,
         eventDependencies[propName]
       ).then((result) => {
         if (result) {
-          let { property, rule} = result
-          this.$set(eventDependencies, property, {'rule': rule})
+          let { property, rule } = result
+          this.$set(eventDependencies, property, { rule: rule })
         }
       })
     },

@@ -34,7 +34,9 @@ confirm.showAsDialog().then(fnOnSuccess)
 | ------------ | ----------------------------------- | -------- | ------ | ------------------------------------------ |
 | schema       | 给后台传递的键和配置                | Array    | -      |                                            |
 | fnGetCaptcha | 获得验证码的回调函数，返回 promise  | function | -      | {code: "0", msg: "\*\*", result:值为 svg } |
-| fnGetToken   | 获得 token 的回调函数，返回 promise | function | -      | -                                          |
+| fnGetToken   | 获得 token 的回调函数，返回 promise | function | -      | 
+| loginTip   | 登录提示 | Object | -      | {text:''}
+-                                          |
 
 ## 属性（props）
 

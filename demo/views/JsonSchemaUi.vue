@@ -2,7 +2,7 @@
   <div class="json-schema-ui">
     <h3>编辑JSONSchema</h3>
     <div id="myJsonSchema">
-      <tms-json-schema ref="myJsonSchema" :schema="jsonSchema" :extendSchema="extendSchema">
+      <tms-json-schema ref="myJsonSchema" :schema="jsonSchema" :extendSchema="extendSchema" :on-upload="onUploadFile">
         <template v-slot:extKeywords="props">
           <el-form-item label="不可修改">
             <el-switch v-model="props.schema.readonly"></el-switch>
@@ -24,124 +24,141 @@ export default {
       jsonSchema: {
         $id: 'https://example.com/card.schema.json',
         $schema: 'http://json-schema.org/draft-07/schema#',
-        description:
-          'A representation of a person, company, organization, or place',
+        description: 'A representation of a person, company, organization, or place',
         type: 'object',
         required: ['familyName', 'givenName'],
         properties: {
           file: {
+            readonly: true,
             type: 'array',
             title: '上传图片和文件',
             items: {
               type: 'object',
               properties: {
                 name: { title: '名字', type: 'string' },
-                url: { title: '地址', type: 'string' },
+                url: { title: '地址', type: 'string' }
               },
               format: 'file',
               formatAttrs: {
                 accept: 'image/png,image/jpeg',
                 size: '20MB',
-                limit: 2,
-              },
-            },
+                limit: 2
+              }
+            }
           },
           fn: {
             description: 'Formatted Name',
             type: 'string',
-            enum: [],
+            enum: []
           },
           familyName: {
-            type: 'string',
+            type: 'string'
           },
           givenName: {
-            type: 'string',
+            type: 'string'
           },
           additionalName: {
             type: 'array',
-            items: {
-              type: 'string',
-            },
+            default: ['a', 'b'],
+            enum: [
+              { label: '选项1', value: 'a' },
+              { label: '选项2', value: 'b' }
+            ]
           },
           honorificPrefix: {
             type: 'array',
             items: {
-              type: 'string',
-            },
+              type: 'string'
+            }
           },
           honorificSuffix: {
             type: 'array',
             items: {
-              type: 'string',
-            },
+              type: 'string'
+            }
           },
           nickname: {
-            type: 'string',
+            type: 'string'
           },
           url: {
-            type: 'string',
+            type: 'string'
           },
           email: {
             type: 'object',
             properties: {
               type: {
-                type: 'string',
+                type: 'string'
               },
               value: {
-                type: 'string',
-              },
-            },
+                type: 'string'
+              }
+            }
           },
           tel: {
             type: 'object',
             properties: {
               type: {
-                type: 'string',
+                type: 'string'
               },
               value: {
-                type: 'string',
-              },
-            },
+                type: 'string'
+              }
+            }
           },
           tz: {
-            type: 'string',
+            type: 'string'
           },
           photo: {
-            type: 'string',
+            type: 'string'
           },
           logo: {
-            type: 'string',
+            type: 'string'
           },
           sound: {
-            type: 'string',
+            type: 'string'
           },
           bday: {
-            type: 'string',
+            type: 'string'
           },
           title: {
-            type: 'string',
+            type: 'string'
           },
           role: {
-            type: 'string',
+            type: 'string'
           },
           org: {
             type: 'object',
             properties: {
               organizationName: {
-                type: 'string',
+                type: 'string'
               },
               organizationUnit: {
-                type: 'string',
-              },
-            },
-          },
+                type: 'string'
+              }
+            }
+          }
         },
+        dependencies: {
+          "name": {
+            "dependencyRules": {
+              "1": { "rules": [{ "property": "resource", "value": "a" }, { "property": "methods", "value": "b" }], "operator": "and" },
+              "2": { "rules": [{ "property": "areaCode", "value": "010" }], "operator": "and" }
+            },
+            "operator": "or"
+          }
+        }
       },
       extendSchema: (vm, schema) => {
-        vm.$set(schema, 'readonly', false)
-      },
+        vm.$set(schema, 'readonly', schema.readonly || false)
+      }
     }
   },
+  methods: {
+    onUploadFile(file) {
+      let result = { name: file.name, url: location.href }
+      return Promise.resolve(result)
+    }
+  }
 }
 </script>
 <style>

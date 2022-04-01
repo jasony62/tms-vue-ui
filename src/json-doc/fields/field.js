@@ -6,7 +6,15 @@ export class Field {
   constructor(schema, pathname) {
     if (typeof schema.attrs === 'object') Object.assign(this, schema.attrs)
     // schema.default 或者 attrs.value 或者 ''
-    this.value = schema.hasOwnProperty('default') ? schema.default : this.hasOwnProperty('value') ? this.value : ''
+    if (schema.type === 'array') {
+      this.value = schema.hasOwnProperty('default')
+        ? [...schema.default]
+        : this.hasOwnProperty('value')
+        ? this.value
+        : []
+    } else {
+      this.value = schema.hasOwnProperty('default') ? schema.default : this.hasOwnProperty('value') ? this.value : ''
+    }
     this.component = schema.component
     this.schemaType = schema.type
     this.label = schema.title || ''
@@ -17,5 +25,10 @@ export class Field {
     //this.name = schema.name ? schema.name : pathname
     this.name = pathname
     this.schema = schema
+    if (schema.type === 'json') {
+      if (this.value === '') this.value = {}
+      this.value = JSON.stringify(this.value)
+      this.schemaType = 'string'
+    }
   }
 }

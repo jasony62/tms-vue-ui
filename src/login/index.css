@@ -30,6 +30,12 @@
   height: 40px;
   line-height: 38px;
 }
+.tms-login__text{
+  color: red;
+  font-size:12px;
+  display: inline-block;
+  margin-top: 5px;
+}
 .tms-login__modal {
   width: 100%;
   height: 100%;

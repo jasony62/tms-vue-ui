@@ -1,6 +1,14 @@
 <template>
   <div id="myJsonDoc">
-    <tms-el-json-doc :is-submit="isSubmit" :schema="schema" :doc="model" :on-file-submit="handleFileSubmit" v-on:submit="jsonDocSubmit" :on-axios="handleAxios"></tms-el-json-doc>
+    <tms-el-json-doc
+      :is-submit="isSubmit"
+      :schema="schema"
+      :doc="model"
+      :on-file-submit="handleFileSubmit"
+      v-on:submit="jsonDocSubmit"
+      :on-axios="handleAxios"
+      :on-file-download="handleDownload"
+    ></tms-el-json-doc>
   </div>
 </template>
 
@@ -23,10 +31,13 @@ export default {
     return {
       isSubmit: false,
       schema,
-      model: {}
+      model: {
+        name: '1',
+        scriptes: { msg: '正常', code: 0, result: { docs: [], total: 0 } },
+      },
     }
   },
-  methods: {			
+  methods: {
     jsonDocSubmit(newSlimModel, newModel) {
       this.isSubmit = true
       setTimeout(() => {
@@ -34,17 +45,20 @@ export default {
         console.log(newSlimModel)
         this.isSubmit = false
       }, 2000)
-		},
-		handleFileSubmit(ref, files) {
-			let result = {}
-			result[ref] = files.map(file => {
-				return {'name': file.name, 'url': location.href}
-			})
-			return Promise.resolve(result)
     },
-    handleAxios() {    
+    handleFileSubmit(ref, files) {
+      let result = {}
+      result[ref] = files.map((file) => {
+        return { name: file.name, url: location.href }
+      })
+      return Promise.resolve(result)
+    },
+    handleAxios() {
       return Vue.TmsAxios()
-    }
-  }
+    },
+    handleDownload(name, url) {
+      console.log(name, url)
+    },
+  },
 }
 </script>

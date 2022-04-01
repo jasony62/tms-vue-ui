@@ -1,4 +1,4 @@
-import { Node, prepareFieldNode, components, FormNode, LabelNode } from './nodes'
+import { FormNode, LabelNode, Node, components, prepareFieldNode } from './nodes'
 let _uid = 0
 /**
  * 创建编辑器（一套schema的节点应该只创建一次，否则会多次render）
@@ -20,8 +20,8 @@ class Creator {
             'span',
             {
               attrs: {
-                'data-required-field': field.required ? 'true' : 'false',
-              },
+                'data-required-field': field.required ? 'true' : 'false'
+              }
             },
             field.label
           )
@@ -31,6 +31,46 @@ class Creator {
       if (field.description) {
         labelNodes.push(createElement('br'))
         labelNodes.push(createElement('small', field.description))
+      }
+      if (field.type === 'file' && field.attachment && field.attachment.length) {
+        labelNodes.push(
+          createElement(
+            components.a.tag,
+            {
+              props: { underline: false },
+              attrs: { disabled: true }
+            },
+            '参考模板：'
+          )
+        )
+        field.attachment.forEach(attach => {
+          let element = createElement(
+            components.a.tag,
+            {
+              attrs: {
+                url: attach.url,
+                name: attach.name
+              },
+              props: {
+                underline: false
+              },
+              style: {
+                marginRight: '10px'
+              },
+              on: {
+                click: event => {
+                  if (event.target.nodeType !== 1) return
+                  let ele = event.target.nodeName.toLowerCase() !== 'a' ? event.target.parentNode : event.target
+                  let url = ele.getAttribute('url')
+                  let name = ele.getAttribute('name')
+                  this.vm.onFileDownload(name, url)
+                }
+              }
+            },
+            attach.name
+          )
+          labelNodes.push(element)
+        })
       }
       return labelNode.createElem(labelNodes)
     } else {
@@ -50,7 +90,7 @@ class Creator {
       return createElement(
         'div',
         {
-          class: this.fieldWrapClass,
+          class: this.fieldWrapClass
         },
         labelAndDescNodes
       )
@@ -79,28 +119,32 @@ class Creator {
     return fieldNodes[sNestPath]
   }
   getFieldVisible(oVisible, oDoc) {
-    var bVisible, oRuleVal
-    if (oVisible.operator === 'or') {
-      bVisible = false
-      for (const [key, value] of Object.entries(oVisible.rules)) {
-        oRuleVal = oDoc[key]
-        if (oRuleVal) {
-          // 多选默认是包含
-          if (oRuleVal === value || oRuleVal.includes(value)) {
-            bVisible = true
-            break
+    var bVisible, oRuleVal, visbleObj
+    visbleObj = {}
+    bVisible = false
+    for (const [key, obj] of Object.entries(oVisible['dependencyRules'])) {
+      if (obj.operator === 'or') {
+        visbleObj[key] = false
+        obj.rules.forEach(item => {
+          oRuleVal = oDoc[item['property']]
+          if (oRuleVal === item['value'] || oRuleVal.includes(item['value'])) {
+            visbleObj[key] = true
           }
-        }
+        })
+      } else if (obj.operator === 'and') {
+        visbleObj[key] = true
+        obj.rules.forEach(item => {
+          oRuleVal = oDoc[item['property']]
+          if (!oRuleVal || (!(oRuleVal === item['value']) && !(oRuleVal.includes(item['value'])))) {
+            visbleObj[key] = false
+          }
+        })
       }
+    }
+    if (oVisible.operator === 'or') {
+      bVisible = JSON.stringify(visbleObj).includes('true') ? true : false
     } else if (oVisible.operator === 'and') {
-      bVisible = true
-      for (const [key, value] of Object.entries(oVisible.rules)) {
-        oRuleVal = oDoc[key]
-        if (!oRuleVal || (oRuleVal !== value && !oRuleVal.includes(value))) {
-          bVisible = false
-          break
-        }
-      }
+      bVisible = JSON.stringify(visbleObj).includes('false') ? false : true
     }
     return bVisible
   }
@@ -110,14 +154,37 @@ class Creator {
    * @param {*} deps 属性间的依赖关系
    * @param {*} fields 所有parse的属性
    * @param {*} oDoc 表单的model对象
-   * 
+   *
    */
   fnToggleAssocSchemas(deps, fields, oDoc) {
     Object.entries(deps).forEach(([oKey, visibility]) => {
       const field = fields[oKey]
-      if (visibility.rules) {
+      if (visibility.dependencyRules) {
         const bVisible = this.getFieldVisible(visibility, oDoc)
         field.visible = bVisible
+        // 隐藏的属性不赋任何值
+        let value
+        if (field.schemaType === 'array') {
+          value = oDoc[oKey].length ? oDoc[oKey] : field.schema.default ? field.schema.default : []
+        } else {
+          value = oDoc[oKey] ? oDoc[oKey] : field.schema.default ? field.schema.default : ''
+        }
+        if (bVisible) {
+          oDoc[oKey] = value
+        } else {
+          if (field.schemaType === 'array') {
+            if (oDoc[oKey].length) oDoc[oKey].splice(0, oDoc[oKey].length)
+          } else {
+            oDoc[oKey] = ''
+          }
+        }
+        // 隐藏且必填的属性应重置
+        if (!bVisible && field.required) {
+          field.required = false
+        }
+        if (bVisible) {
+          field.required = field.schema.required || false
+        }
       }
     })
   }
@@ -126,7 +193,7 @@ class Creator {
    *
    * @param {*} fields 所有parse的属性
    * @param {*} oDoc 表单的model对象
-   * 
+   *
    */
   fnToggleAssocOptions(fields, oDoc) {
     Object.entries(fields).forEach(([oKey, oSchema]) => {
@@ -179,7 +246,7 @@ class Creator {
     // 引用fieldNodes中的嵌套节点（root或嵌套节点），记录当前嵌套节点包含的节点
     let nestFieldNodes = this.getNestFieldNodes(fieldNodes, nestPath)
 
-    Object.keys(fields).forEach((key) => {
+    Object.keys(fields).forEach(key => {
       if (key.indexOf('$') === 0) return
 
       const field = fields[key]
@@ -207,7 +274,7 @@ class Creator {
         createElement(
           'div',
           {
-            class: 'nest-title',
+            class: 'nest-title'
           },
           nestField.$title
         )
@@ -216,7 +283,7 @@ class Creator {
     /**
      * 嵌套节点下的字段节点
      */
-    Object.keys(nestField).forEach((key) => {
+    Object.keys(nestField).forEach(key => {
       if (key.indexOf('$') === 0) return
 
       const subField = nestField[key]
@@ -229,7 +296,7 @@ class Creator {
           createElement(
             'div',
             {
-              class: 'nest',
+              class: 'nest'
             },
             nestFieldNodes
           )
@@ -266,7 +333,7 @@ class Creator {
   createForm() {
     const { vm, createElement } = this
     const fieldNodes = {
-      root: {},
+      root: {}
     }
 
     // 解析依赖关系
@@ -336,7 +403,7 @@ let mapCreators = new Map()
  * @param {*} vm
  * @param {*} createElement
  */
-export default function (vm, createElement) {
+export default function(vm, createElement) {
   let creator = mapCreators.get(vm)
   if (!creator) {
     creator = new Creator(vm, createElement)
