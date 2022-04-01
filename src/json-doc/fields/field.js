@@ -25,5 +25,10 @@ export class Field {
     //this.name = schema.name ? schema.name : pathname
     this.name = pathname
     this.schema = schema
+    if (schema.type === 'json') {
+      if (this.value === '') this.value = {}
+      this.value = JSON.stringify(this.value)
+      this.schemaType = 'string'
+    }
   }
 }

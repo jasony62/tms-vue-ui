@@ -50,17 +50,17 @@ export class Parser {
         }
       }
       if (schema.eventDependencies && JSON.stringify(schema.eventDependencies) !== '{}') {
-        let oItems = new Set();
+        let oItems = new Set()
         for (const key in schema.eventDependencies) {
           oItems.add(key)
           const config = schema.eventDependencies[key]
-          config.rule.params.forEach(param => {
+          config.rule.params.forEach((param) => {
             oItems.add(param)
             schema.properties[param].assocs = schema.properties[param].assocs || new Array()
             schema.properties[param].assocs.push(key)
           })
         }
-        isRequest = Array.from(oItems).every(item => editDoc[item])
+        isRequest = Array.from(oItems).every((item) => editDoc[item])
       }
       // 解析子属性
       for (const key in schema.properties) {
@@ -73,33 +73,39 @@ export class Parser {
         if (!isRequest) {
           if (child.assocs) {
             for (let i = 0; i < child.assocs.length; i++) {
-              let oDep, oRule, postData = {}
+              let oDep,
+                oRule,
+                postData = {}
               oDep = child.assocs[i]
               oRule = schema.eventDependencies[oDep].rule
-              oRule.params.forEach(param => {
+              oRule.params.forEach((param) => {
                 postData[param] = {
-                  'feature': 'start',
-                  'keyword': editDoc[param]
+                  feature: 'start',
+                  keyword: editDoc[param],
                 }
               })
-              this.vm.onAxios().post(oRule.url, { 'filter': postData }).then(rst => {
-                const data = rst.data.result.docs || rst.data.result
-                if (oRule.type === 'v1') {
-                  editDoc[oDep] = data[0][oDep] || data[oDep]
-                } else if (oRule.type === 'v2') {
-                  let arr = []
-                  data.forEach(item => {
-                    let value = item[oDep]
-                    arr.push({ 'label': value, 'value': value })
-                  })
-                  fields[oDep].items = arr
-                  if (data.length === 1) {
-                    editDoc[oDep] = arr[0].value
+              this.vm
+                .onAxios()
+                .post(oRule.url, { filter: postData })
+                .then((rst) => {
+                  const data = rst.data.result.docs || rst.data.result
+                  if (oRule.type === 'v1') {
+                    editDoc[oDep] = data[0][oDep] || data[oDep]
+                  } else if (oRule.type === 'v2') {
+                    let arr = []
+                    data.forEach((item) => {
+                      let value = item[oDep]
+                      arr.push({ label: value, value: value })
+                    })
+                    fields[oDep].items = arr
+                    if (data.length === 1) {
+                      editDoc[oDep] = arr[0].value
+                    }
                   }
-                }
-              }).catch(() => {
-                this.vm.setErrorMessage('数据解析错误')
-              })
+                })
+                .catch(() => {
+                  this.vm.setErrorMessage('数据解析错误')
+                })
             }
           }
         }

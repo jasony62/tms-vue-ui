@@ -31,6 +31,9 @@ export class FieldText extends Field {
         case 'integer':
           this.type = 'number'
           break
+        case 'json':
+          this.type = 'textarea'
+          break
         default:
           this.type = 'text'
       }

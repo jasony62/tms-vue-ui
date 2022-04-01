@@ -31,7 +31,10 @@ export default {
     return {
       isSubmit: false,
       schema,
-      model: {}
+      model: {
+        name: '1',
+        scriptes: { msg: '正常', code: 0, result: { docs: [], total: 0 } },
+      },
     }
   },
   methods: {
@@ -45,7 +48,7 @@ export default {
     },
     handleFileSubmit(ref, files) {
       let result = {}
-      result[ref] = files.map(file => {
+      result[ref] = files.map((file) => {
         return { name: file.name, url: location.href }
       })
       return Promise.resolve(result)
@@ -55,7 +58,7 @@ export default {
     },
     handleDownload(name, url) {
       console.log(name, url)
-    }
-  }
+    },
+  },
 }
 </script>

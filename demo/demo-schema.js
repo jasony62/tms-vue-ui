@@ -4,6 +4,11 @@ const Schema = {
   description: 'json-doc表单组件',
   type: 'object',
   properties: {
+    scripts: {
+      title: '脚本',
+      type: 'json',
+      required: true
+    },
     name: {
       title: '活动名称',
       type: 'string',
